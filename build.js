@@ -1,4 +1,6 @@
-if (await $`git push -n`.exitCode != 0)
+if (await $`git diff --exit-code && git diff --cached --exit-code && git push -n`.exitCode != 0)
+    throw new Error("Uncommitted or unpushed changes");
+if (await $`(cd ../dist/ && git diff --exit-code && git diff --cached --exit-code && git push -n)`.exitCode != 0)
     throw new Error("Uncommitted or unpushed changes");
 
 // Run tests
