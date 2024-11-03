@@ -86,8 +86,16 @@ export class WebHistoryRouterDriver
     {
         if (this.current.state.sequence == 0)
         {
-            this.replace("/");
-            this.load("/", { sequence: 0 }, { navMode: "replace" });
+            let url = new URL("/", this.#router.internalize(env.window.location));
+            let state = { sequence: 0 };
+
+            env.window.history.replaceState(
+                state, 
+                "", 
+                this.#router.externalize(url),
+                );
+
+            this.load(url, state, { navMode: "replace" });
         }
         else
         {
