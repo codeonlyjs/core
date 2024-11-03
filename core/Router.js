@@ -9,7 +9,7 @@ export class Router
         if (driver)
         {
             this.navigate = driver.navigate.bind(driver);
-            this.replace = driver.navigate.bind(driver);
+            this.replace = driver.replace.bind(driver);
             this.back = driver.back.bind(driver);
         }
         if (handlers)
