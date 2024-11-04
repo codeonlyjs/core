@@ -118,7 +118,7 @@ export class WebHistoryRouterDriver
         env.window.history.replaceState(
             this.current.state, 
             "", 
-            this.#router.externalize(url),
+            this.#router.externalize(url).href,
             );
     }
 
