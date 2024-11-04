@@ -26,11 +26,13 @@ export class WebHistoryRouterDriver
                         return;
                     }
 
-                    if (this.navigate(url))
-                    {
-                        ev.preventDefault();
-                        return true;
-                    }
+                    this.navigate(url).then(r => {
+                        if (r == null)
+                            window.location.href = href;
+                    });
+
+                    ev.preventDefault();
+                    return true;
                 }
             }
         });
