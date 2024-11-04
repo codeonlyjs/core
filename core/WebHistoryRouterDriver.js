@@ -13,6 +13,9 @@ export class WebHistoryRouterDriver
             let a = ev.target.closest("a");
             if (a)
             {
+                if (a.hasAttribute("download"))
+                    return;
+
                 let href = a.getAttribute("href");
                 let url = new URL(href, env.window.location);
                 if (url.origin == env.window.location.origin)
