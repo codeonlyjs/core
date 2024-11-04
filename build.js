@@ -3,8 +3,6 @@ syncProcessCwd();
 
 if (await $`git diff --exit-code && git diff --cached --exit-code && git push -n`.exitCode != 0)
     throw new Error("Uncommitted or unpushed changes");
-if (await $`(cd ../dist/ && git diff --exit-code && git diff --cached --exit-code && git push -n)`.exitCode != 0)
-    throw new Error("Uncommitted or unpushed changes");
 
 // Run tests
 console.log("Running tests...");
@@ -22,8 +20,6 @@ console.log(`Package Version: ${pkg.version}`);
 await $`npm run rollup`
 
 // Tag and commit both repos
-await git_tag_and_commit();
-cd("../dist/")
 await git_tag_and_commit();
 
 console.log("Build Completed Successfully");

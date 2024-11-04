@@ -16,14 +16,14 @@ export default {
     ],
     output: [
         {
-            file: "../dist/codeonly.min.js",
+            file: "./dist/codeonly.min.js",
             format: "es",
             plugins: [
                 terser(),
             ],
         },
         {
-            file: "../dist/codeonly.umd.min.cjs",
+            file: "./dist/codeonly.umd.min.cjs",
             name: "codeonly",
             format: "umd",
             plugins: [
