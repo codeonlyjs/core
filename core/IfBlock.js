@@ -1,7 +1,9 @@
 import { Plugins } from "./Plugins.js";
 import { Placeholder } from "./Placeholder.js";
 import { TemplateNode } from "./TemplateNode.js";
-import { TemplateHelpers } from "./TemplateHelpers.js";
+import { env } from "./Environment.js";
+import { TransitionNone } from "./TransitionNone.js";
+import { Transition } from "./TransitionGeneric.js";
 
 export class IfBlock
 {
@@ -50,7 +52,10 @@ export class IfBlock
             }
         }
 
+        let transition = template.transition;
+
         delete template.branches;
+        delete template.transition;
 
         // Make sure there's always an else block
         if (!hasElseBranch)
@@ -63,7 +68,11 @@ export class IfBlock
         return {
             isSingleRoot,
             nodes,
-            data: branches,
+            data: {
+                branches,
+                isSingleRoot,
+                transition,
+            }
         };
     }
 
@@ -78,6 +87,7 @@ export class IfBlock
                 {
                     template: template,
                     condition: template.if,
+                    transition: template.transition,
                 }
             ]
         }
@@ -97,6 +107,7 @@ export class IfBlock
             {
                 ifBlock = {
                     type: IfBlock,
+                    transition: t.transition,
                     branches: [
                         {
                             condition: t.if,
@@ -105,6 +116,7 @@ export class IfBlock
                     ]
                 };
                 delete t.if;
+                delete t.transition;
                 templates.splice(i, 1, ifBlock);
             }
             else if (t.elseif)
@@ -149,7 +161,9 @@ export class IfBlock
 
     constructor(options)
     {
-        this.branches = options.data;
+        this.isSingleRoot = options.data.isSingleRoot;
+        this.branches = options.data.branches;
+        this.transition = options.data.transition;
         this.branch_constructors = [];
         this.context = options.context;
 
@@ -169,6 +183,11 @@ export class IfBlock
         // Initialize
         this.activeBranchIndex = -1;
         this.activeBranch = Placeholder(" IfBlock placeholder ")();
+
+        // Multi-root if blocks need a sentinal to mark position
+        // in case one of the multi-root branches has no elements
+        if (!this.isSingleRoot)
+            this.headSentinal = env.document?.createComment(" if ");
     }
 
     destroy()
@@ -188,6 +207,9 @@ export class IfBlock
     render(w)
     {
         // Update the active branch
+        if (!this.isSingleRoot)
+            w.write(`<!-- if -->`);
+
         this.activeBranch.render(w);
     }
 
@@ -202,24 +224,54 @@ export class IfBlock
         this.activeBranch.bind?.();
     }
 
-    switchActiveBranch(updateDom)
+    get isAttached()
+    {
+        if (this.isSingleRoot)
+            return this.activeBranch.rootNode?.parentNode != null;
+        else
+            return this.headSentinal.parentNode != null;
+    }
+
+    switchActiveBranch()
     {
         // Switch branch
         let newActiveBranchIndex = this.resolveActiveBranch();
         if (newActiveBranchIndex != this.activeBranchIndex)
         {
+            // Finish old transition
+            this.#pendingTransition?.finish();
+
+            // Work out new transition
+            let transition = TransitionNone;
+            if (typeof(this.transition) == "string")
+            {
+                transition = Transition({ name: this.transition });
+            }
+            this.#pendingTransition = transition;
+
+            let isAttached = this.isAttached;
             let oldActiveBranch = this.activeBranch;
             this.activeBranchIndex = newActiveBranchIndex;
             this.activeBranch = this.branch_constructors[newActiveBranchIndex]();
-            TemplateHelpers.replaceMany(oldActiveBranch.rootNodes, this.activeBranch.rootNodes);
+            if (isAttached)
+            {
+                if (this.isSingleRoot)
+                    transition.before(oldActiveBranch.rootNodes[0], this.activeBranch.rootNodes);
+                else
+                    transition.after(this.headSentinal, this.activeBranch.rootNodes);
+                transition.remove(oldActiveBranch.rootNodes);
+            }
             if (this.#mounted)
             {
-                oldActiveBranch.setMounted(false);
-                this.activeBranch.setMounted(true);
+                transition.setMounted(oldActiveBranch, false);
+                transition.setMounted(this.activeBranch, true);
             }
-            oldActiveBranch.destroy();
+            transition.destroy(oldActiveBranch);
+            transition.start();
         }
     }
+
+    #pendingTransition;
 
     resolveActiveBranch()
     {
@@ -240,7 +292,10 @@ export class IfBlock
 
     get rootNodes()
     {
-        return this.activeBranch.rootNodes;
+        if (this.isSingleRoot)
+            return this.activeBranch.rootNodes;
+        else
+            return [ this.headSentinal, ...this.activeBranch.rootNodes ];
     }
 
     get rootNode()

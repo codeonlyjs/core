@@ -1,6 +1,6 @@
 import { Html } from "./Html.js";
 
-export class Transition
+export class TransitionManager
 {
     constructor(el, targetClass)
     {

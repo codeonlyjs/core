@@ -183,17 +183,17 @@ test("If Foreach Fragment", () => {
         ]
     })();
 
-    assert.equal(r.rootNode.childNodes.length, 6);      // test + foreach*2 + foreach head/tail sentinal
+    assert.equal(r.rootNode.childNodes.length, 7);      // if sentinal + text + foreach*2 + foreach head/tail sentinal
 
     val = false;
     r.update();
 
-    assert.equal(r.rootNode.childNodes.length, 1);      // if placeholder
+    assert.equal(r.rootNode.childNodes.length, 2);      // if sentinal + placeholder
 
     val = true;
     r.update();
 
-    assert.equal(r.rootNode.childNodes.length,6);      // as before
+    assert.equal(r.rootNode.childNodes.length,7);      // as before
 });
 
 test("If at root", () => {

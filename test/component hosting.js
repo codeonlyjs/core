@@ -150,17 +150,20 @@ test("Conditional multi-root component", () => {
     })();
 
     assert.equal(r.isSingleRoot, true);
-    assert.equal(r.rootNode.childNodes[0].nodeValue, "foo");
-    assert.equal(r.rootNode.childNodes[1].nodeValue, "bar");
+    assert.equal(r.rootNode.childNodes[0].nodeType, 8);
+    assert.equal(r.rootNode.childNodes[1].nodeValue, "foo");
+    assert.equal(r.rootNode.childNodes[2].nodeValue, "bar");
 
     value = false;
     r.update();
     assert.equal(r.rootNode.childNodes[0].nodeType, 8);
+    assert.equal(r.rootNode.childNodes[1].nodeType, 8);
 
     value = true;
     r.update();
-    assert.equal(r.rootNode.childNodes[0].nodeValue, "foo");
-    assert.equal(r.rootNode.childNodes[1].nodeValue, "bar");
+    assert.equal(r.rootNode.childNodes[0].nodeType, 8);
+    assert.equal(r.rootNode.childNodes[1].nodeValue, "foo");
+    assert.equal(r.rootNode.childNodes[2].nodeValue, "bar");
 });
 
 
