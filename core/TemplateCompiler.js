@@ -517,8 +517,20 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 if (key.startsWith("class_"))
                 {
                     let className = camel_to_dash(key.substring(6));
+                    let value = ni.template[key];
 
-                    format_dynamic(ni.template[key], (valueExpr) => `helpers.setNodeClass(${ni.name}, ${JSON.stringify(className)}, ${valueExpr})`);
+                    if (value instanceof Function)
+                    {
+                        let mgrName = `${ni.name}_bc`;
+                        closure.addLocal(mgrName);
+                        closure.create.append(`${mgrName} = helpers.boolClassMgr(context, ${ni.name}, ${JSON.stringify(className)}, refs[${refs.length}]);`);
+                        refs.push(value);
+                        closure.update.append(`${mgrName}();`);
+                    }
+                    else
+                    {
+                        closure.create.append(`helpers.setNodeClass(${ni.name}, ${JSON.stringify(className)}, ${value});`);
+                    }
                     continue;
                 }
 
@@ -539,17 +551,15 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 {
                     if (ni.template.display instanceof Function)
                     {
-                        closure.addLocal(`${ni.name}_prev_display`);
-                        format_dynamic(ni.template[key], (valueExpr) => `${ni.name}_prev_display = helpers.setNodeDisplay(${ni.name}, ${valueExpr}, ${ni.name}_prev_display)`);
+                        let mgrName = `${ni.name}_dm`;
+                        closure.addLocal(mgrName);
+                        closure.create.append(`${mgrName} = helpers.displayMgr(context, ${ni.name}, refs[${refs.length}]);`);
+                        refs.push(ni.template.display);
+                        closure.update.append(`${mgrName}();`);
                     }
                     else
                     {
-                        if (typeof(ni.template.display) == 'string')
-                            closure.create.append(`${ni.name}.style.display = '${ni.template.display}';`);
-                        else if (ni.template.display === false || ni.template.display === null || ni.template.display === undefined)
-                            closure.create.append(`${ni.name}.style.display = 'none';`);
-                        else if (ni.template.display !== true)
-                            throw new Error("display property must be set to string, true, false, or null")
+                        closure.create.append(`helpers.setNodeDisplay(${ni.name}, ${JSON.stringify(ni.template.display)});`);
                     }
                     continue;
                 }

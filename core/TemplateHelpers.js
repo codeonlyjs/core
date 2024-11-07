@@ -1,5 +1,6 @@
 import { HtmlString } from "./HtmlString.js";
 import { htmlEncode } from "./htmlEncode.js";
+import { env } from "./Environment.js";
 
 export class TemplateHelpers 
 {
@@ -143,6 +144,42 @@ export class TemplateHelpers
             node.style[style] = value;
     }
 
+    static boolClassMgr(ctx, node, cls, getValue)
+    {
+        let tx = null;
+        let value = getValue(ctx.model, ctx);
+        TemplateHelpers.setNodeClass(node, cls, value);
+
+        return function update()
+        {
+            let newVal = getValue(ctx.model, ctx);
+            if (newVal == value)
+                return;
+            value = newVal;
+
+            if (getValue.withTransition && node.isConnected)
+            {
+                tx?.finish();
+                tx = getValue.withTransition(ctx);
+                if (newVal)
+                {
+                    tx.enterNodes([node]);
+                    tx.onWillEnter(() => node.classList.add(cls));
+                }
+                else
+                {
+                    tx.leaveNodes([node]);
+                    tx.onDidLeave(() => node.classList.remove(cls));
+                }
+                tx.start();
+            }
+            else
+            {
+                TemplateHelpers.setNodeClass(node, cls, newVal);
+            }
+        }
+    }
+
     static setNodeDisplay(node, show, prev_display)
     {
         if (show === true)
@@ -173,6 +210,61 @@ export class TemplateHelpers
             if (node.style.display != show)
                 node.style.display = show;
             return prev ?? null;
+        }
+    }
+
+    static displayMgr(ctx, node, getValue)
+    {
+        let tx = null;
+        let value = getValue(ctx.model, ctx);
+        let prevDisplay = TemplateHelpers.setNodeDisplay(node, value, undefined);
+        let prevComputed;
+        if (env.browser)
+            prevComputed = window.getComputedStyle(node).getPropertyValue("display");
+
+        return function update()
+        {
+            // See if value changed
+            let newVal = getValue(ctx.model, ctx);
+            if (newVal == value)
+                return;
+            value = newVal;
+
+            if (env.browser && getValue.withTransition && node.isConnected)
+            {
+                tx?.finish();
+
+                let currentComputed = window.getComputedStyle(node).getPropertyValue("display");
+
+                // Work out new actual style
+                let newComputed;
+                if (newVal === true)
+                    newComputed = prevComputed;
+                else if (newVal === false || newVal === null || newVal === undefined)
+                    newComputed = "none";
+                else
+                    newComputed = newVal;
+
+                // Toggling to/from display none"
+                if ((currentComputed == "none") != (newComputed == "none"))
+                {
+                    tx = getValue.withTransition(ctx);
+                    if (newComputed != 'none')
+                    {
+                        tx.enterNodes([node]);
+                        tx.onWillEnter(() => prevDisplay = TemplateHelpers.setNodeDisplay(node, newVal, prevDisplay));
+                    }
+                    else
+                    {
+                        tx.leaveNodes([node]);
+                        tx.onDidLeave(() => prevDisplay = TemplateHelpers.setNodeDisplay(node, newVal, prevDisplay));
+                    }
+                    tx.start();
+                    return;
+                }
+            }
+
+            prevDisplay = TemplateHelpers.setNodeDisplay(node, newVal, prevDisplay);
         }
     }
 

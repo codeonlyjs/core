@@ -3,7 +3,6 @@ import { Placeholder } from "./Placeholder.js";
 import { TemplateNode } from "./TemplateNode.js";
 import { env } from "./Environment.js";
 import { TransitionNone } from "./TransitionNone.js";
-import { Transition } from "./TransitionGeneric.js";
 
 export class IfBlock
 {
@@ -52,10 +51,7 @@ export class IfBlock
             }
         }
 
-        let transition = template.transition;
-
         delete template.branches;
-        delete template.transition;
 
         // Make sure there's always an else block
         if (!hasElseBranch)
@@ -71,7 +67,6 @@ export class IfBlock
             data: {
                 branches,
                 isSingleRoot,
-                transition,
             }
         };
     }
@@ -87,7 +82,6 @@ export class IfBlock
                 {
                     template: template,
                     condition: template.if,
-                    transition: template.transition,
                 }
             ]
         }
@@ -107,7 +101,6 @@ export class IfBlock
             {
                 ifBlock = {
                     type: IfBlock,
-                    transition: t.transition,
                     branches: [
                         {
                             condition: t.if,
@@ -116,7 +109,6 @@ export class IfBlock
                     ]
                 };
                 delete t.if;
-                delete t.transition;
                 templates.splice(i, 1, ifBlock);
             }
             else if (t.elseif)
@@ -163,7 +155,6 @@ export class IfBlock
     {
         this.isSingleRoot = options.data.isSingleRoot;
         this.branches = options.data.branches;
-        this.transition = options.data.transition;
         this.branch_constructors = [];
         this.context = options.context;
 
@@ -241,33 +232,54 @@ export class IfBlock
             // Finish old transition
             this.#pendingTransition?.finish();
 
-            // Work out new transition
-            let transition = TransitionNone;
-            if (typeof(this.transition) == "string")
-            {
-                transition = Transition({ name: this.transition });
-            }
-            this.#pendingTransition = transition;
-
             let isAttached = this.isAttached;
             let oldActiveBranch = this.activeBranch;
             this.activeBranchIndex = newActiveBranchIndex;
             this.activeBranch = this.branch_constructors[newActiveBranchIndex]();
+
             if (isAttached)
             {
-                if (this.isSingleRoot)
-                    transition.before(oldActiveBranch.rootNodes[0], this.activeBranch.rootNodes);
-                else
-                    transition.after(this.headSentinal, this.activeBranch.rootNodes);
-                transition.remove(oldActiveBranch.rootNodes);
+                // Work out new transition
+                let transition;
+                if (this.#mounted)
+                    transition = this.branches[0].condition.withTransition?.(this.context);
+                if (!transition)
+                    transition = TransitionNone;
+                this.#pendingTransition = transition;
+
+                transition.enterNodes(this.activeBranch.rootNodes);
+                transition.leaveNodes(oldActiveBranch.rootNodes);
+                
+                transition.onWillEnter(() => {
+                    if (this.isSingleRoot)
+                    {
+                        let last = oldActiveBranch.rootNodes[oldActiveBranch.rootNodes.length - 1];
+                        last.after(this.activeBranch.rootNodes[0]);
+                    }
+                    else
+                        this.headSentinal.after(...this.activeBranch.rootNodes);
+
+                    if (this.#mounted)
+                        this.activeBranch.setMounted(true);
+                });
+                
+                transition.onDidLeave(() => {
+                    oldActiveBranch.rootNodes.forEach(x => x.remove());
+                    if (this.#mounted)
+                        oldActiveBranch.setMounted(false);
+                    oldActiveBranch.destroy();
+                });
+
+                transition.start();
             }
-            if (this.#mounted)
+            else
             {
-                transition.setMounted(oldActiveBranch, false);
-                transition.setMounted(this.activeBranch, true);
+                if (this.#mounted)
+                {
+                    this.activeBranch.setMounted(true);
+                    oldActiveBranch.setMounted(false);
+                }
             }
-            transition.destroy(oldActiveBranch);
-            transition.start();
         }
     }
 

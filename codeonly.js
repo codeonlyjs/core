@@ -10,8 +10,9 @@ export * from "./core/urlPattern.js";
 export * from "./core/nextFrame.js";
 export * from "./core/htmlEncode.js";
 export * from "./core/Utils.js";
-export * from "./core/TransitionManager.js";
-export * from "./core/TransitionGeneric.js";
+//export * from "./core/TransitionManager.js";
+export * from "./core/TransitionCss.js";
+export * from "./core/transition.js";
 export * from "./core/TransitionNone.js";
 
 export * from "./core/DocumentScrollPosition.js";
