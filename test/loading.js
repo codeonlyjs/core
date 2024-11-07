@@ -7,7 +7,7 @@ import { Component, env } from "../codeonly.js";
 test("loading", async () => {
 
     let comp = new Component();
-    comp.init();
+    comp.create();
 
     // Busy should be false by default
     assert.equal(comp.loading, false);
@@ -24,7 +24,7 @@ test("loading", async () => {
 test("loaded event", async () => {
 
     let comp = new Component();
-    comp.init();
+    comp.create();
 
 
     let loaded = 0;

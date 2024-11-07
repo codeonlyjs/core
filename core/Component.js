@@ -31,7 +31,7 @@ export class Component extends EventTarget
         return this.compiledTemplate.isSingleRoot;
     }
 
-    init()
+    create()
     {
         if (!this.#dom)
             this.#dom = new this.constructor.compiledTemplate({ model: this });
@@ -41,7 +41,7 @@ export class Component extends EventTarget
     get dom()
     {
         if (!this.#dom)
-            this.init();
+            this.create();
         return this.#dom;
     }
 
@@ -120,11 +120,14 @@ export class Component extends EventTarget
         this.dom.update();
     }
 
+    loadError = null;
+
     async load(callback)
     {
         this.#loading++;
         if (this.#loading == 1)
         {
+            this.loadError = null;
             this.invalidate();  
             env.enterLoading();
             this.dispatchEvent(new Event("loading"));
@@ -132,6 +135,10 @@ export class Component extends EventTarget
         try
         {
             return await callback();
+        }
+        catch (err)
+        {
+            this.loadError = err;
         }
         finally
         {

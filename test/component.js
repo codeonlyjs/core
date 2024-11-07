@@ -66,7 +66,7 @@ test("Component as direct child node", () => {
 test("Invalidate Component", async () => {
 
    let comp = new TestComponent();
-   comp.init();
+   comp.create();
 
    comp.invalidate();
    assert.equal(comp.updateCount, 0);
@@ -78,8 +78,8 @@ test("Invalidate during Update", async () => {
 
     let comp = new TestComponent();
     let comp2 = new TestComponent();
-    comp.init();
-    comp2.init();
+    comp.create();
+    comp2.create();
 
     comp.onUpdate = function()
     {
