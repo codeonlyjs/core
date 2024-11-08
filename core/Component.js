@@ -13,28 +13,33 @@ export class Component extends EventTarget
         this.invalidate = this.invalidate.bind(this);
     }
 
-    static _compiledTemplate;
-    static get compiledTemplate()
+    static _domConstructor;
+    static get domConstructor()
     {
-        if (!this._compiledTemplate)
-            this._compiledTemplate = this.compileTemplate();
-        return this._compiledTemplate
+        if (!this._domConstructor)
+            this._domConstructor = this.onProvideDomConstructor();
+        return this._domConstructor
     }
 
-    static compileTemplate()
+    static onProvideDomConstructor()
     {
-        return Template.compile(this.template);
+        return Template.compile(this.onProvideTemplate());
+    }
+
+    static onProvideTemplate()
+    {
+        return this.template;
     }
 
     static get isSingleRoot()
     {
-        return this.compiledTemplate.isSingleRoot;
+        return this.domConstructor.isSingleRoot;
     }
 
     create()
     {
         if (!this.#dom)
-            this.#dom = new this.constructor.compiledTemplate({ model: this });
+            this.#dom = new this.constructor.domConstructor({ model: this });
     }
 
     #dom;
@@ -120,14 +125,33 @@ export class Component extends EventTarget
         this.dom.update();
     }
 
-    loadError = null;
+    #loadError = null;
+    get loadError()
+    {
+        return this.#loadError;
+    }
+    set loadError(value)
+    {
+        this.#loadError = value;
+        this.invalidate();
+    }
+
+    #loading = 0;
+    get loading()
+    {
+        return this.#loading != 0;
+    }
+    set loading(value)
+    {
+        throw new Error("setting Component.loading not supported, use load() function");
+    }
 
     async load(callback)
     {
         this.#loading++;
         if (this.#loading == 1)
         {
-            this.loadError = null;
+            this.#loadError = null;
             this.invalidate();  
             env.enterLoading();
             this.dispatchEvent(new Event("loading"));
@@ -138,7 +162,7 @@ export class Component extends EventTarget
         }
         catch (err)
         {
-            this.loadError = err;
+            this.#loadError = err;
         }
         finally
         {
@@ -152,16 +176,6 @@ export class Component extends EventTarget
         }
     }
 
-    #loading = 0;
-
-    get loading()
-    {
-        return this.#loading != 0;
-    }
-    set loading(value)
-    {
-        throw new Error("setting Component.loading not supported, use load() function");
-    }
 
     render(w)
     {
