@@ -5,7 +5,7 @@ import { env, Template, Html } from "../codeonly.js";
 
 test("Static Comment", () => {
     let r = Template.compile({
-        _: "comment",
+        _: "#comment",
         text: "foo",
     })();
 
@@ -16,7 +16,7 @@ test("Static Comment", () => {
 test("Dynamic Comment", () => {
     let val = "foo";
     let r = Template.compile({
-        _: "comment",
+        _: "#comment",
         text: () => val,
     })();
 

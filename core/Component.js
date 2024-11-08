@@ -13,15 +13,15 @@ export class Component extends EventTarget
         this.invalidate = this.invalidate.bind(this);
     }
 
-    static _domConstructor;
-    static get domConstructor()
+    static _domTreeConstructor;
+    static get domTreeConstructor()
     {
-        if (!this._domConstructor)
-            this._domConstructor = this.onProvideDomConstructor();
-        return this._domConstructor
+        if (!this._domTreeConstructor)
+            this._domTreeConstructor = this.onProvideDomTreeConstructor();
+        return this._domTreeConstructor
     }
 
-    static onProvideDomConstructor()
+    static onProvideDomTreeConstructor()
     {
         return Template.compile(this.onProvideTemplate());
     }
@@ -33,26 +33,31 @@ export class Component extends EventTarget
 
     static get isSingleRoot()
     {
-        return this.domConstructor.isSingleRoot;
+        return this.domTreeConstructor.isSingleRoot;
     }
 
     create()
     {
-        if (!this.#dom)
-            this.#dom = new this.constructor.domConstructor({ model: this });
+        if (!this.#domTree)
+            this.#domTree = new this.constructor.domTreeConstructor({ model: this });
     }
 
-    #dom;
-    get dom()
+    get created()
     {
-        if (!this.#dom)
+        return this.#domTree != null;
+    }
+
+    #domTree;
+    get domTree()
+    {
+        if (!this.#domTree)
             this.create();
-        return this.#dom;
+        return this.#domTree;
     }
 
     get isSingleRoot() 
     { 
-        return this.dom.isSingleRoot; 
+        return this.domTree.isSingleRoot; 
     }
 
     get rootNode() 
@@ -60,12 +65,12 @@ export class Component extends EventTarget
         if (!this.isSingleRoot)
             throw new Error("rootNode property can't be used on multi-root template");
 
-        return this.dom.rootNode;
+        return this.domTree.rootNode;
     }
 
     get rootNodes() 
     { 
-        return this.dom.rootNodes; 
+        return this.domTree.rootNodes; 
     }
 
     static nextFrameOrder = -100;
@@ -73,7 +78,7 @@ export class Component extends EventTarget
     invalidate()
     {
         // No need to invalidate if not created yet
-        if (!this.#dom)
+        if (!this.#domTree)
             return;
 
         // Already invalid?
@@ -118,11 +123,11 @@ export class Component extends EventTarget
 
     update()
     {
-        if (!this.#dom)
+        if (!this.#domTree)
             return;
         
         this.invalid = false;
-        this.dom.update();
+        this.domTree.update();
     }
 
     #loadError = null;
@@ -179,15 +184,15 @@ export class Component extends EventTarget
 
     render(w)
     {
-        this.dom.render(w);
+        this.domTree.render(w);
     }
 
     destroy()
     {
-        if (this.#dom)
+        if (this.#domTree)
         {
-            this.#dom.destroy();
-            this.#dom = null;
+            this.#domTree.destroy();
+            this.#domTree = null;
         }
     }
 
@@ -199,10 +204,15 @@ export class Component extends EventTarget
     {
     }
 
+    get mounted()
+    {
+        return this.#mounted;
+    }
+
     #mounted = false;
     setMounted(mounted)
     {
-        this.#dom?.setMounted(mounted);
+        this.#domTree?.setMounted(mounted);
         this.#mounted = mounted;
         if (mounted)
             this.onMount();
@@ -223,7 +233,7 @@ export class Component extends EventTarget
 
     unmount()
     {
-        if (this.#dom)
+        if (this.#domTree)
             this.rootNodes.forEach(x => x. remove());
         this.setMounted(false);
     }

@@ -78,7 +78,7 @@ export class TemplateNode
         }
         else if (template instanceof Function)
             this.kind = "dynamic_text";
-        else if (template.type === 'comment')
+        else if (template.type === '#comment')
             this.kind = "comment";
         else if (template.type === undefined)
             this.kind = "fragment";
