@@ -11,21 +11,18 @@ export default {
                 'env.browser': true,
             }
         }),
-        terser(),
         bundleSize(),
     ],
     output: [
         {
-            file: "./dist/codeonly.min.js",
+            file: "./dist/codeonly.js",
             format: "es",
             plugins: [
-                terser(),
             ],
         },
         {
-            file: "./dist/codeonly.umd.min.cjs",
-            name: "codeonly",
-            format: "umd",
+            file: "./dist/codeonly.min.js",
+            format: "es",
             plugins: [
                 terser(),
             ],
