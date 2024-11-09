@@ -9,6 +9,8 @@ export class IfBlock
     static integrate(template, compilerOptions)
     {
         let branches = [];
+        let key = template.key;
+        delete template.key;
         let nodes = [];
         let hasElseBranch = false;
         let isSingleRoot = true;
@@ -65,6 +67,7 @@ export class IfBlock
             isSingleRoot,
             nodes,
             data: {
+                key,
                 branches,
                 isSingleRoot,
             }
@@ -73,22 +76,42 @@ export class IfBlock
 
     static transform(template)
     {
-        if (template.if === undefined)
-            return template;
-
-        let newTemplate = {
-            type: IfBlock,
-            branches: [
-                {
-                    template: template,
-                    condition: template.if,
-                }
-            ]
+        if (template.key !== undefined)
+        {
+            let key = template.key;
+            if (!(key instanceof Function))
+                throw new Error("`key` is not a function");
+            delete template.key;
+            let newTemplate = {
+                type: IfBlock,
+                key,
+                branches: [
+                    {
+                        template: this.transform(template),
+                        condition: true,
+                    }
+                ]
+            }
+            return newTemplate;
         }
 
-        delete template.if;
+        if (template.if !== undefined)
+        {
+            let newTemplate = {
+                type: IfBlock,
+                branches: [
+                    {
+                        template: template,
+                        condition: template.if,
+                    }
+                ]
+            }
 
-        return newTemplate;
+            delete template.if;
+            return newTemplate;
+        }
+
+        return template;
     }
 
     static transformGroup(templates)
@@ -155,6 +178,7 @@ export class IfBlock
     {
         this.isSingleRoot = options.data.isSingleRoot;
         this.branches = options.data.branches;
+        this.key = options.data.key;
         this.branch_constructors = [];
         this.context = options.context;
 
@@ -173,6 +197,7 @@ export class IfBlock
 
         // Initialize
         this.activeBranchIndex = -1;
+        this.activeKey = undefined;
         this.activeBranch = Placeholder(" IfBlock placeholder ")();
 
         // Multi-root if blocks need a sentinal to mark position
@@ -227,7 +252,9 @@ export class IfBlock
     {
         // Switch branch
         let newActiveBranchIndex = this.resolveActiveBranch();
-        if (newActiveBranchIndex != this.activeBranchIndex)
+        let newActiveKey = this.key ? this.key.call(this.context.model, this.context.model, this.context) : undefined;
+        if (newActiveBranchIndex != this.activeBranchIndex ||
+            newActiveKey != this.activeKey)
         {
             // Finish old transition
             this.#pendingTransition?.finish();
@@ -235,6 +262,7 @@ export class IfBlock
             let isAttached = this.isAttached;
             let oldActiveBranch = this.activeBranch;
             this.activeBranchIndex = newActiveBranchIndex;
+            this.activeKey = newActiveKey;
             this.activeBranch = this.branch_constructors[newActiveBranchIndex]();
 
             if (isAttached)
@@ -242,7 +270,12 @@ export class IfBlock
                 // Work out new transition
                 let transition;
                 if (this.#mounted)
-                    transition = this.branches[0].condition.withTransition?.(this.context);
+                {
+                    if (this.key)
+                        transition = this.key.withTransition?.(this.context);
+                    else
+                        transition = this.branches[0].condition.withTransition?.(this.context);
+                }
                 if (!transition)
                     transition = TransitionNone;
                 this.#pendingTransition = transition;
