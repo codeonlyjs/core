@@ -1815,6 +1815,8 @@ class UrlMapper
 
         if (this.options.hash)
         {
+            if (url.pathname != "/")
+                throw new Error(`can't internalize url "${url.href}"`);
             let hash = url.hash.substring(1);
             if (!hash.startsWith("/"))
                 hash = "/" + hash;
