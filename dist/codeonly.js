@@ -182,41 +182,51 @@ class Component extends EventTarget
         this.invalidate = this.invalidate.bind(this);
     }
 
-    static _compiledTemplate;
-    static get compiledTemplate()
+    static _domTreeConstructor;
+    static get domTreeConstructor()
     {
-        if (!this._compiledTemplate)
-            this._compiledTemplate = this.compileTemplate();
-        return this._compiledTemplate
+        if (!this._domTreeConstructor)
+            this._domTreeConstructor = this.onProvideDomTreeConstructor();
+        return this._domTreeConstructor
     }
 
-    static compileTemplate()
+    static onProvideDomTreeConstructor()
     {
-        return Template.compile(this.template);
+        return Template.compile(this.onProvideTemplate());
+    }
+
+    static onProvideTemplate()
+    {
+        return this.template;
     }
 
     static get isSingleRoot()
     {
-        return this.compiledTemplate.isSingleRoot;
+        return this.domTreeConstructor.isSingleRoot;
     }
 
     create()
     {
-        if (!this.#dom)
-            this.#dom = new this.constructor.compiledTemplate({ model: this });
+        if (!this.#domTree)
+            this.#domTree = new this.constructor.domTreeConstructor({ model: this });
     }
 
-    #dom;
-    get dom()
+    get created()
     {
-        if (!this.#dom)
+        return this.#domTree != null;
+    }
+
+    #domTree;
+    get domTree()
+    {
+        if (!this.#domTree)
             this.create();
-        return this.#dom;
+        return this.#domTree;
     }
 
     get isSingleRoot() 
     { 
-        return this.dom.isSingleRoot; 
+        return this.domTree.isSingleRoot; 
     }
 
     get rootNode() 
@@ -224,12 +234,12 @@ class Component extends EventTarget
         if (!this.isSingleRoot)
             throw new Error("rootNode property can't be used on multi-root template");
 
-        return this.dom.rootNode;
+        return this.domTree.rootNode;
     }
 
     get rootNodes() 
     { 
-        return this.dom.rootNodes; 
+        return this.domTree.rootNodes; 
     }
 
     static nextFrameOrder = -100;
@@ -237,7 +247,7 @@ class Component extends EventTarget
     invalidate()
     {
         // No need to invalidate if not created yet
-        if (!this.#dom)
+        if (!this.#domTree)
             return;
 
         // Already invalid?
@@ -282,21 +292,40 @@ class Component extends EventTarget
 
     update()
     {
-        if (!this.#dom)
+        if (!this.#domTree)
             return;
         
         this.invalid = false;
-        this.dom.update();
+        this.domTree.update();
     }
 
-    loadError = null;
+    #loadError = null;
+    get loadError()
+    {
+        return this.#loadError;
+    }
+    set loadError(value)
+    {
+        this.#loadError = value;
+        this.invalidate();
+    }
+
+    #loading = 0;
+    get loading()
+    {
+        return this.#loading != 0;
+    }
+    set loading(value)
+    {
+        throw new Error("setting Component.loading not supported, use load() function");
+    }
 
     async load(callback)
     {
         this.#loading++;
         if (this.#loading == 1)
         {
-            this.loadError = null;
+            this.#loadError = null;
             this.invalidate();  
             env.enterLoading();
             this.dispatchEvent(new Event("loading"));
@@ -307,7 +336,7 @@ class Component extends EventTarget
         }
         catch (err)
         {
-            this.loadError = err;
+            this.#loadError = err;
         }
         finally
         {
@@ -321,28 +350,18 @@ class Component extends EventTarget
         }
     }
 
-    #loading = 0;
-
-    get loading()
-    {
-        return this.#loading != 0;
-    }
-    set loading(value)
-    {
-        throw new Error("setting Component.loading not supported, use load() function");
-    }
 
     render(w)
     {
-        this.dom.render(w);
+        this.domTree.render(w);
     }
 
     destroy()
     {
-        if (this.#dom)
+        if (this.#domTree)
         {
-            this.#dom.destroy();
-            this.#dom = null;
+            this.#domTree.destroy();
+            this.#domTree = null;
         }
     }
 
@@ -354,10 +373,15 @@ class Component extends EventTarget
     {
     }
 
+    get mounted()
+    {
+        return this.#mounted;
+    }
+
     #mounted = false;
     setMounted(mounted)
     {
-        this.#dom?.setMounted(mounted);
+        this.#domTree?.setMounted(mounted);
         this.#mounted = mounted;
         if (mounted)
             this.onMount();
@@ -378,7 +402,7 @@ class Component extends EventTarget
 
     unmount()
     {
-        if (this.#dom)
+        if (this.#domTree)
             this.rootNodes.forEach(x => x. remove());
         this.setMounted(false);
     }
@@ -2515,7 +2539,7 @@ class TemplateNode
         }
         else if (template instanceof Function)
             this.kind = "dynamic_text";
-        else if (template.type === 'comment')
+        else if (template.type === '#comment')
             this.kind = "comment";
         else if (template.type === undefined)
             this.kind = "fragment";
