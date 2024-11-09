@@ -1121,12 +1121,40 @@ function TransitionCss(options, ctx)
     let nodesTransitioning = [];
     let finished = false;
 
-    function className(state)
+    // For an array of states, get the full set of class names
+    // associated with that state.
+    function classNames(states)
     {
-        if (options.classNames)
-            return options.classNames[state];
-        else
-            return `${options.cssClassPrefix ?? "tx"}-${state}`;
+        let result = [];
+        for (let s of states)
+        {
+            // Look in options.classNames the in default names
+            let cls_names = options.classNames?.[s] ?? TransitionCss.defaultClassNames[s];
+
+            // Split on semicolon
+            cls_names = (cls_names ?? "").split(";");
+
+            // Replace * with animation name
+            cls_names = cls_names.map(x => x.replace(/\*/g, options.name ?? "tx"));
+
+            // Add to list
+            result.push(...cls_names);
+        }
+        return result;
+    }
+
+    function addClasses(nodes, states)
+    {
+        let classes = classNames(states);
+        if (classes.length)
+            nodes.forEach(x => x.classList?.add(...classes));
+    }
+
+    function removeClasses(nodes, states)
+    {
+        let classes = classNames(states);
+        if (classes.length)
+            nodes.forEach(x => x.classList?.remove(...classes));
     }
 
     function track_transitions(nodes, class_add, class_remove)
@@ -1134,10 +1162,8 @@ function TransitionCss(options, ctx)
         // Switch classes after one frame
         requestAnimationFrame(() => 
         requestAnimationFrame(() => {
-            nodes.forEach(x => {
-                x.classList?.add(className(class_add));
-                x.classList?.remove(className(class_remove));
-            });
+            addClasses(nodes, [ class_add ]);
+            removeClasses(nodes, [ class_remove ]);
         }));
 
         // Track that these nodes might be transition
@@ -1147,7 +1173,7 @@ function TransitionCss(options, ctx)
     function start_enter()
     {
         // Apply classes
-        enterNodes.forEach(x => x.classList?.add(className("entering"), className("enter-start")));
+        addClasses(enterNodes, [ "entering", "enter-start" ]);
 
         // Do operation
         onWillEnter?.();
@@ -1159,19 +1185,13 @@ function TransitionCss(options, ctx)
 
     function finish_enter()
     {
-        enterNodes?.forEach(x => {
-            x.classList?.remove(
-                className("enter-start"), 
-                className("entering"), 
-                className("enter-end")
-            );
-        });
+        removeClasses(enterNodes, [ "enter-start", "entering", "enter-end" ]);
     }
 
     function start_leave()
     {
         // Apply classes
-        leaveNodes.forEach(x => x.classList?.add(className("leaving"), className("leave-start")));
+        addClasses(leaveNodes, [ "leaving", "leave-start" ]);
 
         // Track transitions
         track_transitions(leaveNodes, "leave-end", "leave-start");
@@ -1179,13 +1199,7 @@ function TransitionCss(options, ctx)
 
     function finish_leave()
     {
-        leaveNodes.forEach(x => {
-            x.classList?.remove(
-                className("leave-start"), 
-                className("leaving"), 
-                className("leave-end")
-            );
-        });
+        removeClasses(leaveNodes, [ "leave-start", "leaving", "leave-end" ]);
 
         // Do operation
         onDidLeave?.();
@@ -1311,6 +1325,15 @@ function TransitionCss(options, ctx)
         finish,
     }
 }
+
+TransitionCss.defaultClassNames = {
+    "entering": "*-entering;*-active",
+    "enter-start": "*-enter-start;*-out",
+    "enter-end": "*-enter-end;*-in",
+    "leaving": "*-leaving;*-active",
+    "leave-start": "*-leave-start;*-in",
+    "leave-end": "*-leave-end;*-out",
+};
 
 function transition(value, cssClassPrefix)
 {
