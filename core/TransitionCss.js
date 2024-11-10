@@ -7,6 +7,25 @@ export function TransitionCss(options, ctx)
     let nodesTransitioning = [];
     let finished = false;
 
+    // Resolve dynamic values
+    let name = options.name;
+    let mode = options.mode;
+    if (name instanceof Function)
+        name = name(ctx.model, ctx);
+    if (mode instanceof Function)
+        mode = mode(ctx.model, ctx);
+        
+    switch (mode)
+    {
+        case "enter-leave":
+        case "leave-enter":
+            break;
+        default:
+            mode = "";
+            break;
+    }
+
+
     // For an array of states, get the full set of class names
     // associated with that state.
     function classNames(states)
@@ -116,22 +135,6 @@ export function TransitionCss(options, ctx)
 
     async function start()
     {
-        // Work out animation mode
-        let mode = options.mode;
-        if (mode instanceof Function)
-            mode = mode(ctx.model, ctx);
-        
-        switch (mode)
-        {
-            case "enter-leave":
-            case "leave-enter":
-                break;
-            default:
-                mode = "";
-                break;
-        }
-
-
         options.on_start?.(ctx.model, ctx);
 
         if (mode == "" || mode == "enter-leave")
