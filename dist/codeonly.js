@@ -522,7 +522,10 @@ function urlPattern(pattern)
         }
         else if (ch == '*')
         {
-            rx += "[^\\/]+";
+            if (i + 1 == len)
+                rx += "(?<tail>.*)";
+            else
+                rx += "[^\\/]+";
         }
         else if (ch == ':')
         {
