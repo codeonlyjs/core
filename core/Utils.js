@@ -10,7 +10,6 @@ export function is_constructor(x)
     return x instanceof Function && !!x.prototype && !!x.prototype.constructor; 
 }
 
-
 let rxIdentifier = /^[a-zA-Z$][a-zA-Z0-9_$]*$/;
 
 export function member(name)
