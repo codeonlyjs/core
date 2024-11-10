@@ -25,8 +25,8 @@ export function transition(value, cssClassPrefix)
     // Attach transition constructor
     fnValue.withTransition = function(context)
     {
-        if (options.factory)
-            return options.construct(options, context);
+        if (options.type)
+            return new options.type(options, context);
         else
             return TransitionCss(options, context);
     }
