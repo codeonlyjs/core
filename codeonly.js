@@ -5,7 +5,6 @@ export * from "./core/Style.js";
 export * from "./core/Component.js";
 export * from "./core/Template.js";
 export * from "./core/Html.js";
-export * from "./core/ObservableArray.js";
 export * from "./core/urlPattern.js";
 export * from "./core/nextFrame.js";
 export * from "./core/htmlEncode.js";

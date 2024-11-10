@@ -108,53 +108,6 @@ export class ForEachBlock
         
     }
 
-    onObservableUpdate(index, del, ins)
-    {
-        let tempCtx = { outer: this.outer };
-        if (ins == 0 && del == 0)
-        {
-            let item = this.observableItems[index];
-            let newItems = [ item ];
-            let newKeys = null;
-            if (this.itemKey)
-            {
-                tempCtx.model = item;
-                newKeys = [ this.itemKey.call(item, item, tempCtx) ];
-            }
-            this.#patch_existing(newItems, newKeys, index, 0, 1);
-        }
-        else
-        {
-            // Over patch or keyed patch?
-            let newKeys = null;
-            let newItems = this.observableItems.slice(index, index + ins);
-            if (this.itemKey)
-            {
-                // Get keys for all new items
-                newKeys = newItems.map((item) => {
-                    tempCtx.model = item;
-                    return this.itemKey.call(item, item, tempCtx);
-                });
-            }
-
-            if (ins && del)
-            {
-                // Update range
-                this.#update_range(index, del, newItems, newKeys); 
-            }
-            else if (del != 0)
-            {
-                this.#delete(index, del);
-            }
-            else if (ins != 0)
-            {
-                this.#insert(newItems, newKeys, index, 0, ins);
-            }
-
-            this.#updateEmpty();
-        }
-    }
-
     get rootNodes()
     {
         let emptyNodes = this.emptyDom ? this.emptyDom.rootNodes : [];
@@ -202,46 +155,21 @@ export class ForEachBlock
         }
         newItems = newItems ?? [];
 
-        // Disconnect old observable items?
-        if (this.observableItems != null && this.observableItems != newItems)
-        {
-            this.observableItems.removeListener(this._onObservableUpdate);
-        }
-
-        // Connect new observableItems
-        if (Array.isArray(newItems) && newItems.isObservable)
-        {
-            // Different instance?
-            if (this.observableItems != newItems)
-            {
-                // Connect listener
-                this._onObservableUpdate = this.onObservableUpdate.bind(this);
-                this.observableItems = newItems;
-                this.observableItems.addListener(this._onObservableUpdate);
-
-                // Reload items
-                this.#delete(0, this.itemDoms.length);
-                this.itemsLoaded = false;
-            }
-        }
-
         // Get keys for all items
         let tempCtx = { 
             outer: this.outer 
         };
 
-        // Run condition and key generation (except if using observable)
+        // Run condition and key generation 
         let newKeys = null;
-        if (!this.observableItems)
+
+        // Filter out conditional items
+        if (this.condition)
         {
-            // Filter out conditional items
-            if (this.condition)
-            {
-                newItems = newItems.filter((item) => {
-                    tempCtx.model = item;
-                    return this.condition.call(item, item, tempCtx);
-                });
-            }
+            newItems = newItems.filter((item) => {
+                tempCtx.model = item;
+                return this.condition.call(item, item, tempCtx);
+            });
         }
 
         // Generate keys
@@ -259,12 +187,6 @@ export class ForEachBlock
             this.itemsLoaded = true;
             this.#insert(newItems, newKeys, 0, 0, newItems.length);
             this.#updateEmpty();
-            return;
-        }
-
-        // Don't update observable items
-        if (this.observableItems)
-        {
             return;
         }
 
@@ -414,12 +336,6 @@ export class ForEachBlock
 
     destroy()
     {
-        if (this.observableItems != null)
-        {
-            this.observableItems.removeListener(this._onObservableUpdate);
-            this.observableItems = null;
-        }
-
         destroyItems(this.itemDoms);
 
         this.itemDoms = null;

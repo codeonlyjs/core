@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, ObservableArray, Component, env } from "../codeonly.js";
+import { Template, Component, env } from "../codeonly.js";
 
 function assert_iterables(a, b)
 {
@@ -93,8 +93,7 @@ function assert_foreach_content(r, items, actual, expected, opts)
     function assert_items()
     {
         // Do the update
-        if (!items.isObservable)
-            r.update();
+        r.update();
 
         // Check items match
         assert_iterables(actual().map(x => x.innerText), expected());
@@ -142,70 +141,6 @@ test("ForEach Content (diff, keyed)", () => {
                 foreach: {
                     items: () => items,
                     itemKey: x => x,
-                },
-                _: "DIV",
-                text: x => x,
-            }
-        ]
-    })();
-
-
-    assert_foreach_content(r, items, actual, expected);
-
-    function actual()
-    {
-        return r.rootNodes[0].childNodes.slice(1, -1);
-    }
-
-    function expected()
-    {
-        return items;
-    }
-});
-
-test("ForEach Content (observable, unkeyed)", () => {
-
-    let items = new ObservableArray();
-    items.push("A", "B", "C");
-
-    let r = Template.compile({
-        _: "DIV",
-        $: [
-            {
-                foreach: () => items,
-                _: "DIV",
-                text: x => x,
-            }
-        ]
-    })();
-
-
-    assert_foreach_content(r, items, actual, expected);
-
-    function actual()
-    {
-        return r.rootNodes[0].childNodes.slice(1, -1);
-    }
-
-    function expected()
-    {
-        return items;
-    }
-});
-
-
-test("ForEach Content (observable, keyed)", () => {
-
-    let items = new ObservableArray();
-    items.push("A", "B", "C");
-
-    let r = Template.compile({
-        _: "DIV",
-        $: [
-            {
-                foreach: {
-                    items: () => items,
-                    itemKey: x => x
                 },
                 _: "DIV",
                 text: x => x,
@@ -644,43 +579,8 @@ function test_item_life(r, items)
             nodeMap.set(items[i], nodes[i]);
         }
 
-        let edits;
-        if (items.isObservable)
-        {
-            // For observable arrays we need
-            // to do all the edits in a single update
-            // otherwise items aren't re-used in the
-            // same manner.  Copy to a temp array
-            // make the edits and then merge back 
-            let wip = Array.from(items);
-            edits = cb(wip);
-
-            // Work out what actually changed
-            let start = 0;
-            while (start < wip.length && 
-                   start < items.length && 
-                   wip[start] == items[start])
-                start++;
-            let end = 0;
-            while (items.length - end > 0 &&
-                    wip.length - end > 0 &&
-                    items[items.length - end - 1] == wip[wip.length - end - 1])
-                end++;
-
-            // Get the changed range
-            let wip_slice = wip.slice(start, wip.length - end);
-
-            // Splice it back onto the observable array
-            items.splice(start, items.length - end - start, ...wip_slice);
-
-            // Make sure we didn't mess it up
-            assert.deepEqual(wip, Array.from(items));
-        }
-        else
-        {
-            edits = cb(items);
-            r.update();
-        }
+        let edits = cb(items);
+        r.update();
 
         // Check counts
         assert.equal(TextItem.instanceCount, items.length);
@@ -775,29 +675,4 @@ test("ForEach Item Life (diff, keyed)", () => {
     test_item_life(r, items);
 });
 
-
-test("ForEach Item Life (observable, keyed)", () => {
-
-    TextItem.reset();
-
-    let items = ObservableArray.from([ 
-    ]);
-
-
-    let r = Template.compile({
-        _: "DIV",
-        $: [
-            {
-                foreach: {
-                    items: () => items,
-                    itemKey: i => i,
-                },
-                _: TextItem,
-                text: i => i,
-            }
-        ]
-    })();
-
-    test_item_life(r, items);
-});
 

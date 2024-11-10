@@ -3,7 +3,6 @@ import { strict as assert } from "node:assert";
 import { SSREnvironment } from "../core/SSREnvironment.js";
 import { compileTemplate } from "../core/TemplateCompilerSSR.js";
 import { Html } from "../core/Html.js";
-import { ObservableArray } from "../core/ObservableArray.js";
 import { Component } from "../core/Component.js";
 import { env, setEnvironment } from "../core/Environment.js";
 import { Window } from "../minidom/Window.js";
@@ -532,29 +531,6 @@ test("List (conditional)", () => {
     assert.equal(r.html, `<div><!-- enter foreach block --><p>1</p><p>3</p><!-- leave foreach block --></div>`);
 
 });
-
-test("List (observable)", () => {
-
-    let l = ObservableArray.from([ 1, 2, 3 ]);
-    let r = compileTemplate({
-        _: "div",
-        $: {
-            foreach: {
-                items: () => l,
-            },
-            _: "p",
-            text: i => i,
-        }
-    })();
-
-    l.splice(1,1);
-    l.push(4);
-
-    assert.equal(r.html, `<div><!-- enter foreach block --><p>1</p><p>3</p><p>4</p><!-- leave foreach block --></div>`);
-
-});
-
-
 
 
 test("Embed Slot", () => {
