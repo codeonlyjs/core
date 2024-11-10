@@ -226,8 +226,16 @@ export class Router
             }
 
             // Call match handler
-            let result = await Promise.resolve(h.match(route));
-            if (result === true || result == route)
+            if (h.match)
+            {
+                let result = await Promise.resolve(h.match(route));
+                if (result === true || result == route)
+                {
+                    route.handler = h;
+                    return route;
+                }
+            }
+            else
             {
                 route.handler = h;
                 return route;
@@ -263,6 +271,11 @@ export class Router
         }
 
         this.#needSort = true;
+    }
+
+    revoke(predicate)
+    {
+        this.#handlers = this.#handlers.filter(x => !predicate(x));
     }
 }
 
