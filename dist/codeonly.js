@@ -1121,6 +1121,25 @@ function TransitionCss(options, ctx)
     let nodesTransitioning = [];
     let finished = false;
 
+    // Resolve dynamic values
+    let name = options.name;
+    let mode = options.mode;
+    if (name instanceof Function)
+        name = name(ctx.model, ctx);
+    if (mode instanceof Function)
+        mode = mode(ctx.model, ctx);
+        
+    switch (mode)
+    {
+        case "enter-leave":
+        case "leave-enter":
+            break;
+        default:
+            mode = "";
+            break;
+    }
+
+
     // For an array of states, get the full set of class names
     // associated with that state.
     function classNames(states)
@@ -1230,22 +1249,6 @@ function TransitionCss(options, ctx)
 
     async function start()
     {
-        // Work out animation mode
-        let mode = options.mode;
-        if (mode instanceof Function)
-            mode = mode(ctx.model, ctx);
-        
-        switch (mode)
-        {
-            case "enter-leave":
-            case "leave-enter":
-                break;
-            default:
-                mode = "";
-                break;
-        }
-
-
         options.on_start?.(ctx.model, ctx);
 
         if (mode == "" || mode == "enter-leave")
@@ -1335,20 +1338,21 @@ TransitionCss.defaultClassNames = {
     "leave-end": "*-leave-end;*-out",
 };
 
-function transition(value, cssClassPrefix)
+function transition()
 {
-    // Convert arg to options
-    let options;
-    if (value instanceof Function)
+    // Merge all args
+    let options = {};
+    for (let i=0; i<arguments.length; i++)
     {
-        options = {
-            value,
-            cssClassPrefix,
-        };
-    }
-    else
-    {
-        options = value;
+        let a = arguments[i];
+        if (a instanceof Function)
+            options.value = a;
+        else if (typeof(a) === 'string')
+            options.name = a;
+        else if (typeof(a) === 'object')
+            Object.assign(options, a);
+        else
+            throw new Error("Invalid argument to transition");
     }
 
     // Create wrapper function
@@ -1360,6 +1364,7 @@ function transition(value, cssClassPrefix)
     // Attach transition constructor
     fnValue.withTransition = function(context)
     {
+        // Construct the transition
         if (options.type)
             return new options.type(options, context);
         else
