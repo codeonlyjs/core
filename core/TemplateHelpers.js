@@ -1,5 +1,5 @@
 import { HtmlString } from "./HtmlString.js";
-import { htmlEncode } from "./htmlEncode.js";
+import { Html } from "./Html.js";
 import { env } from "./Environment.js";
 
 export class TemplateHelpers 
@@ -9,7 +9,7 @@ export class TemplateHelpers
         if (text instanceof HtmlString)
             return text.html;
         else
-            return htmlEncode(text);
+            return Html.encode(text);
     }
 
     static renderToString(renderFn)
@@ -36,7 +36,7 @@ export class TemplateHelpers
         if (text instanceof HtmlString)
             style = text.html;
         else
-            style = htmlEncode(text);
+            style = Html.encode(text);
         style = style.trim();
         if (!style.endsWith(";"))
             style += ";"
@@ -52,7 +52,7 @@ export class TemplateHelpers
         if (text instanceof HtmlString)
             style = text.html;
         else
-            style = htmlEncode(text);
+            style = Html.encode(text);
         style = style.trim();
         style += ";"
         return `${styleName}:${style}`;

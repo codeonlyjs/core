@@ -7,7 +7,6 @@ export * from "./core/Template.js";
 export * from "./core/Html.js";
 export * from "./core/urlPattern.js";
 export * from "./core/nextFrame.js";
-export * from "./core/htmlEncode.js";
 export * from "./core/TransitionCss.js";
 export * from "./core/transition.js";
 export * from "./core/TransitionNone.js";

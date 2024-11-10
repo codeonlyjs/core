@@ -1,5 +1,5 @@
 import { camel_to_dash } from "./Utils.js";
-import { htmlEncode } from "./htmlEncode.js";
+import { Html } from "./Html.js";
 import { HtmlString } from "./HtmlString.js";
 import { CloakedValue} from "./CloakedValue.js";
 import { ClosureBuilder } from "./ClosureBuilder.js";
@@ -490,7 +490,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
 
                     if (cls.condition instanceof Function)
                     {
-                        tlb.expr(`${format_callback(refs.length)} ? "${htmlEncode(cls.name)}" : ""`);
+                        tlb.expr(`${format_callback(refs.length)} ? "${Html.encode(cls.name)}" : ""`);
                         refs.push(cls.condition);
                     }
                     else if (cls.condition)                    
