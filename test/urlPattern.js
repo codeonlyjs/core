@@ -165,5 +165,25 @@ test("One or more segments at end", () => {
 });
 
 
+test("Any chars at end", () => {
+
+    let rx = new RegExp(urlPattern("/foo/*"));
+    
+    let m = "/foo/".match(rx);
+    assert.equal(m.groups.tail, "");
+
+    m = "/foo/bar".match(rx);
+    assert.equal(m.groups.tail, "bar");
+
+    m = "/foo/bar/baz".match(rx);
+    assert.equal(m.groups.tail, "bar/baz");
+
+    m = "/foo/bar/baz/".match(rx);
+    assert.equal(m.groups.tail, "bar/baz/");
+});
+
+
+
+
 
 
