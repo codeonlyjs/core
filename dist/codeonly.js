@@ -1120,15 +1120,25 @@ function TransitionCss(options, ctx)
     let leaveNodes = [];
     let nodesTransitioning = [];
     let finished = false;
+    let entering = false;
+    let leaving = false;
+
+    function resolve(x)
+    {
+        if (x instanceof Function)
+            return x(ctx.model, ctx);
+        else
+            return x;
+    }
 
     // Resolve dynamic values
-    let name = options.name;
-    let mode = options.mode;
-    if (name instanceof Function)
-        name = name(ctx.model, ctx);
-    if (mode instanceof Function)
-        mode = mode(ctx.model, ctx);
-        
+    resolve(options.name);
+    let mode = resolve(options.mode);
+    let classNames = resolve(options.clasNames);
+    let duration = resolve(options.duration);
+    let subtree = resolve(options.subtree);
+
+    // Resolve mode        
     switch (mode)
     {
         case "enter-leave":
@@ -1139,16 +1149,20 @@ function TransitionCss(options, ctx)
             break;
     }
 
+    // Resolve duration
+    if (duration != undefined && !Array.isArray(duration))
+        duration = [ duration, duration ];
+
 
     // For an array of states, get the full set of class names
     // associated with that state.
-    function classNames(states)
+    function classNamesForState(states)
     {
         let result = [];
         for (let s of states)
         {
             // Look in options.classNames the in default names
-            let cls_names = options.classNames?.[s] ?? TransitionCss.defaultClassNames[s];
+            let cls_names = classNames?.[s] ?? TransitionCss.defaultClassNames[s];
 
             // Split on semicolon
             cls_names = (cls_names ?? "").split(";");
@@ -1164,14 +1178,14 @@ function TransitionCss(options, ctx)
 
     function addClasses(nodes, states)
     {
-        let classes = classNames(states);
+        let classes = classNamesForState(states);
         if (classes.length)
             nodes.forEach(x => x.classList?.add(...classes));
     }
 
     function removeClasses(nodes, states)
     {
-        let classes = classNames(states);
+        let classes = classNamesForState(states);
         if (classes.length)
             nodes.forEach(x => x.classList?.remove(...classes));
     }
@@ -1191,6 +1205,8 @@ function TransitionCss(options, ctx)
 
     function start_enter()
     {
+        entering = true;
+
         // Apply classes
         addClasses(enterNodes, [ "entering", "enter-start" ]);
 
@@ -1204,11 +1220,14 @@ function TransitionCss(options, ctx)
 
     function finish_enter()
     {
+        entering = false;
         removeClasses(enterNodes, [ "enter-start", "entering", "enter-end" ]);
     }
 
     function start_leave()
     {
+        leaving = true;
+
         // Apply classes
         addClasses(leaveNodes, [ "leaving", "leave-start" ]);
 
@@ -1218,6 +1237,7 @@ function TransitionCss(options, ctx)
 
     function finish_leave()
     {
+        leaving = false;
         removeClasses(leaveNodes, [ "leave-start", "leaving", "leave-end" ]);
 
         // Do operation
@@ -1225,8 +1245,20 @@ function TransitionCss(options, ctx)
         onDidLeave = null;
     }
 
-    function while_busy()
+    function while_busy(enter)
     {
+        // Use duration instead of animation watching?
+        if (duration !== undefined)
+        {
+            let d = 0;
+            if (entering)
+                d = d[0];
+            if (leaving)
+                d = Math.max(d, d[1]);
+
+            return new Promise((resolve) => setTimeout(resolve, d));
+        }
+
         return new Promise((resolve, reject) => {
             requestAnimationFrame(() => 
             requestAnimationFrame(() => {
@@ -1237,7 +1269,7 @@ function TransitionCss(options, ctx)
                 for (let n of nodesTransitioning)
                 {
                     if (n.nodeType == 1)
-                        animations.push(...n.getAnimations({subtree: true}));
+                        animations.push(...n.getAnimations({subtree: subtree ?? true}));
                 }
                 nodesTransitioning = [];
 
