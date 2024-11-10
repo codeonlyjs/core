@@ -87,7 +87,6 @@ export class Router
         route = Object.assign(route, { 
             current: false,
             url, 
-            pathname: url.pathname,
             state,
         });
 
@@ -221,7 +220,7 @@ export class Router
             // If the handler has a pattern, check it matches
             if (h.pattern)
             {
-                route.match = route.pathname.match(h.pattern);
+                route.match = route.url.pathname.match(h.pattern);
                 if (!route.match)
                     continue;
             }

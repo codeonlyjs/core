@@ -69,28 +69,6 @@ export class ForEachBlock
         return newTemplate;
     }
 
-    static transformGroup(templates)
-    {
-        for (let i=1; i<templates.length; i++)
-        {
-            if (templates[i].else !== undefined)
-            {
-                // Transform previous item to ForEachBlock
-                if (templates[i-1].foreach !== undefined)
-                {
-                    templates[i-1] = ForEachBlock.transform(templates[i-1]);
-                }
-                if (templates[i-1].type === ForEachBlock && !templates[i-1].else)
-                {
-                    delete templates[i].else;
-                    templates[i-1].empty = templates[i];
-                    templates.splice(i, 1);
-                    i--;
-                }  
-            }
-        }
-    }
-
     constructor(options)
     {
         // Get the item consructor we compiled earlier

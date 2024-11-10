@@ -51,29 +51,6 @@ export class EmbedSlot
         return template;
     }
 
-    static transformGroup(templates)
-    {
-        // Convert 'else' blocks following an EmbedSlot into 
-        // the embed slot's placeholder
-        for (let i=1; i<templates.length; i++)
-        {
-            if (templates[i].else !== undefined)
-            {
-                // Transform previous item to EmbedSlot
-                templates[i-1] = EmbedSlot.transform(templates[i-1]);
-
-                // Store else item as placeholder on the template
-                if (templates[i-1].type === EmbedSlot && !templates[i-1].placeholder)
-                {
-                    delete templates[i].else;
-                    templates[i-1].placeholder = templates[i];
-                    templates.splice(i, 1);
-                    i--;
-                }  
-            }
-        }
-    }
-
     #context;
     #content;
     #resolvedContent;        // either #content, or if #content is a function the return value from the function

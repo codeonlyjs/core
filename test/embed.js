@@ -86,11 +86,10 @@ test("Embedded with Placeholder", () => {
             {
                 _: "embed-slot",
                 export: "slot",
-            },
-            {
-                else: true,
-                _: "span",
-                text: "placeholder content",
+                placeholder: {
+                    _: "span",
+                    text: "placeholder content",
+                },
             },
             "post",
         ]

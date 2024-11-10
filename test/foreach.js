@@ -389,15 +389,16 @@ test("ForEach Content (with else block)", () => {
         $: [
             {
                 _: "DIV",
-                foreach: () => items,
+                foreach: {
+                    items: () => items,
+                    empty: {
+                        _: "DIV",
+                        text: "Empty!",
+                        export: "empty",
+                    }
+                },
                 text: x => x,
             },
-            {
-                else: true,
-                _: "DIV",
-                text: "Empty!",
-                export: "empty",
-            }
         ],
     })();
 
