@@ -449,6 +449,22 @@ class Html
     {
         return new HtmlString(text);
     }
+
+    static encode(str)
+    {
+        if (str === null || str === undefined)
+            return "";
+        return (""+str).replace(/["'&<>]/g, function(x) {
+            switch (x) 
+            {
+                case '\"': return '&quot;';
+                case '&': return '&amp;';
+                case '\'':return '&#39;';
+                case '<': return '&lt;';
+                case '>': return '&gt;';
+            }
+        });
+    }
 }
 
 /*
@@ -612,22 +628,6 @@ function urlPattern(pattern)
         return (ch >= 'a' && ch <= 'z') || (ch >='A' && ch <= 'Z') 
             || (ch >= '0' && ch <= '9') || ch == '_' || ch == '$';
     }
-}
-
-function htmlEncode(str)
-{
-    if (str === null || str === undefined)
-        return "";
-    return (""+str).replace(/["'&<>]/g, function(x) {
-        switch (x) 
-        {
-        case '\"': return '&quot;';
-        case '&': return '&amp;';
-        case '\'':return '&#39;';
-        case '<': return '&lt;';
-        case '>': return '&gt;';
-        }
-    });
 }
 
 function TransitionCss(options, ctx) 
@@ -1752,7 +1752,7 @@ class TemplateHelpers
         if (text instanceof HtmlString)
             return text.html;
         else
-            return htmlEncode(text);
+            return Html.encode(text);
     }
 
     static renderToString(renderFn)
@@ -1779,7 +1779,7 @@ class TemplateHelpers
         if (text instanceof HtmlString)
             style = text.html;
         else
-            style = htmlEncode(text);
+            style = Html.encode(text);
         style = style.trim();
         if (!style.endsWith(";"))
             style += ";";
@@ -1795,7 +1795,7 @@ class TemplateHelpers
         if (text instanceof HtmlString)
             style = text.html;
         else
-            style = htmlEncode(text);
+            style = Html.encode(text);
         style = style.trim();
         style += ";";
         return `${styleName}:${style}`;
@@ -3423,7 +3423,7 @@ function Placeholder(comment)
             setMounted(m) { },
             destroy() {},
             update() {},
-            render(w) { w.write(`<!--${htmlEncode(comment)}-->`); },
+            render(w) { w.write(`<!--${Html.encode(comment)}-->`); },
         }
     };
 
@@ -4563,4 +4563,4 @@ if (typeof(document) !== "undefined")
     setEnvironment(new BrowserEnvironment());
 }
 
-export { BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, htmlEncode, nextFrame, postNextFrame, setEnvironment, transition, urlPattern };
+export { BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, postNextFrame, setEnvironment, transition, urlPattern };
