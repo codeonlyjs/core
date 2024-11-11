@@ -210,10 +210,11 @@ export class Component extends EventTarget
         this.cleanup(() => target.removeEventListener(event, handler));
     }
 
-    setInterval(handler, period)
+    setInterval()
     {
-        let interval = setInterval(handler, period);
+        let interval = setInterval(...arguments);
         this.cleanup(() => clearInterval(interval));
+        return interval;
     }
 
     cleanup(cb)
