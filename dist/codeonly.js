@@ -1369,12 +1369,17 @@ class WebHistoryRouterDriver
         if (typeof(url) === 'string')
             url = new URL(url, this.#router.internalize(env.window.location));
 
-        this.current.pathname = url.pathname;
-        this.current.url = url;
+        if (url !== undefined)
+        {
+            this.current.pathname = url.pathname;
+            this.current.url = url;
+            url = this.#router.externalize(url).href;
+        }
+
         env.window.history.replaceState(
             this.current.state, 
             "", 
-            this.#router.externalize(url).href,
+            url
             );
     }
 
