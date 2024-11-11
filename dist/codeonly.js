@@ -2471,13 +2471,13 @@ class EmbedSlot
     }
 
     #context;
-    #content;
-    #resolvedContent;        // either #content, or if #content is a function the return value from the function
+    #content;           // As set by user (potentially callback)
+    #contentValue;      // Either #content or result of #content() if function
+    #contentObject;     // Either a component like object, or an array of nodes
     #headSentinal;
-    #nodes;
     #tailSentinal;
     #placeholderConstructor;
-    #isPlaceholder;
+    #pendingTransition;
 
     constructor(options)
     {
@@ -2485,7 +2485,6 @@ class EmbedSlot
         this.#placeholderConstructor = options.nodes[1];
         this.#headSentinal = env.document?.createTextNode("");
         this.#tailSentinal = env.document?.createTextNode("");
-        this.#nodes = [];
         this.#ownsContent = options.data.ownsContent ?? true;
 
         // Load now
@@ -2495,11 +2494,16 @@ class EmbedSlot
             this.content = options.data.content;
     }
 
+    get #contentNodes()
+    {
+        return this.#contentObject?.rootNodes ?? this.#contentObject ?? [];
+    }
+
     get rootNodes() 
     { 
         return [ 
             this.#headSentinal, 
-            ...this.#nodes,
+            ...this.#contentNodes,
             this.#tailSentinal 
         ]; 
     }
@@ -2551,14 +2555,14 @@ class EmbedSlot
 
     bind()
     {
-        if (this.#isPlaceholder)
-            this.#resolvedContent?.bind?.();
+        if (!this.#contentValue)        // only placeholder
+            this.#contentObject?.bind?.();
     }
 
     unbind()
     {
-        if (this.#isPlaceholder)
-            this.#resolvedContent?.unbind?.();
+        if (!this.#contentValue)        // only placeholder
+            this.#contentObject?.unbind?.();
     }
 
     get isAttached() {  }
@@ -2572,98 +2576,114 @@ class EmbedSlot
     setMounted(mounted)
     {
         this.#mounted = mounted;
-        this.#resolvedContent?.setMounted?.(mounted);
+        this.#contentObject?.setMounted?.(mounted);
     }
 
     replaceContent(value)
     {
-        // Quit if redundant (same value, or still need placeholder)
-        if (value == this.#resolvedContent || (!value && this.#isPlaceholder))
+        // Same value?
+        if (this.#contentValue == value)
             return;
 
-        // Remove old content
-        if (this.#attached)
-        {
-            let n = this.#headSentinal.nextSibling;
-            while (n != this.#tailSentinal)
-            {
-                let t = n.nextSibling;
-                n.remove();
-                n = t;
-            }
-        }
+        // Capture old content and nodes
+        let oldContentObject = this.#contentObject;
+        let nodesLeaving = [...this.#contentNodes];
 
-        if (this.#mounted)
-            this.#resolvedContent?.setMounted?.(false);
+        // Store new value 
+        this.#contentValue = value;
 
-        this.#nodes = [];
-        if (this.#ownsContent)
-            this.#resolvedContent?.destroy?.();
-
-        // Insert new content
-        this.#resolvedContent = value;
-        this.#isPlaceholder = false;
+        // Resolve place-holder
+        let newContentObject;
         if (!value)
         {
-            // Insert placeholder?
-            if (this.#placeholderConstructor)
-            {
-                this.#resolvedContent = this.#placeholderConstructor(this.#context);
-                this.#isPlaceholder = true;
-                this.#nodes = this.#resolvedContent.rootNodes;
-            }
+            newContentObject = this.#placeholderConstructor?.(this.#context) ?? null;
         }
-        else if (value.rootNodes !== undefined)
+        else if (value.rootNodes)
         {
-            // Component like object
-            this.#nodes = value.rootNodes;
-        }
-        else if (Array.isArray(value))
-        {
-            // Array of HTML nodes
-            this.#nodes = value;
-        }
-        else if (env.Node !== undefined && value instanceof env.Node)
-        {
-            // Single HTML node
-            this.#nodes = [ value ];
+            newContentObject = value;
         }
         else if (value instanceof HtmlString)
         {
+            // Convert node
             let span = env.document.createElement('span');
             span.innerHTML = value.html;
-            this.#nodes = [ ...span.childNodes ];
+            newContentObject = [ ...span.childNodes ];
+            newContentObject.forEach(x => x.remove());
         }
         else if (typeof(value) === 'string')
         {
-            this.#nodes = [ env.document.createTextNode(value) ];
+            // Convert to node
+            newContentObject = [ env.document.createTextNode(value) ];
+        }
+        else if (Array.isArray(value))
+        {
+            // TODO: assert all are Node objects
+            newContentObject = value;
+        }
+        else if (env.Node !== undefined && value instanceof env.Node)
+        {
+            // Wrap single node in an array
+            newContentObject = [ value ];
         }
         else if (value.render)
         {
-            // Render only component, ignore it
-            this.#nodes = [];
+            // Render only
+            newContentObject = value;
         }
         else
         {
             throw new Error("Embed slot requires component, array of HTML nodes or a single HTML node");
         }
 
+        // Store new content object
+        this.#contentObject = newContentObject;
+
         if (this.#attached)
-            this.#tailSentinal.before(...this.#nodes);
-        if (this.#mounted)
-            this.#resolvedContent?.setMounted?.(true);
+        {
+            // Work out transition
+            this.#pendingTransition?.finish();
+            let tx;
+            if (this.#mounted)
+                tx = this.#content?.withTransition?.(this.#context);
+            if (!tx)
+                tx = TransitionNone;
+            this.#pendingTransition = tx;
+
+            tx.enterNodes(this.#contentNodes);
+            tx.leaveNodes(nodesLeaving);
+            tx.onWillEnter(() => {
+                this.#tailSentinal.before(...this.#contentNodes);
+                this.#contentObject?.setMounted?.(true);
+            });
+            tx.onDidLeave(() => {
+                nodesLeaving.forEach(x => x.remove());
+                oldContentObject?.setMounted?.(false);
+                if (this.#ownsContent)
+                    oldContentObject?.destroy?.();
+            });
+            tx.start();
+        }
+        else
+        {
+            if (this.#mounted)
+            {
+                oldContentObject?.setMounted?.(false);
+                this.#contentObject?.setMounted?.(true);
+            }
+            if (this.#ownsContent)
+                oldContentObject?.destroy?.();
+        }
     }
 
     destroy()
     {
         if (this.#ownsContent)
-            this.#resolvedContent?.destroy?.();
+            this.#contentObject?.destroy?.();
     }
 
     render(w)
     {
-        if (this.#resolvedContent)
-            this.#resolvedContent.render?.(w);
+        this.#contentObject?.render?.(w);
     }
 }
 
@@ -3807,6 +3827,7 @@ class IfBlock
                 {
                     this.activeBranch.setMounted(true);
                     oldActiveBranch.setMounted(false);
+                    oldActiveBranch.destroy();
                 }
             }
         }
