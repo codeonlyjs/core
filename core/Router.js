@@ -23,9 +23,31 @@ export class Router
 
     #driver;
 
+    #mapUrl(url, fn)
+    {
+        if (!this.urlMapper)
+        {
+            if (url instanceof URL)
+                return new URL(url);
+            else
+                return url;
+        }
+        else
+        {
+            if (url instanceof URL)
+            {
+                return this.urlMapper[fn](url);
+            }
+            else
+            {
+                return this.urlMapper[fn](new URL(url, "http://x/")).href.substring(8);
+            }
+        }
+    }
+
     urlMapper;
-    internalize(url) { return this.urlMapper?.internalize(url) ?? new URL(url); }
-    externalize(url) { return this.urlMapper?.externalize(url) ?? new URL(url); }
+    internalize(url) { return this.#mapUrl(url, "internalize"); }
+    externalize(url) { return this.#mapUrl(url, "externalize"); }
 
     // The current route
     #current = null;

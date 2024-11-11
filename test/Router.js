@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import { Router } from "../core/Router.js";
+import { UrlMapper } from "../core/UrlMapper.js";
 
 function asyncOp()
 {
@@ -279,3 +280,87 @@ test("concurrent navigation", async () => {
     assert.equal(router.current, to);
 
 });
+
+
+test("externalize URL (no mapper)", () => {
+
+    let r = new Router();
+    let a = new URL("http://x/url")
+    let b = r.externalize(a);
+
+    assert.notEqual(a, b);
+    assert.equal(a.href, b.href);
+});
+
+test("externalize string (no mapper)", () => {
+
+    let r = new Router();
+    let a = "/url";
+    let b = r.externalize(a);
+
+    assert.equal(a, b);
+});
+
+test("internalize URL (no mapper)", () => {
+
+    let r = new Router();
+    let a = new URL("http://x/url")
+    let b = r.internalize(a);
+
+    assert.notEqual(a, b);
+    assert.equal(a.href, b.href);
+});
+
+test("internalize string (no mapper)", () => {
+
+    let r = new Router();
+    let a = "/url";
+    let b = r.internalize(a);
+
+    assert.equal(a, b);
+});
+
+
+
+
+
+test("externalize URL (mapper)", () => {
+
+    let r = new Router();
+    r.urlMapper = new UrlMapper({ base: "/base/" });
+    let a = new URL("http://x/url")
+    let b = r.externalize(a);
+
+    assert.notEqual(a, b);
+    assert.equal(b.href, "http://x/base/url");
+});
+
+test("externalize string (mapper)", () => {
+
+    let r = new Router();
+    r.urlMapper = new UrlMapper({ base: "/base/" });
+    let a = "/url";
+    let b = r.externalize(a);
+
+    assert.equal(b, "/base/url");
+});
+
+test("internalize URL (mapper)", () => {
+
+    let r = new Router();
+    r.urlMapper = new UrlMapper({ base: "/base/" });
+    let a = new URL("http://x/base/url")
+    let b = r.internalize(a);
+
+    assert.equal(b.href, "http://x/url");
+});
+
+test("internalize string (mapper)", () => {
+
+    let r = new Router();
+    r.urlMapper = new UrlMapper({ base: "/base/" });
+    let b = r.internalize("/base/url");
+
+    assert.equal(b, "/url");
+});
+
