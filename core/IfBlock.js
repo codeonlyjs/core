@@ -311,6 +311,7 @@ export class IfBlock
                 {
                     this.activeBranch.setMounted(true);
                     oldActiveBranch.setMounted(false);
+                    oldActiveBranch.destroy();
                 }
             }
         }
