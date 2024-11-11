@@ -53,6 +53,15 @@ class HtmlString
     {
         this.html = html;
     }
+    
+    static areEqual(a, b)
+    {
+        return (
+            a instanceof HtmlString &&
+            b instanceof HtmlString &&
+            a.html == b.html
+        );
+    }
 }
 
 function html(html)
@@ -2582,7 +2591,7 @@ class EmbedSlot
     replaceContent(value)
     {
         // Same value?
-        if (this.#contentValue == value)
+        if (this.#contentValue == value || HtmlString.areEqual(this.#contentValue, value))
             return;
 
         // Capture old content and nodes
