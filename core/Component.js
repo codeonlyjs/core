@@ -204,6 +204,29 @@ export class Component extends EventTarget
     {
     }
 
+    listen(target, event, handler)
+    {
+        target.addEventListener(event, handler);
+        this.cleanup(() => target.removeEventListener(event, handler));
+    }
+
+    setInterval(handler, period)
+    {
+        let interval = setInterval(handler, period);
+        this.cleanup(() => clearInterval(interval));
+    }
+
+    cleanup(cb)
+    {
+        if (!this.#mounted)
+            throw new Error("Invalid when not mounted");
+        if (!this.#cleanups)
+            this.#cleanups = [];
+        this.#cleanups.push(cb);
+    }
+
+    #cleanups;
+
     get mounted()
     {
         return this.#mounted;
@@ -212,12 +235,27 @@ export class Component extends EventTarget
     #mounted = false;
     setMounted(mounted)
     {
+        // Depth first
         this.#domTree?.setMounted(mounted);
+
+        // Remember state
         this.#mounted = mounted;
+
+        // Dispatch to self
         if (mounted)
             this.onMount();
         else
             this.onUnmount();
+
+        // Invoke all clean up callbacks
+        if (!mounted)
+        {
+            if (this.#cleanups)
+            {
+                this.#cleanups.forEach(x => x());
+                this.#cleanups = [];
+            }
+        }
     }
 
     mount(el)
