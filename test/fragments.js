@@ -7,8 +7,8 @@ import { Template, env } from "../codeonly.js";
 test("Fragment", () => {
     let r = Template.compile({
         $: [
-            { _: "SPAN", text: "foo" },
-            { _: "SPAN", text: "bar" },
+            { type: "SPAN", text: "foo" },
+            { type: "SPAN", text: "bar" },
         ]
     })();
     assert.equal(r.rootNodes.length, 2);
@@ -18,8 +18,8 @@ test("Fragment (with conditional)", () => {
     let val = false;
     let r = Template.compile({
         $: [
-            { _: "SPAN", text: "foo", if: () => val },
-            { _: "SPAN", text: "bar" },
+            { type: "SPAN", text: "foo", if: () => val },
+            { type: "SPAN", text: "bar" },
         ]
     })();
 
@@ -46,7 +46,7 @@ test("Fragment (with conditional)", () => {
 test("Nested Fragment", () => {
     let r = Template.compile({
         $: [
-            { _: "SPAN", text: "foo" },
+            { type: "SPAN", text: "foo" },
             { 
                 $: [ "A", "B", "C" ]
             },

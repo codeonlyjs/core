@@ -7,7 +7,7 @@ import { Template } from "../codeonly.js";
 test("Root Export", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         export: "mydiv",
     })();
 
@@ -17,11 +17,11 @@ test("Root Export", () => {
 test("Non-root Export", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $:
         [
             {
-                _: "P",
+                type: "P",
                 export: "myPara",
                 text: "foo",
             }
@@ -35,12 +35,12 @@ test("Export conditional", () => {
 
     let val = true;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $:
         [
             {
                 if: () => val,
-                _: "P",
+                type: "P",
                 export: "myPara",
                 text: "foo",
             }

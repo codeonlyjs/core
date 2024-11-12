@@ -502,18 +502,6 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 if (process_common_property(ni, key))
                     continue;
 
-                if (key == "id")
-                {
-                    format_dynamic(ni.template.id, (valueExpr) => `${ni.name}.setAttribute("id", ${valueExpr});`);
-                    continue;
-                }
-
-                if (key == "class")
-                {
-                    format_dynamic(ni.template.class, (valueExpr) => `${ni.name}.setAttribute("class", ${valueExpr});`);
-                    continue;
-                }
-
                 if (key.startsWith("class_"))
                 {
                     let className = camel_to_dash(key.substring(6));
@@ -531,12 +519,6 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     {
                         closure.create.append(`helpers.setNodeClass(${ni.name}, ${JSON.stringify(className)}, ${value});`);
                     }
-                    continue;
-                }
-
-                if (key == "style")
-                {
-                    format_dynamic(ni.template.style, (valueExpr) => `${ni.name}.setAttribute("style", ${valueExpr});`);
                     continue;
                 }
 
@@ -564,18 +546,6 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     continue;
                 }
 
-                if (key.startsWith("attr_"))
-                {
-                    let attrName = key.substring(5);
-                    if (attrName == "style" || attrName == "class" || attrName == "id")
-                        throw new Error(`Incorrect attribute: use '${attrName}' instead of '${key}'`);
-                    if (!closure.current_xmlns)
-                        attrName = camel_to_dash(attrName);
-
-                    format_dynamic(ni.template[key], (valueExpr) => `helpers.setElementAttribute(${ni.name}, ${JSON.stringify(attrName)}, ${valueExpr})`);
-                    continue;
-                }
-
                 if (key == "text")
                 {
                     if (ni.template.text instanceof Function)
@@ -593,7 +563,15 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     continue;
                 }
 
-                throw new Error(`Unknown element template key: ${key}`);
+
+                let attrName = key;
+                if (key.startsWith("attr_"))
+                    attrName = attrName.substring(5);
+
+                if (!closure.current_xmlns)
+                    attrName = camel_to_dash(attrName);
+
+                format_dynamic(ni.template[key], (valueExpr) => `helpers.setElementAttribute(${ni.name}, ${JSON.stringify(attrName)}, ${valueExpr})`);
             }
 
             // Emit child nodes

@@ -22,10 +22,10 @@ class TestComponent extends Component
     }
 
     static template = {
-        _:  "DIV",
+        type:  "DIV",
         $: [
             {
-                _: "DIV",
+                type: "DIV",
                 text: c => c.value,
             }
         ],
@@ -102,7 +102,7 @@ test("Invalidate during Update", async () => {
  test("deep update on", () => {
 
     let template = Template.compile({
-        _: TestComponent,
+        type: TestComponent,
         update: true,
         export: "comp",
     });
@@ -116,7 +116,7 @@ test("Invalidate during Update", async () => {
  test("deep update off", () => {
 
     let template = Template.compile({
-        _: TestComponent,
+        type: TestComponent,
         update: false,
         export: "comp",
     });
@@ -132,7 +132,7 @@ test("Invalidate during Update", async () => {
     let shouldUpdate = false;
 
     let template = Template.compile({
-        _: TestComponent,
+        type: TestComponent,
         update: () => shouldUpdate,
         export: "comp",
     });
@@ -162,7 +162,7 @@ test("Invalidate during Update", async () => {
     let prop_value = "foo";
 
     let template = Template.compile({
-        _: TestComponent,
+        type: TestComponent,
         update: "auto",
         export: "comp",
         prop: () => prop_value,

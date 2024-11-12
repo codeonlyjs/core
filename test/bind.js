@@ -13,7 +13,7 @@ test("Root Element", () => {
     };
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         bind: "mydiv",
     })({ model });
 
@@ -25,11 +25,11 @@ test("Non-root Element", () => {
     let model = {};
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $:
         [
             {
-                _: "P",
+                type: "P",
                 bind: "myPara",
                 text: "foo",
             }
@@ -48,12 +48,12 @@ test("Conditionally Included Element", () => {
 
     let val = true;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $:
         [
             {
                 if: () => val,
-                _: "P",
+                type: "P",
                 bind: "myPara",
                 text: "foo",
             }
@@ -83,11 +83,11 @@ test("Simple Rebind", () => {
     let ctx = { model };
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $:
         [
             {
-                _: "P",
+                type: "P",
                 bind: "myPara",
                 text: "foo",
             }
@@ -116,12 +116,12 @@ test("Conditional Rebind", () => {
     let val = true;
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $:
         [
             {
                 if: () => val,
-                _: "P",
+                type: "P",
                 bind: "myPara",
                 text: "foo",
             }

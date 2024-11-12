@@ -11,6 +11,10 @@ export class TemplateNode
     // - template: the user supplied template object this node is derived from
     constructor(template, compilerOptions)
     {
+        // Unwrap fluent
+        if (template.$el)
+            template = template.$el;
+
         // Automatically wrap array as a fragment with the array
         // as the child nodes.
         if (Array.isArray(template))
@@ -18,29 +22,7 @@ export class TemplateNode
             template = { $:template }
         }
 
-        // _ is an alias for type
-        if (template._ && !template.type)
-        {
-            template.type = template._;
-            delete template._;
-        }
-
-        // Apply automatic transforms
-        /*
-        let saved = {};
-        if (template.export !== undefined)
-        {
-            saved.export = template.export;
-            delete template.export;
-        }
-        if (template.bind !== undefined)
-        {
-            saved.bind = template.bind;
-            delete template.bind;
-        }
-        */
         template = Plugins.transform(template);
-        //template = Object.assign(template, saved);
         if (is_constructor(template))
         {
             template = { type: template }
@@ -124,21 +106,10 @@ export class TemplateNode
                 {
                     template.childNodes = template.childNodes.flat();
                 }
-                
-                template.childNodes.forEach(x => {
-                    if (x._ && !x.type)
-                    {
-                        x.type = x._;
-                        delete x._;
-                    }
-                });
 
+                template.childNodes = template.childNodes.map(x => x.$el ?? x);
+                
                 Plugins.transformGroup(template.childNodes);
-                /*
-                ForEachBlock.transformGroup(template.childNodes);
-                EmbedSlot.transformGroup(template.childNodes);
-                IfBlock.transformGroup(template.childNodes);
-                */
                 this.childNodes = this.template.childNodes.map(x => new TemplateNode(x, compilerOptions));
             }
             else

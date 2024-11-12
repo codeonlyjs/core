@@ -7,10 +7,10 @@ import { Template, Html } from "../codeonly.js";
 test("Basic", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
-            { _: "SPAN", text: "foo" },
-            { _: "SPAN", text: "bar" },
+            { type: "SPAN", text: "foo" },
+            { type: "SPAN", text: "bar" },
         ]
     })();
 
@@ -23,9 +23,9 @@ test("Child Nodes with Dynamic Text", () => {
 
     let val = "foo";
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
-            { _: "SPAN", text: () => val },
+            { type: "SPAN", text: () => val },
         ]
     })();
 
@@ -40,7 +40,7 @@ test("Child Nodes with Static Text", () => {
 
     let val = "foo";
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         text: val,
     })();
 
@@ -51,7 +51,7 @@ test("Child Nodes with Static HTML", () => {
 
     let val = "<span>foo</span>";
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         text: Html.raw(val),
     })();
 
@@ -62,7 +62,7 @@ test("$: Static Text", () => {
 
     let val = "foo";
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: val,
     })();
 
@@ -73,7 +73,7 @@ test("$: Static HTML", () => {
 
     let val = "<span>foo</span>";
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: Html.raw(val),
     })();
 

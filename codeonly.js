@@ -10,6 +10,7 @@ export * from "./core/nextFrame.js";
 export * from "./core/TransitionCss.js";
 export * from "./core/transition.js";
 export * from "./core/TransitionNone.js";
+export * from "./core/Fluent.js";
 
 export * from "./core/DocumentScrollPosition.js";
 export * from "./core/Router.js";

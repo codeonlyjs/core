@@ -11,11 +11,11 @@ function assert_iterables(a, b)
 
 test("ForEach Content Static", () => {
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 foreach: [ "apples", "pears", "bananas" ],
-                _: "DIV",
+                type: "DIV",
                 text: x => x,
             }
         ]
@@ -106,11 +106,11 @@ test("ForEach Content (diff, unkeyed)", () => {
     let items = [ "A", "B", "C" ];
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 foreach: () => items,
-                _: "DIV",
+                type: "DIV",
                 text: x => x,
             }
         ]
@@ -135,14 +135,14 @@ test("ForEach Content (diff, keyed)", () => {
     let items = [ "A", "B", "C" ];
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 foreach: {
                     items: () => items,
                     itemKey: x => x,
                 },
-                _: "DIV",
+                type: "DIV",
                 text: x => x,
             }
         ]
@@ -173,11 +173,11 @@ test("ForEach Content (fragment)", () => {
                 foreach: () => items,
                 $: [
                     {
-                        _: "DIV",
+                        type: "DIV",
                         text: x => x,
                     },
                     {
-                        _: "SPAN",
+                        type: "SPAN",
                         text: x => x,
                     }
                 ]
@@ -221,7 +221,7 @@ test("ForEach Content (conditional items)", () => {
                     items: () => items,
                     condition: check_condition,
                 },
-                _: "DIV",
+                type: "DIV",
                 text: x => x,
             }
         ]
@@ -249,11 +249,11 @@ test("ForEach Content (index sensitive)", () => {
     let items = [ "A", "B", "C" ];
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 foreach: () => items,
-                _: "DIV",
+                type: "DIV",
                 text: (x, ctx) => `${x}${ctx.index}`,
             }
         ]
@@ -283,7 +283,7 @@ test("ForEach Content (nested)", () => {
 
     let r = Template.compile(
     {
-        _: "DIV",
+        type: "DIV",
         $: 
         [
             {
@@ -292,7 +292,7 @@ test("ForEach Content (nested)", () => {
                 [
                     {
                         foreach: (item) => item.subItems,
-                        _: "DIV",
+                        type: "DIV",
                         text: (subItem, ctx) => `${ctx.outer.model.name}${subItem}`,
                     }
                 ],
@@ -320,14 +320,14 @@ test("ForEach Content (with else block)", () => {
 
     let r = Template.compile(
     {
-        _: "DIV",
+        type: "DIV",
         $: [
             {
-                _: "DIV",
+                type: "DIV",
                 foreach: {
                     items: () => items,
                     empty: {
-                        _: "DIV",
+                        type: "DIV",
                         text: "Empty!",
                         export: "empty",
                     }
@@ -397,7 +397,7 @@ class ItemComponent extends Component
     }
 
     static template = {
-        _: "DIV",
+        type: "DIV",
         text: c => c.item.name,
     }
 
@@ -413,14 +413,14 @@ test("ForEach Update Count Check", async () => {
     ];
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 foreach: {
                     items: () => items,
                     itemKey: i => i.name,
                 },
-                _: ItemComponent,
+                type: ItemComponent,
                 item: i => i,
             }
         ]
@@ -510,7 +510,7 @@ class TextItem extends Component
     set text(value) { this.#text = "" + value; this.invalidate() }
 
     static template = { 
-        _: "DIV",
+        type: "DIV",
         text: x => x.text,
     }
 }
@@ -527,13 +527,13 @@ test("ForEach Item Life (diff, unkeyed)", () => {
     ];
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 foreach: {
                     items: () => items,
                 },
-                _: TextItem,
+                type: TextItem,
                 text: i => i,
             }
         ]
@@ -659,14 +659,14 @@ test("ForEach Item Life (diff, keyed)", () => {
 
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 foreach: {
                     items: () => items,
                     itemKey: i => i,
                 },
-                _: TextItem,
+                type: TextItem,
                 text: i => i,
             }
         ]

@@ -7,11 +7,11 @@ import { Template, env } from "../codeonly.js";
 test("If (true)", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             { 
                 if: true,
-                _: "SPAN", 
+                type: "SPAN", 
                 text: "foo", 
             },
         ]
@@ -24,9 +24,9 @@ test("If (true)", () => {
 test("If (false)", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
-            { _: "SPAN", text: "foo", if: false },
+            { type: "SPAN", text: "foo", if: false },
         ]
     })();
 
@@ -38,12 +38,12 @@ test("If", () => {
 
     let val = false;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: 
         [
             { 
                 if: () => val,
-                _: "DIV", 
+                type: "DIV", 
                 $: [ "A", "B", "C" ]
             },
         ]
@@ -63,16 +63,16 @@ test("If-Else", () => {
 
     let val = true;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             { 
                 if: () => val,
-                _: "DIV", 
+                type: "DIV", 
                 text: "foo",
             },
             { 
                 else: true,
-                _: "DIV", 
+                type: "DIV", 
                 text: "bar",
             },
         ]
@@ -92,16 +92,16 @@ test("If-ElseIf", () => {
 
     let val = 1;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             { 
                 if: () => val == 1,
-                _: "DIV", 
+                type: "DIV", 
                 text: "foo",
             },
             { 
                 elseif: () => val == 2,
-                _: "DIV", 
+                type: "DIV", 
                 text: "bar",
             },
         ]
@@ -127,21 +127,21 @@ test("If-ElseIf-Else", () => {
 
     let val = 1;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             { 
                 if: () => val == 1,
-                _: "DIV", 
+                type: "DIV", 
                 text: "foo",
             },
             { 
                 elseif: () => val == 2,
-                _: "DIV", 
+                type: "DIV", 
                 text: "bar",
             },
             {
                 else: true,
-                _: "DIV", 
+                type: "DIV", 
                 text: "baz",
             },
         ]
@@ -167,7 +167,7 @@ test("If Foreach Fragment", () => {
 
     let val = true;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             {
                 if: () => val,
@@ -175,7 +175,7 @@ test("If Foreach Fragment", () => {
                     "text",
                     { 
                         foreach: [ "A", "B", "C" ],
-                        _: "DIV", 
+                        type: "DIV", 
                         text: x => x,
                     },
                 ]
@@ -200,7 +200,7 @@ test("If at root", () => {
 
     let val = true;
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         if: () => val,
     })();
 
@@ -224,7 +224,7 @@ test("If at root", () => {
 test("If at root (true)", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         if: true,
     })();
 
@@ -237,7 +237,7 @@ test("If at root (true)", () => {
 test("If at root (false)", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         if: false,
     })();
 
@@ -256,7 +256,7 @@ test("If on fragment at root", () => {
         $: 
         [
             {
-                _: "DIV",
+                type: "DIV",
             }
         ]
     })();

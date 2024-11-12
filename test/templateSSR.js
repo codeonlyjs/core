@@ -423,10 +423,10 @@ test("Fragment Text Nodes", () => {
 test("Conditional (static, true)", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
             if: true,
-            _: "span",
+            type: "span",
             text: "warning",
         }
     })();
@@ -438,10 +438,10 @@ test("Conditional (static, true)", () => {
 test("Conditional (static, false)", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
             if: false,
-            _: "span",
+            type: "span",
             text: "warning",
         }
     })();
@@ -454,10 +454,10 @@ test("Conditional (static, false)", () => {
 test("Conditional (dynamic, true)", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
             if: () => true,
-            _: "span",
+            type: "span",
             text: "warning",
         }
     })();
@@ -469,10 +469,10 @@ test("Conditional (dynamic, true)", () => {
 test("Conditional (dynamic, false)", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
             if: () => false,
-            _: "span",
+            type: "span",
             text: "warning",
         }
     })();
@@ -486,10 +486,10 @@ test("Conditional (dynamic, false)", () => {
 test("List (static)", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
             foreach: [ 1, 2, 3 ],
-            _: "p",
+            type: "p",
             text: i => i,
         }
     })();
@@ -501,10 +501,10 @@ test("List (static)", () => {
 test("List (dynamic)", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
             foreach: () => [ 1, 2, 3 ],
-            _: "p",
+            type: "p",
             text: i => i,
         }
     })();
@@ -517,13 +517,13 @@ test("List (dynamic)", () => {
 test("List (conditional)", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
             foreach: {
                 items: () => [ 1, 2, 3 ],
                 condition: i => (i % 2) == 1,
             },
-            _: "p",
+            type: "p",
             text: i => i,
         }
     })();
@@ -536,9 +536,9 @@ test("List (conditional)", () => {
 test("Embed Slot", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: {
-            _: "embed-slot",
+            type: "embed-slot",
             $: [
                 "Apples", " Pears", " Bananas",
             ]
@@ -553,7 +553,7 @@ test("Embed Slot", () => {
 test("Text Content", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: "Apples & Pears"
     })();
 
@@ -564,7 +564,7 @@ test("Text Content", () => {
 test("Raw Content", () => {
 
     let r = compileTemplate({
-        _: "div",
+        type: "div",
         $: Html.raw("Apples &amp; Pears"),
     })();
 
@@ -586,7 +586,7 @@ class MyComponent extends Component
 
 
     static template = {
-        _: "div",
+        type: "div",
         text: c => c.value,
     }
 
@@ -598,7 +598,7 @@ test("Embedded Component", () => {
     let val = "Apples & Pears";
 
     let r = compileTemplate({
-        _: MyComponent,
+        type: MyComponent,
         value: () => val,
         update: "auto",
     })();

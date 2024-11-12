@@ -8,11 +8,11 @@ import { EmbedSlot } from "../core/EmbedSlot.js";
 test("Empty Embed", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             "pre",
             {
-                _: "embed-slot",
+                type: "embed-slot",
                 export: "slot",
             },
             "post",
@@ -26,11 +26,11 @@ test("Empty Embed", () => {
 test("Embedded Single Element", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             "pre",
             {
-                _: "embed-slot",
+                type: "embed-slot",
                 export: "slot",
             },
             "post",
@@ -51,11 +51,11 @@ test("Embedded Single Element", () => {
 test("Embedded Multiple Elements", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             "pre",
             {
-                _: "embed-slot",
+                type: "embed-slot",
                 export: "slot",
             },
             "post",
@@ -80,14 +80,14 @@ test("Embedded Multiple Elements", () => {
 test("Embedded with Placeholder", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             "pre",
             {
-                _: "embed-slot",
+                type: "embed-slot",
                 export: "slot",
                 placeholder: {
-                    _: "span",
+                    type: "span",
                     text: "placeholder content",
                 },
             },
@@ -137,11 +137,11 @@ class MyComponent extends Component
 test("Embedded Component", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             "pre",
             {
-                _: "embed-slot",
+                type: "embed-slot",
                 export: "slot",
             },
             "post",
@@ -163,11 +163,11 @@ test("Embedded Component", () => {
 test("Embedded Component destroyed", () => {
 
     let r = Template.compile({
-        _: "DIV",
+        type: "DIV",
         $: [
             "pre",
             {
-                _: "embed-slot",
+                type: "embed-slot",
                 export: "slot",
             },
             "post",

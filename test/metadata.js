@@ -7,7 +7,7 @@ import { Template } from "../codeonly.js";
 test("Single-root", () => {
 
     let component = Template.compile({
-        _: "DIV",
+        type: "DIV",
         text: "foo",
     });
 
