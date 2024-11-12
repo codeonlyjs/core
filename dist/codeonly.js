@@ -66,7 +66,16 @@ class HtmlString
 
 function html(html)
 {
-    return new HtmlString(html);
+    if (html instanceof Function)
+    {
+        return (...args) => {
+            return new HtmlString(html(...args));
+        }
+    }
+    else
+    {
+        return new HtmlString(html);
+    }
 }
 
 class CloakedValue
@@ -495,7 +504,7 @@ class Html
 
     static raw(text)
     {
-        return new HtmlString(text);
+        return html(text);
     }
 
     static encode(str)
