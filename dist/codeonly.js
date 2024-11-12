@@ -995,6 +995,105 @@ let TransitionNone =
     finish: function() {},
 };
 
+class TemplateBuilder
+{
+    constructor(type)
+    {
+        this.$el = { type };
+    }
+
+    append(...items)
+    {
+        items = items.flat(1000).map(x => x.$el ?? x);
+        if (this.$el.$)
+            this.$el.$.push(...items);
+        else
+            this.$el.$ = [...items];
+    }
+
+    setAttr(name, value)
+    {
+        if ((name == "class" || name == "style") && arguments.length > 2)
+        {
+            name = `${name}_${value}`;
+            value = arguments[2];
+        }
+        else if (name == "on" && arguments.length > 2)
+        {
+            name = `on_${value}`;
+            value = arguments[2];
+        }
+        else if (name == "type")
+            name = "attr_type";
+
+        if (this.$el[name] !== undefined)
+            throw new Error(`duplicate attribute: ${name}`);
+        this.$el[name] = value;
+    }
+}
+
+// This is the proxy wrapper for the TemplateBuilder's append
+// method.  If a property is accessed on the function itself,
+// then return a function to set an attribute with the property's
+// name.
+let AppendProxy = 
+{
+    get: function(object, key)
+    {
+        // Check if underlying property
+        let underlying = Reflect.get(object, key);
+        if (underlying !== undefined)
+            return underlying;
+
+        // Return a function to set an attribute
+        return (...args) => {
+
+            // Get the builder
+            let tb = Reflect.get(object, "$tb");
+
+            // Set attribute
+            tb.setAttr(key, ...args);
+
+            // Return the outer proxy for chaining
+            return Reflect.get(object, "$proxy");        }
+    }
+};
+
+// This is the proxy for the roo
+let RootProxy = 
+{
+    get: function(object, key)
+    {
+        let underlying = Reflect.get(object, key);
+        if (underlying !== undefined)
+            return underlying;
+
+        return constructTemplateBuilder(key);
+    }
+};
+
+function constructTemplateBuilder(type)
+{
+    // Create  template builder
+    let tb = new TemplateBuilder(type);
+
+    // Wrap the append function in a proxy that
+    // can create attributes
+    let fnAppendProxy;
+    let fnAppend = function () { 
+        tb.append(...arguments); 
+        return fnAppendProxy; 
+    };
+    fnAppend.$tb = tb;
+    fnAppend.$el = tb.$el;
+    fnAppendProxy = new Proxy(fnAppend, AppendProxy);
+    fnAppend.$proxy = fnAppendProxy;
+    return fnAppendProxy;
+}
+
+// Export the proxied template builder
+let $ = new Proxy(constructTemplateBuilder,  RootProxy);
+
 class DocumentScrollPosition
 {
     static get()
@@ -2181,6 +2280,10 @@ class TemplateNode
     // - template: the user supplied template object this node is derived from
     constructor(template, compilerOptions)
     {
+        // Unwrap fluent
+        if (template.$el)
+            template = template.$el;
+
         // Automatically wrap array as a fragment with the array
         // as the child nodes.
         if (Array.isArray(template))
@@ -2188,29 +2291,7 @@ class TemplateNode
             template = { $:template };
         }
 
-        // _ is an alias for type
-        if (template._ && !template.type)
-        {
-            template.type = template._;
-            delete template._;
-        }
-
-        // Apply automatic transforms
-        /*
-        let saved = {};
-        if (template.export !== undefined)
-        {
-            saved.export = template.export;
-            delete template.export;
-        }
-        if (template.bind !== undefined)
-        {
-            saved.bind = template.bind;
-            delete template.bind;
-        }
-        */
         template = Plugins.transform(template);
-        //template = Object.assign(template, saved);
         if (is_constructor(template))
         {
             template = { type: template };
@@ -2294,21 +2375,10 @@ class TemplateNode
                 {
                     template.childNodes = template.childNodes.flat();
                 }
-                
-                template.childNodes.forEach(x => {
-                    if (x._ && !x.type)
-                    {
-                        x.type = x._;
-                        delete x._;
-                    }
-                });
 
+                template.childNodes = template.childNodes.map(x => x.$el ?? x);
+                
                 Plugins.transformGroup(template.childNodes);
-                /*
-                ForEachBlock.transformGroup(template.childNodes);
-                EmbedSlot.transformGroup(template.childNodes);
-                IfBlock.transformGroup(template.childNodes);
-                */
                 this.childNodes = this.template.childNodes.map(x => new TemplateNode(x, compilerOptions));
             }
             else
@@ -4377,18 +4447,6 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                 if (process_common_property(ni, key))
                     continue;
 
-                if (key == "id")
-                {
-                    format_dynamic(ni.template.id, (valueExpr) => `${ni.name}.setAttribute("id", ${valueExpr});`);
-                    continue;
-                }
-
-                if (key == "class")
-                {
-                    format_dynamic(ni.template.class, (valueExpr) => `${ni.name}.setAttribute("class", ${valueExpr});`);
-                    continue;
-                }
-
                 if (key.startsWith("class_"))
                 {
                     let className = camel_to_dash(key.substring(6));
@@ -4406,12 +4464,6 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                     {
                         closure.create.append(`helpers.setNodeClass(${ni.name}, ${JSON.stringify(className)}, ${value});`);
                     }
-                    continue;
-                }
-
-                if (key == "style")
-                {
-                    format_dynamic(ni.template.style, (valueExpr) => `${ni.name}.setAttribute("style", ${valueExpr});`);
                     continue;
                 }
 
@@ -4439,18 +4491,6 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                     continue;
                 }
 
-                if (key.startsWith("attr_"))
-                {
-                    let attrName = key.substring(5);
-                    if (attrName == "style" || attrName == "class" || attrName == "id")
-                        throw new Error(`Incorrect attribute: use '${attrName}' instead of '${key}'`);
-                    if (!closure.current_xmlns)
-                        attrName = camel_to_dash(attrName);
-
-                    format_dynamic(ni.template[key], (valueExpr) => `helpers.setElementAttribute(${ni.name}, ${JSON.stringify(attrName)}, ${valueExpr})`);
-                    continue;
-                }
-
                 if (key == "text")
                 {
                     if (ni.template.text instanceof Function)
@@ -4468,7 +4508,15 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                     continue;
                 }
 
-                throw new Error(`Unknown element template key: ${key}`);
+
+                let attrName = key;
+                if (key.startsWith("attr_"))
+                    attrName = attrName.substring(5);
+
+                if (!closure.current_xmlns)
+                    attrName = camel_to_dash(attrName);
+
+                format_dynamic(ni.template[key], (valueExpr) => `helpers.setElementAttribute(${ni.name}, ${JSON.stringify(attrName)}, ${valueExpr})`);
             }
 
             // Emit child nodes
@@ -4671,4 +4719,4 @@ if (typeof(document) !== "undefined")
     setEnvironment(new BrowserEnvironment());
 }
 
-export { BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, postNextFrame, setEnvironment, transition, urlPattern };
+export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, postNextFrame, setEnvironment, transition, urlPattern };
