@@ -17,5 +17,14 @@ export class HtmlString
 
 export function html(html)
 {
-    return new HtmlString(html);
+    if (html instanceof Function)
+    {
+        return (...args) => {
+            return new HtmlString(html(...args));
+        }
+    }
+    else
+    {
+        return new HtmlString(html);
+    }
 }

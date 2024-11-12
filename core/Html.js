@@ -1,4 +1,4 @@
-import { HtmlString } from "./HtmlString.js";
+import { html } from "./HtmlString.js";
 import { env } from "./Environment.js";
 
 export class Html
@@ -38,7 +38,7 @@ export class Html
 
     static raw(text)
     {
-        return new HtmlString(text);
+        return html(text);
     }
 
     static encode(str)
