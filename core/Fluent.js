@@ -43,10 +43,13 @@ let AppendProxy =
 {
     get: function(object, key)
     {
-        // Check if underlying property
-        let underlying = Reflect.get(object, key);
-        if (underlying !== undefined)
-            return underlying;
+        if (key != 'bind')
+        {
+            // Check if underlying property
+            let underlying = Reflect.get(object, key);
+            if (underlying !== undefined)
+                return underlying;
+        }
 
         // Return a function to set an attribute
         return (...args) => {
