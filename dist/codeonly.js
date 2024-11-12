@@ -1094,6 +1094,9 @@ function constructTemplateBuilder(type)
     return fnAppendProxy;
 }
 
+constructTemplateBuilder.raw = Html.raw;
+constructTemplateBuilder.encode = Html.encode;
+
 // Export the proxied template builder
 let $ = new Proxy(constructTemplateBuilder,  RootProxy);
 
