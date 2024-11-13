@@ -2,6 +2,7 @@ import { HtmlString } from "./HtmlString.js";
 import { is_constructor } from "./Utils.js";
 import { Plugins } from "./Plugins.js";
 import { env } from "./Environment.js";
+import { parseTypeDecl } from "./parseTypeDecl.js";
 
 // Manages information about a node in a template
 export class TemplateNode
@@ -14,6 +15,12 @@ export class TemplateNode
         // Unwrap fluent
         if (template.$el)
             template = template.$el;
+
+        // Parse type decl
+        if (typeof(template.type) === 'string' && template.type[0] != '#')
+        {
+            Object.assign(template, parseTypeDecl(template.type));
+        }
 
         // Automatically wrap array as a fragment with the array
         // as the child nodes.
