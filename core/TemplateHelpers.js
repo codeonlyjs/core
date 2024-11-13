@@ -147,8 +147,7 @@ export class TemplateHelpers
     static boolClassMgr(ctx, node, cls, getValue)
     {
         let tx = null;
-        let value = getValue(ctx.model, ctx);
-        TemplateHelpers.setNodeClass(node, cls, value);
+        let value;
 
         return function update()
         {
@@ -216,11 +215,8 @@ export class TemplateHelpers
     static displayMgr(ctx, node, getValue)
     {
         let tx = null;
-        let value = getValue(ctx.model, ctx);
-        let prevDisplay = TemplateHelpers.setNodeDisplay(node, value, undefined);
-        let prevComputed;
-        if (env.browser)
-            prevComputed = window.getComputedStyle(node).getPropertyValue("display");
+        let value;
+        let prevDisplay;
 
         return function update()
         {
