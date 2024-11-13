@@ -2278,6 +2278,66 @@ class Plugins
 
 }
 
+function parseTypeDecl(str)
+{
+    // Type first
+    let mType = str.match(/\s*([^ \t.#]*)/);
+    if (!mType)
+        return {};
+
+    str = str.substring(mType[0].length);
+
+    let classes = [];
+    let result = {
+        type: mType[1],
+    };
+    for (let a of str.matchAll(/\s*([.#]?)([^ \t=.#]+)(?:\s*=\s*(\'[^']+\'|\S+))?/g))
+    {
+        if (!a[3])
+        {
+            if (a[1] == '.')
+            {
+                classes.push(a[2]);
+                continue;
+            }
+            else if (a[1] == '#')
+            {
+                result.id = a[2];
+                continue;
+            }
+        }
+
+        // Work out attribute name
+        let attrName = a[2];
+        if (attrName == "type")
+            attrName = "attr_type";
+
+        // Work out attribute value
+        let val = a[3] ?? a[2];
+
+        // Trim quotes
+        if ((val.startsWith("'") && val.endsWith("'")) || 
+            (val.startsWith("\"") && val.endsWith("\"")))
+        {
+            val = val.substring(1, val.length - 1);
+        }
+
+        // Hook up event handler
+        if (attrName.startsWith("on_"))
+        {
+            let handler = val;
+            val = (c,...args) => c[handler](...args);
+        }
+
+        result[attrName] = val;
+    }
+
+    if (classes.length > 0)
+        result.class = classes.join(" ");
+    
+    return result;
+}
+
 // Manages information about a node in a template
 class TemplateNode
 {
@@ -2289,6 +2349,12 @@ class TemplateNode
         // Unwrap fluent
         if (template.$el)
             template = template.$el;
+
+        // Parse type decl
+        if (typeof(template.type) === 'string' && template.type[0] != '#')
+        {
+            Object.assign(template, parseTypeDecl(template.type));
+        }
 
         // Automatically wrap array as a fragment with the array
         // as the child nodes.
