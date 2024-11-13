@@ -4651,7 +4651,13 @@ function compileTemplateCode(rootTemplate, compilerOptions)
             if (key.startsWith("on_"))
             {
                 let eventName = key.substring(3);
-                if (!(ni.template[key] instanceof Function))
+                let handler = ni.template[key];
+                if (typeof(handler) === 'string')
+                {
+                    let handlerName = handler;
+                    handler = (c,ev) => c[handlerName](ev);
+                }
+                if (!(handler instanceof Function))
                     throw new Error(`event handler for '${key}' is not a function`);
 
                 // create a variable name for the listener
@@ -4663,7 +4669,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
 
                 // Add listener
                 closure.create.append(`${listener_name} = helpers.addEventListener(() => model, ${ni.name}, ${JSON.stringify(eventName)}, refs[${refs.length}]);`);
-                refs.push(ni.template[key]);
+                refs.push(handler);
 
                 closure.destroy.append(`${listener_name}?.();`);
                 closure.destroy.append(`${listener_name} = null;`);
