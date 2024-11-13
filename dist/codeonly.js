@@ -999,19 +999,19 @@ class TemplateBuilder
 {
     constructor(type)
     {
-        this.$el = { type };
+        this.$node = { type };
     }
 
     append(...items)
     {
-        items = items.flat(1000).map(x => x.$el ?? x);
-        if (this.$el.$)
-            this.$el.$.push(...items);
+        items = items.flat(1000).map(x => x.$node ?? x);
+        if (this.$node.$)
+            this.$node.$.push(...items);
         else
-            this.$el.$ = [...items];
+            this.$node.$ = [...items];
     }
 
-    setAttr(name, value)
+    attr(name, value)
     {
         if ((name == "class" || name == "style") && arguments.length > 2)
         {
@@ -1026,9 +1026,9 @@ class TemplateBuilder
         else if (name == "type")
             name = "attr_type";
 
-        if (this.$el[name] !== undefined)
+        if (this.$node[name] !== undefined)
             throw new Error(`duplicate attribute: ${name}`);
-        this.$el[name] = value;
+        this.$node[name] = value;
     }
 }
 
@@ -1055,7 +1055,7 @@ let AppendProxy =
             let tb = Reflect.get(object, "$tb");
 
             // Set attribute
-            tb.setAttr(key, ...args);
+            tb.attr(key, ...args);
 
             // Return the outer proxy for chaining
             return Reflect.get(object, "$proxy");        }
@@ -1088,7 +1088,7 @@ function constructTemplateBuilder(type)
         return fnAppendProxy; 
     };
     fnAppend.$tb = tb;
-    fnAppend.$el = tb.$el;
+    fnAppend.$node = tb.$node;
     fnAppendProxy = new Proxy(fnAppend, AppendProxy);
     fnAppend.$proxy = fnAppendProxy;
     return fnAppendProxy;
@@ -2322,13 +2322,6 @@ function parseTypeDecl(str)
             val = val.substring(1, val.length - 1);
         }
 
-        // Hook up event handler
-        if (attrName.startsWith("on_"))
-        {
-            let handler = val;
-            val = (c,...args) => c[handler](...args);
-        }
-
         result[attrName] = val;
     }
 
@@ -2347,8 +2340,8 @@ class TemplateNode
     constructor(template, compilerOptions)
     {
         // Unwrap fluent
-        if (template.$el)
-            template = template.$el;
+        if (template.$node)
+            template = template.$node;
 
         // Parse type decl
         if (typeof(template.type) === 'string' && template.type[0] != '#')
@@ -2448,7 +2441,7 @@ class TemplateNode
                     template.childNodes = template.childNodes.flat();
                 }
 
-                template.childNodes = template.childNodes.map(x => x.$el ?? x);
+                template.childNodes = template.childNodes.map(x => x.$node ?? x);
                 
                 Plugins.transformGroup(template.childNodes);
                 this.childNodes = this.template.childNodes.map(x => new TemplateNode(x, compilerOptions));
@@ -4655,7 +4648,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                 if (typeof(handler) === 'string')
                 {
                     let handlerName = handler;
-                    handler = (c,ev) => c[handlerName](ev);
+                    handler = (c,...args) => c[handlerName](...args);
                 }
                 if (!(handler instanceof Function))
                     throw new Error(`event handler for '${key}' is not a function`);
