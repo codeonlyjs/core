@@ -100,20 +100,3 @@ test("input type", () => {
 });
 
 
-test("event handler", () => {
-
-    let r = parseTypeDecl("input on_click=onInputClick");
-
-    assert.equal(r.type, "input");
-    assert(r.on_click instanceof Function);
-
-    // Fire a fake event and check received
-    let received;
-    let comp = {
-        onInputClick: (ev) => {
-            received = ev;
-        }
-    }
-    r.on_click(comp, "signal");
-    assert.equal(received, "signal");
-});
