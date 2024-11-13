@@ -42,13 +42,6 @@ export function parseTypeDecl(str)
             val = val.substring(1, val.length - 1);
         }
 
-        // Hook up event handler
-        if (attrName.startsWith("on_"))
-        {
-            let handler = val;
-            val = (c,...args) => c[handler](...args);
-        }
-
         result[attrName] = val;
     }
 

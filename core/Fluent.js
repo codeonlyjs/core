@@ -4,19 +4,19 @@ class TemplateBuilder
 {
     constructor(type)
     {
-        this.$el = { type }
+        this.$node = { type }
     }
 
     append(...items)
     {
-        items = items.flat(1000).map(x => x.$el ?? x);
-        if (this.$el.$)
-            this.$el.$.push(...items)
+        items = items.flat(1000).map(x => x.$node ?? x);
+        if (this.$node.$)
+            this.$node.$.push(...items)
         else
-            this.$el.$ = [...items];
+            this.$node.$ = [...items];
     }
 
-    setAttr(name, value)
+    attr(name, value)
     {
         if ((name == "class" || name == "style") && arguments.length > 2)
         {
@@ -31,9 +31,9 @@ class TemplateBuilder
         else if (name == "type")
             name = "attr_type";
 
-        if (this.$el[name] !== undefined)
+        if (this.$node[name] !== undefined)
             throw new Error(`duplicate attribute: ${name}`);
-        this.$el[name] = value;
+        this.$node[name] = value;
     }
 }
 
@@ -60,7 +60,7 @@ let AppendProxy =
             let tb = Reflect.get(object, "$tb");
 
             // Set attribute
-            tb.setAttr(key, ...args);
+            tb.attr(key, ...args);
 
             // Return the outer proxy for chaining
             return Reflect.get(object, "$proxy");;
@@ -94,7 +94,7 @@ function constructTemplateBuilder(type)
         return fnAppendProxy; 
     }
     fnAppend.$tb = tb;
-    fnAppend.$el = tb.$el;
+    fnAppend.$node = tb.$node;
     fnAppendProxy = new Proxy(fnAppend, AppendProxy);
     fnAppend.$proxy = fnAppendProxy;
     return fnAppendProxy;

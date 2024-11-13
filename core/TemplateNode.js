@@ -13,8 +13,8 @@ export class TemplateNode
     constructor(template, compilerOptions)
     {
         // Unwrap fluent
-        if (template.$el)
-            template = template.$el;
+        if (template.$node)
+            template = template.$node;
 
         // Parse type decl
         if (typeof(template.type) === 'string' && template.type[0] != '#')
@@ -114,7 +114,7 @@ export class TemplateNode
                     template.childNodes = template.childNodes.flat();
                 }
 
-                template.childNodes = template.childNodes.map(x => x.$el ?? x);
+                template.childNodes = template.childNodes.map(x => x.$node ?? x);
                 
                 Plugins.transformGroup(template.childNodes);
                 this.childNodes = this.template.childNodes.map(x => new TemplateNode(x, compilerOptions));

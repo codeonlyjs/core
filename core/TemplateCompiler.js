@@ -638,7 +638,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 if (typeof(handler) === 'string')
                 {
                     let handlerName = handler;
-                    handler = (c,ev) => c[handlerName](ev);
+                    handler = (c,...args) => c[handlerName](...args);
                 }
                 if (!(handler instanceof Function))
                     throw new Error(`event handler for '${key}' is not a function`);
