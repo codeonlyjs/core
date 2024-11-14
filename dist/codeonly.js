@@ -4516,7 +4516,9 @@ function compileTemplateCode(rootTemplate, compilerOptions)
 
                     if (value instanceof Function)
                     {
-                        let mgrName = `${ni.name}_bc`;
+                        if (!ni.bcCount)
+                            ni.bcCount = 0;
+                        let mgrName = `${ni.name}_bc${ni.bcCount++}`;
                         closure.addLocal(mgrName);
                         closure.create.append(`${mgrName} = helpers.boolClassMgr(context, ${ni.name}, ${JSON.stringify(className)}, refs[${refs.length}]);`);
                         refs.push(value);
