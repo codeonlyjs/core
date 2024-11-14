@@ -108,7 +108,7 @@ export class Router
 
         route = Object.assign(route, { 
             current: false,
-            url, 
+            url: new URL(url), 
             state,
         });
 
