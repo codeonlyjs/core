@@ -1100,6 +1100,107 @@ constructTemplateBuilder.encode = Html.encode;
 // Export the proxied template builder
 let $ = new Proxy(constructTemplateBuilder,  RootProxy);
 
+class UpdateManager
+{
+    constructor()
+    {
+    }
+
+    #listenerMap = new WeakMap();
+
+    // Add a listener for a source object
+    addListener(sourceObject, handler)
+    {
+        if (!sourceObject)
+            return;
+        let listeners = this.#listenerMap.get(sourceObject);
+        if (!listeners)
+            listeners = this.#listenerMap.set(sourceObject, [handler]);
+        else
+            listeners.push(handler);
+    }
+
+    // Remove a listener for a source object
+    removeListener(sourceObject, handler)
+    {
+        if (!sourceObject)
+            return;
+        let listeners = this.#listenerMap.get(sourceObject);
+        if (listeners)
+        {
+            let index = listeners.indexOf(handler);
+            if (index >= 0)
+            {
+                listeners.splice(index, 1);
+            }
+        }
+    }
+
+    // Fire a listener for a source object
+    fire(sourceObject)
+    {
+        if (!sourceObject)
+            return;
+        let listeners = this.#listenerMap.get(sourceObject);
+        if (listeners)
+        {
+            for (let i=listeners.length-1; i>=0; i--)
+            {
+                listeners[i].apply(null, arguments);
+            }
+        }
+    }
+
+}
+
+// Default instance of update manager
+let updateManager = new UpdateManager();
+
+class PageCache
+{
+    #cache = [];
+    #maxCount = 10;
+
+    get(key, factory)
+    {
+        // Unpack URL Objects
+        if (key instanceof URL)
+            key = key.pathname + key.query;
+
+        // Check cache
+        for (let i=0; i<this.#cache.length; i++)
+        {
+            if (this.#cache[i].key == key)
+            {
+                let e = this.#cache[i];
+                if (i > 0)
+                {
+                    this.#cache.splice(i, 1);
+                    this.#cache.unshift(e);
+                }
+                return e.page;
+            }
+        }
+
+        // Create new
+        let e = {
+            key,
+            page: factory(key),
+        };
+        this.#cache.unshift(e);
+
+        // Trim size
+        if (this.#cache.length > this.#maxCount)
+            this.#cache.splice(this.#cache);
+
+        return e.page;
+    }
+
+
+}
+
+let pageCache = new PageCache();
+
 class DocumentScrollPosition
 {
     static get()
@@ -1678,7 +1779,8 @@ class ViewStateRestoration
         });
 
         router.addEventListener("mayEnter", (from, to) => {
-            to.viewState = this.#viewStates[to.state.sequence];
+            if (to.navMode != 'push')
+                to.viewState = this.#viewStates[to.state.sequence];
         });
 
         router.addEventListener("didEnter", (from, to) => {
@@ -4789,4 +4891,4 @@ if (typeof(document) !== "undefined")
     setEnvironment(new BrowserEnvironment());
 }
 
-export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, postNextFrame, setEnvironment, transition, urlPattern };
+export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Router, Style, Template, TransitionCss, TransitionNone, UpdateManager, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, pageCache, postNextFrame, setEnvironment, transition, updateManager, urlPattern };
