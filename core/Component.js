@@ -151,8 +151,15 @@ export class Component extends EventTarget
         throw new Error("setting Component.loading not supported, use load() function");
     }
 
-    async load(callback)
+    async load(callback, silent)
     {
+        if (silent)
+        {
+            let retv = await callback();
+            this.invalidate();
+            return retv;
+        }
+
         this.#loading++;
         if (this.#loading == 1)
         {
