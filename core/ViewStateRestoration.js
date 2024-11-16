@@ -27,7 +27,8 @@ export class ViewStateRestoration
         });
 
         router.addEventListener("mayEnter", (from, to) => {
-            to.viewState = this.#viewStates[to.state.sequence];
+            if (to.navMode != 'push')
+                to.viewState = this.#viewStates[to.state.sequence];
         });
 
         router.addEventListener("didEnter", (from, to) => {
