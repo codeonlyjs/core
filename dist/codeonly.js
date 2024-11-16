@@ -1107,24 +1107,24 @@ constructTemplateBuilder.encode = Html.encode;
 // Export the proxied template builder
 let $ = new Proxy(constructTemplateBuilder,  RootProxy);
 
-class Notify
+function Notify()
 {
-    #objectListenerMap = new WeakMap();
-    #valueListenerMap = new Map();
+    let objectListenerMap = new WeakMap();
+    let valueListenerMap = new Map();
 
-    #resolveMap(sourceObject)
+    function resolveMap(sourceObject)
     {
         return sourceObject instanceof Object ? 
-            this.#objectListenerMap : this.#valueListenerMap
+            objectListenerMap : valueListenerMap
     }
 
 
     // Add a listener for a source object
-    addListener(sourceObject, handler)
+    function addListener(sourceObject, handler)
     {
         if (!sourceObject)
             return;
-        let map = this.#resolveMap(sourceObject);
+        let map = resolveMap(sourceObject);
         let listeners = map.get(sourceObject);
         if (!listeners)
             listeners = map.set(sourceObject, [handler]);
@@ -1133,11 +1133,11 @@ class Notify
     }
 
     // Remove a listener for a source object
-    removeListener(sourceObject, handler)
+    function removeListener(sourceObject, handler)
     {
         if (!sourceObject)
             return;
-        let map = this.#resolveMap(sourceObject);
+        let map = resolveMap(sourceObject);
         let listeners = map.get(sourceObject);
         if (listeners)
         {
@@ -1150,11 +1150,11 @@ class Notify
     }
 
     // Fire a listener for a source object
-    fire(sourceObject)
+    function fire(sourceObject)
     {
         if (!sourceObject)
             return;
-        let map = this.#resolveMap(sourceObject);
+        let map = resolveMap(sourceObject);
         let listeners = map.get(sourceObject);
         if (listeners)
         {
@@ -1165,6 +1165,9 @@ class Notify
         }
     }
 
+    fire.addListener = addListener;
+    fire.removeListener = removeListener;
+    return fire;
 }
 
 // Default instance of update manager
