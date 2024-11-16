@@ -1,19 +1,24 @@
-export class UpdateManager
+export class Notify
 {
-    constructor()
+    #objectListenerMap = new WeakMap();
+    #valueListenerMap = new Map();
+
+    #resolveMap(sourceObject)
     {
+        return sourceObject instanceof Object ? 
+            this.#objectListenerMap : this.#valueListenerMap
     }
 
-    #listenerMap = new WeakMap();
 
     // Add a listener for a source object
     addListener(sourceObject, handler)
     {
         if (!sourceObject)
             return;
-        let listeners = this.#listenerMap.get(sourceObject);
+        let map = this.#resolveMap(sourceObject);
+        let listeners = map.get(sourceObject);
         if (!listeners)
-            listeners = this.#listenerMap.set(sourceObject, [handler]);
+            listeners = map.set(sourceObject, [handler]);
         else
             listeners.push(handler);
     }
@@ -23,7 +28,8 @@ export class UpdateManager
     {
         if (!sourceObject)
             return;
-        let listeners = this.#listenerMap.get(sourceObject);
+        let map = this.#resolveMap(sourceObject);
+        let listeners = map.get(sourceObject);
         if (listeners)
         {
             let index = listeners.indexOf(handler);
@@ -39,7 +45,8 @@ export class UpdateManager
     {
         if (!sourceObject)
             return;
-        let listeners = this.#listenerMap.get(sourceObject);
+        let map = this.#resolveMap(sourceObject);
+        let listeners = map.get(sourceObject);
         if (listeners)
         {
             for (let i=listeners.length-1; i>=0; i--)
@@ -52,4 +59,4 @@ export class UpdateManager
 }
 
 // Default instance of update manager
-export let updateManager = new UpdateManager();
+export let notify = new Notify();
