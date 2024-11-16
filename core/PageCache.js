@@ -1,4 +1,4 @@
-class PageCache
+export class PageCache
 {
     constructor(options)
     {
@@ -47,5 +47,3 @@ class PageCache
 
 
 }
-
-export let pageCache = new PageCache();
