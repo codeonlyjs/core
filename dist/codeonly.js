@@ -1172,8 +1172,15 @@ let notify = new Notify();
 
 class PageCache
 {
+    constructor(options)
+    {
+        this.options = Object.assign({
+            max: 10
+        }, options);
+    }  
+
     #cache = [];
-    #maxCount = 10;
+    #options;
 
     get(key, factory)
     {
@@ -1204,7 +1211,7 @@ class PageCache
         this.#cache.unshift(e);
 
         // Trim size
-        if (this.#cache.length > this.#maxCount)
+        if (this.#cache.length > this.#options.max)
             this.#cache.splice(this.#cache);
 
         return e.page;
