@@ -56,8 +56,8 @@ export function Notify()
         }
     }
 
-    fire.addListener = addListener;
-    fire.removeListener = removeListener;
+    fire.addEventListener = addListener;
+    fire.removeEventListener = removeListener;
     return fire;
 }
 
