@@ -211,10 +211,33 @@ export class Component extends EventTarget
     {
     }
 
+    #listeners;
     listen(target, event, handler)
     {
-        target.addEventListener(event, handler);
-        this.cleanup(() => target.removeEventListener(event, handler));
+        if (!this.#listeners)
+            this.#listeners = [];
+        this.#listeners.push({
+            target, event, handler
+        });
+        if (this.#mounted)
+            target.addEventListener(event, handler);
+    }
+
+    unlisten(target, event, handler)
+    {
+        if (!this.#listeners)
+            return;
+        let index = this.#listeners.findIndex(x =>
+            x.target == target &&
+            x.event == event &&
+            x.handler == handler
+            );
+        if (index >= 0)
+        {
+            this.#listeners.splice(index, 1);
+            if (this.#mounted)
+                target.removeEventListener(event, handler);
+        }
     }
 
     setInterval()
@@ -249,11 +272,19 @@ export class Component extends EventTarget
         // Remember state
         this.#mounted = mounted;
 
+        // Add event listeners
+        if (mounted && this.#listeners)
+            this.#listeners.forEach(x => x.target.addEventListener(x.event, x.handler));
+
         // Dispatch to self
         if (mounted)
             this.onMount();
         else
             this.onUnmount();
+
+        // Remove event listeners
+        if (!mounted && this.#listeners)
+            this.#listeners.forEach(x => x.target.removeEventListener(x.event, x.handler));
 
         // Invoke all clean up callbacks
         if (!mounted)
