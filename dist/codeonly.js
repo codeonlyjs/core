@@ -1107,22 +1107,27 @@ constructTemplateBuilder.encode = Html.encode;
 // Export the proxied template builder
 let $ = new Proxy(constructTemplateBuilder,  RootProxy);
 
-class UpdateManager
+class Notify
 {
-    constructor()
+    #objectListenerMap = new WeakMap();
+    #valueListenerMap = new Map();
+
+    #resolveMap(sourceObject)
     {
+        return sourceObject instanceof Object ? 
+            this.#objectListenerMap : this.#valueListenerMap
     }
 
-    #listenerMap = new WeakMap();
 
     // Add a listener for a source object
     addListener(sourceObject, handler)
     {
         if (!sourceObject)
             return;
-        let listeners = this.#listenerMap.get(sourceObject);
+        let map = this.#resolveMap(sourceObject);
+        let listeners = map.get(sourceObject);
         if (!listeners)
-            listeners = this.#listenerMap.set(sourceObject, [handler]);
+            listeners = map.set(sourceObject, [handler]);
         else
             listeners.push(handler);
     }
@@ -1132,7 +1137,8 @@ class UpdateManager
     {
         if (!sourceObject)
             return;
-        let listeners = this.#listenerMap.get(sourceObject);
+        let map = this.#resolveMap(sourceObject);
+        let listeners = map.get(sourceObject);
         if (listeners)
         {
             let index = listeners.indexOf(handler);
@@ -1148,7 +1154,8 @@ class UpdateManager
     {
         if (!sourceObject)
             return;
-        let listeners = this.#listenerMap.get(sourceObject);
+        let map = this.#resolveMap(sourceObject);
+        let listeners = map.get(sourceObject);
         if (listeners)
         {
             for (let i=listeners.length-1; i>=0; i--)
@@ -1161,7 +1168,7 @@ class UpdateManager
 }
 
 // Default instance of update manager
-let updateManager = new UpdateManager();
+let notify = new Notify();
 
 class PageCache
 {
@@ -4898,4 +4905,4 @@ if (typeof(document) !== "undefined")
     setEnvironment(new BrowserEnvironment());
 }
 
-export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Router, Style, Template, TransitionCss, TransitionNone, UpdateManager, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, pageCache, postNextFrame, setEnvironment, transition, updateManager, urlPattern };
+export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Notify, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, notify, pageCache, postNextFrame, setEnvironment, transition, urlPattern };
