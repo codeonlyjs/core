@@ -51,7 +51,7 @@ export class WebHistoryRouterDriver
 
             // Load
             let loadId = this.#loadId + 1;
-            let url = this.#router.internalize(env.window.location);
+            let url = this.#router.internalize(new URL(env.window.location));
             let state = event.state ?? { sequence: this.current.state.sequence + 1 };
             if (!await this.load(url, state, { navMode: "pop" }))
             {
@@ -68,7 +68,7 @@ export class WebHistoryRouterDriver
 
 
         // Do initial navigation
-        let url = this.#router.internalize(env.window.location);
+        let url = this.#router.internalize(new URL(env.window.location));
         let state = env.window.history.state ?? { sequence: 0 };
         let route = await this.load(url, state, { navMode: "start" });
         env.window.history.replaceState(state, null);
@@ -91,7 +91,7 @@ export class WebHistoryRouterDriver
     {
         if (this.current.state.sequence == 0)
         {
-            let url = new URL("/", this.#router.internalize(env.window.location));
+            let url = new URL("/", this.#router.internalize(new URL(env.window.location)));
             let state = { sequence: 0 };
 
             env.window.history.replaceState(
@@ -111,7 +111,7 @@ export class WebHistoryRouterDriver
     replace(url)
     {
         if (typeof(url) === 'string')
-            url = new URL(url, this.#router.internalize(env.window.location));
+            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
 
         if (url !== undefined)
         {
@@ -132,7 +132,7 @@ export class WebHistoryRouterDriver
         // Convert to URL
         if (typeof(url) === 'string')
         {
-            url = new URL(url, this.#router.internalize(env.window.location));
+            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
         }
 
         // Load the route
