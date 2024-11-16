@@ -401,6 +401,10 @@ class Component extends EventTarget
     #listeners;
     listen(target, event, handler)
     {
+        if (!target || !event)
+            return;
+        if (!handler)
+            handler = this.invalidate;
         if (!this.#listeners)
             this.#listeners = [];
         this.#listeners.push({
@@ -412,7 +416,7 @@ class Component extends EventTarget
 
     unlisten(target, event, handler)
     {
-        if (!this.#listeners)
+        if (!target || !event || !this.#listeners)
             return;
         let index = this.#listeners.findIndex(x =>
             x.target == target &&
@@ -426,24 +430,6 @@ class Component extends EventTarget
                 target.removeEventListener(event, handler);
         }
     }
-
-    setInterval()
-    {
-        let interval = setInterval(...arguments);
-        this.cleanup(() => clearInterval(interval));
-        return interval;
-    }
-
-    cleanup(cb)
-    {
-        if (!this.#mounted)
-            throw new Error("Invalid when not mounted");
-        if (!this.#cleanups)
-            this.#cleanups = [];
-        this.#cleanups.push(cb);
-    }
-
-    #cleanups;
 
     get mounted()
     {
@@ -472,16 +458,6 @@ class Component extends EventTarget
         // Remove event listeners
         if (!mounted && this.#listeners)
             this.#listeners.forEach(x => x.target.removeEventListener(x.event, x.handler));
-
-        // Invoke all clean up callbacks
-        if (!mounted)
-        {
-            if (this.#cleanups)
-            {
-                this.#cleanups.forEach(x => x());
-                this.#cleanups = [];
-            }
-        }
     }
 
     mount(el)
