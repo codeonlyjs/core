@@ -20,7 +20,7 @@ class PageCache
         for (let i=0; i<this.#cache.length; i++)
         {
             let e = this.#cache[i];
-            if (e.key == key && !e.page.mounted)
+            if (e.key == key)
             {
                 if (i > 0)
                 {
