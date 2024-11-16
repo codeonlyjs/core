@@ -2,7 +2,7 @@ class PageCache
 {
     constructor(options)
     {
-        this.options = Object.assign({
+        this.#options = Object.assign({
             max: 10
         }, options);
     }  
