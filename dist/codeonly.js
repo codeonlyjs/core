@@ -1184,9 +1184,9 @@ class PageCache
         // Check cache
         for (let i=0; i<this.#cache.length; i++)
         {
-            if (this.#cache[i].key == key)
+            let e = this.#cache[i];
+            if (e.key == key && !e.page.mounted)
             {
-                let e = this.#cache[i];
                 if (i > 0)
                 {
                     this.#cache.splice(i, 1);
