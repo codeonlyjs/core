@@ -2055,22 +2055,38 @@ function input(opts)
     let parseValue = opts.parse ?? (x => x);
     let formatValue = opts.format ?? (x => x);
 
+    if (typeof(opts) === 'string')
+        opts = { prop: opts };
+
     if (opts.get && opts.set)
     {
         getValue = () => opts.get(ctx.model, ctx);
         setValue = (value) => opts.set(ctx.model, value, ctx);
     }
-    else if (typeof(opts) === 'string')
+    else if (typeof(opts.prop) === 'string')
     {
-        getValue = () => ctx.model[opts];
-        setValue = (value) => ctx.model[opts] = value;
-    }
-    else if (opts && 
-             opts.target instanceof Function && 
-             typeof(opts.prop) === 'string')
-    {
-        getValue = () => opts.target(ctx.model, ctx)[opts.prop];
-        setValue = (value) => opts.target(ctx.model, ctx)[opts.prop] = value;
+        // Resolve base object
+        let baseObj;
+        if (opts.target instanceof Function)
+            baseObj = () => opts.target(ctx.model, ctx);
+        else if (opts.target)
+            baseObj = () => opts.target;
+        else
+            baseObj = () => ctx.model;
+
+        // String can be a simple.dotted.property
+        let props = opts.prop.split('.');
+        let prop = props.pop();
+        function getObj()
+        {
+            // Expand .dotted.sub.props
+            let o = baseObj();
+            for (let i=0; i<props.length; i++)
+                o = o[props[i]];
+            return o;
+        }
+        getValue = () => getObj()[prop];
+        setValue = (value) => getObj()[prop] = value;
     }
     else
     {
@@ -2084,6 +2100,7 @@ function input(opts)
             v = parseValue(v);
         if (v !== undefined)
             setValue(v);
+        opts.on_change?.(ctx.model, ev);
     }
 
     function update()
