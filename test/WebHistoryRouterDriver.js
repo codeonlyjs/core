@@ -122,7 +122,7 @@ test("load new session", async () => {
     let mr = new MockRouter();
     let route = await mr.start();
     assert(route != null);
-    assert.equal(route.url, env.window.location);
+    assert.deepEqual(route.url, new URL(env.window.location));
     assert.equal(route.state.sequence, 0);
     await env.window.waitAnimationFrames();
     assert.equal(route.mockViewState, undefined);

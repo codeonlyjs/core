@@ -1,6 +1,7 @@
 import { HtmlString } from "./HtmlString.js";
 import { Html } from "./Html.js";
 import { env } from "./Environment.js";
+import { input } from "./input.js";
 
 export class TemplateHelpers 
 {
@@ -289,6 +290,11 @@ export class TemplateHelpers
 
         return function() { el.removeEventListener(eventName, wrapped_handler); }
     }
+
+    static input() 
+    { 
+        return input(...arguments); 
+    };
 
     /*
     static cloneNodeRecursive(node) 

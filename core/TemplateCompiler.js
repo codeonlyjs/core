@@ -61,12 +61,13 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
 
         // Setup closure functions
         let closure = new ClosureBuilder();
-        closure.create = closure.addFunction("create").code;
-        closure.bind = closure.addFunction("bind").code;
-        closure.update = closure.addFunction("update").code;
-        closure.unbind = closure.addFunction("unbind").code;
-        closure.setMounted = closure.addFunction("setMounted", ["mounted"]).code;
-        closure.destroy = closure.addFunction("destroy").code;
+        let closure_create = closure.addFunction("create").code;
+        let closure_post_create = [];
+        let closure_bind = closure.addFunction("bind").code;
+        let closure_update = closure.addFunction("update").code;
+        let closure_unbind = closure.addFunction("unbind").code;
+        let closure_setMounted = closure.addFunction("setMounted", ["mounted"]).code;
+        let closure_destroy = closure.addFunction("destroy").code;
         let rebind;
         if (isRootTemplate)
             rebind = closure.addFunction("rebind").code;
@@ -88,11 +89,13 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
         // Render code
         emit_node(ni);
 
+        closure_create.append(closure_post_create);
+
         // Bind/unbind
-        if (!closure.bind.closure.isEmpty)
+        if (!closure_bind.closure.isEmpty)
         {
-            closure.create.append(`bind();`);
-            closure.destroy.closure.addProlog().append(`unbind();`);
+            closure_create.append(`bind();`);
+            closure_destroy.closure.addProlog().append(`unbind();`);
         }
 
         let otherExports = []
@@ -160,10 +163,10 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
         // adds it when needed
         function need_update_temp()
         {
-            if (!closure.update.temp_declared)
+            if (!closure_update.temp_declared)
             {
-                closure.update.temp_declared = true;
-                closure.update.append(`let temp;`);
+                closure_update.temp_declared = true;
+                closure_update.append(`let temp;`);
             }
         }
 
@@ -181,7 +184,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
         function emit_text_node(ni)
         {
             addNodeLocal(ni);
-            closure.create.append(`${ni.name} = document.createTextNode(${JSON.stringify(ni.template)});`);
+            closure_create.append(`${ni.name} = document.createTextNode(${JSON.stringify(ni.template)});`);
         }
 
         // Emit a static 'html' node
@@ -194,12 +197,12 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             addNodeLocal(ni);
             if (ni.nodes.length == 1)
             {
-                closure.create.append(`${ni.name} = refs[${refs.length}].cloneNode(true);`);
+                closure_create.append(`${ni.name} = refs[${refs.length}].cloneNode(true);`);
                 refs.push(ni.nodes[0]);
             }
             else
             {
-                closure.create.append(`${ni.name} = refs[${refs.length}].map(x => x.cloneNode(true));`);
+                closure_create.append(`${ni.name} = refs[${refs.length}].map(x => x.cloneNode(true));`);
                 refs.push(ni.nodes);
             }
         }
@@ -211,13 +214,13 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             addNodeLocal(ni);
             let prevName = `p${prevId++}`;
             closure.addLocal(prevName);
-            closure.create.append(`${ni.name} = helpers.createTextNode("");`);
+            closure_create.append(`${ni.name} = helpers.createTextNode("");`);
 
             // Update
             need_update_temp();
-            closure.update.append(`temp = ${format_callback(refs.length)};`);
-            closure.update.append(`if (temp !== ${prevName})`)
-            closure.update.append(`  ${ni.name} = helpers.setNodeText(${ni.name}, ${prevName} = ${format_callback(refs.length)});`);
+            closure_update.append(`temp = ${format_callback(refs.length)};`);
+            closure_update.append(`if (temp !== ${prevName})`)
+            closure_update.append(`  ${ni.name} = helpers.setNodeText(${ni.name}, ${prevName} = ${format_callback(refs.length)});`);
 
             // Store the callback as a ref
             refs.push(ni.template);
@@ -234,13 +237,13 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 // Create
                 let prevName = `p${prevId++}`;
                 closure.addLocal(prevName);
-                closure.create.append(`${ni.name} = document.createComment("");`);
+                closure_create.append(`${ni.name} = document.createComment("");`);
 
                 // Update
                 need_update_temp();
-                closure.update.append(`temp = ${format_callback(refs.length)};`);
-                closure.update.append(`if (temp !== ${prevName})`);
-                closure.update.append(`  ${ni.name}.nodeValue = ${prevName} = temp;`);
+                closure_update.append(`temp = ${format_callback(refs.length)};`);
+                closure_update.append(`if (temp !== ${prevName})`);
+                closure_update.append(`  ${ni.name}.nodeValue = ${prevName} = temp;`);
 
                 // Store callback
                 refs.push(ni.template.text);
@@ -248,7 +251,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             else
             {
                 // Static
-                closure.create.append(`${ni.name} = document.createComment(${JSON.stringify(ni.template.text)});`);
+                closure_create.append(`${ni.name} = document.createComment(${JSON.stringify(ni.template.text)});`);
             }
         }
 
@@ -289,12 +292,12 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 }
             }
 
-            closure.update.append(`${ni.name}.update()`);
+            closure_update.append(`${ni.name}.update()`);
 
             if (has_bindings)
             {
-                closure.bind.append(`${ni.name}.bind()`);
-                closure.unbind.append(`${ni.name}.unbind()`);
+                closure_bind.append(`${ni.name}.bind()`);
+                closure_unbind.append(`${ni.name}.unbind()`);
             }
 
             let data_index = -1;
@@ -306,7 +309,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
 
             // Create integrated component
             addNodeLocal(ni);
-            closure.create.append(
+            closure_create.append(
                 `${ni.name} = new refs[${refs.length}]({`,
                 `  context,`,
                 `  data: ${ni.integrated.data ? `refs[${data_index}]` : `null`},`,
@@ -316,11 +319,11 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             refs.push(ni.template.type);
 
             // setMounted support
-            closure.setMounted.append(`${ni.name}.setMounted(mounted);`);
+            closure_setMounted.append(`${ni.name}.setMounted(mounted);`);
 
             // destroy support
-            closure.destroy.append(`${ni.name}?.destroy();`);
-            closure.destroy.append(`${ni.name} = null;`);
+            closure_destroy.append(`${ni.name}?.destroy();`);
+            closure_destroy.append(`${ni.name} = null;`);
 
             // Process common properties
             for (let key of Object.keys(ni.template))
@@ -340,7 +343,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
         {
             // Create component
             addNodeLocal(ni);
-            closure.create.append(`${ni.name} = new refs[${refs.length}]();`);
+            closure_create.append(`${ni.name} = new refs[${refs.length}]();`);
             refs.push(ni.template.type);
 
             let slotNames = new Set(ni.template.type.slots ?? []);
@@ -349,11 +352,11 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             let auto_modified_name = false;
 
             // setMounted support
-            closure.setMounted.append(`${ni.name}.setMounted(mounted);`);
+            closure_setMounted.append(`${ni.name}.setMounted(mounted);`);
             
             // destroy support
-            closure.destroy.append(`${ni.name}?.destroy();`);
-            closure.destroy.append(`${ni.name} = null;`);
+            closure_destroy.append(`${ni.name}?.destroy();`);
+            closure_destroy.append(`${ni.name} = null;`);
 
             // Process all keys
             for (let key of Object.keys(ni.template))
@@ -378,9 +381,9 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     let propTemplate = new TemplateNode(ni.template[key], compilerOptions);
                     emit_node(propTemplate);
                     if (propTemplate.isSingleRoot)
-                        closure.create.append(`${ni.name}${member(key)}.content = ${propTemplate.name};`);
+                        closure_create.append(`${ni.name}${member(key)}.content = ${propTemplate.name};`);
                     else
-                        closure.create.append(`${ni.name}${member(key)}.content = [${propTemplate.spreadDomNodes()}];`);
+                        closure_create.append(`${ni.name}${member(key)}.content = [${propTemplate.spreadDomNodes()}];`);
                     continue;
                 }
 
@@ -389,7 +392,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 if (propType == 'string' || propType == 'number' || propType == 'boolean')
                 {
                     // Simple literal property
-                    closure.create.append(`${ni.name}${member(key)} = ${JSON.stringify(ni.template[key])}`);
+                    closure_create.append(`${ni.name}${member(key)} = ${JSON.stringify(ni.template[key])}`);
                 }
                 else if (propType === 'function')
                 {
@@ -398,7 +401,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     if (auto_update && !auto_modified_name)
                     {
                         auto_modified_name = `${ni.name}_mod`;
-                        closure.update.append(`let ${auto_modified_name} = false;`);
+                        closure_update.append(`let ${auto_modified_name} = false;`);
                     }
 
                     // Create
@@ -408,18 +411,18 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
 
                     // Update
                     need_update_temp();
-                    closure.update.append(`temp = ${format_callback(callback_index)};`);
-                    closure.update.append(`if (temp !== ${prevName})`);
+                    closure_update.append(`temp = ${format_callback(callback_index)};`);
+                    closure_update.append(`if (temp !== ${prevName})`);
                     if (auto_update)
                     {
-                        closure.update.append(`{`);
-                        closure.update.append(`  ${auto_modified_name} = true;`);
+                        closure_update.append(`{`);
+                        closure_update.append(`  ${auto_modified_name} = true;`);
                     }
 
-                    closure.update.append(`  ${ni.name}${member(key)} = ${prevName} = temp;`);
+                    closure_update.append(`  ${ni.name}${member(key)} = ${prevName} = temp;`);
 
                     if (auto_update)
-                        closure.update.append(`}`);
+                        closure_update.append(`}`);
 
                     // Store callback
                     refs.push(ni.template[key]);
@@ -432,7 +435,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                         val = val.value;
 
                     // Object property
-                    closure.create.append(`${ni.name}${member(key)} = refs[${refs.length}];`);
+                    closure_create.append(`${ni.name}${member(key)} = refs[${refs.length}];`);
                     refs.push(val);
                 }
             }
@@ -442,8 +445,8 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             {
                 if (typeof(ni.template.update) === 'function')
                 {
-                    closure.update.append(`if (${format_callback(refs.length)})`);
-                    closure.update.append(`  ${ni.name}.update();`);
+                    closure_update.append(`if (${format_callback(refs.length)})`);
+                    closure_update.append(`  ${ni.name}.update();`);
                     refs.push(ni.template.update);
                 }
                 else
@@ -452,13 +455,13 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     {
                         if (auto_modified_name)
                         {
-                            closure.update.append(`if (${auto_modified_name})`);
-                            closure.update.append(`  ${ni.name}.update();`);
+                            closure_update.append(`if (${auto_modified_name})`);
+                            closure_update.append(`  ${ni.name}.update();`);
                         }
                     }
                     else
                     {
-                        closure.update.append(`${ni.name}.update();`);
+                        closure_update.append(`${ni.name}.update();`);
                     }
                 }
             }
@@ -486,15 +489,15 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             // Create the element
             addNodeLocal(ni);
             if (!xmlns)
-                closure.create.append(`${ni.name} = document.createElement(${JSON.stringify(ni.template.type)});`);
+                closure_create.append(`${ni.name} = document.createElement(${JSON.stringify(ni.template.type)});`);
             else
             {
                 closure.current_xmlns = xmlns;
-                closure.create.append(`${ni.name} = document.createElementNS(${JSON.stringify(xmlns)}, ${JSON.stringify(ni.template.type)});`);
+                closure_create.append(`${ni.name} = document.createElementNS(${JSON.stringify(xmlns)}, ${JSON.stringify(ni.template.type)});`);
             }
 
             // destroy support
-            closure.destroy.append(`${ni.name} = null;`);
+            closure_destroy.append(`${ni.name} = null;`);
 
             for (let key of Object.keys(ni.template))
             {
@@ -513,13 +516,13 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                             ni.bcCount = 0;
                         let mgrName = `${ni.name}_bc${ni.bcCount++}`;
                         closure.addLocal(mgrName);
-                        closure.create.append(`${mgrName} = helpers.boolClassMgr(context, ${ni.name}, ${JSON.stringify(className)}, refs[${refs.length}]);`);
+                        closure_create.append(`${mgrName} = helpers.boolClassMgr(context, ${ni.name}, ${JSON.stringify(className)}, refs[${refs.length}]);`);
                         refs.push(value);
-                        closure.update.append(`${mgrName}();`);
+                        closure_update.append(`${mgrName}();`);
                     }
                     else
                     {
-                        closure.create.append(`helpers.setNodeClass(${ni.name}, ${JSON.stringify(className)}, ${value});`);
+                        closure_create.append(`helpers.setNodeClass(${ni.name}, ${JSON.stringify(className)}, ${value});`);
                     }
                     continue;
                 }
@@ -537,13 +540,13 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     {
                         let mgrName = `${ni.name}_dm`;
                         closure.addLocal(mgrName);
-                        closure.create.append(`${mgrName} = helpers.displayMgr(context, ${ni.name}, refs[${refs.length}]);`);
+                        closure_create.append(`${mgrName} = helpers.displayMgr(context, ${ni.name}, refs[${refs.length}]);`);
                         refs.push(ni.template.display);
-                        closure.update.append(`${mgrName}();`);
+                        closure_update.append(`${mgrName}();`);
                     }
                     else
                     {
-                        closure.create.append(`helpers.setNodeDisplay(${ni.name}, ${JSON.stringify(ni.template.display)});`);
+                        closure_create.append(`helpers.setNodeDisplay(${ni.name}, ${JSON.stringify(ni.template.display)});`);
                     }
                     continue;
                 }
@@ -556,11 +559,11 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                     }
                     else if (ni.template.text instanceof HtmlString)
                     {
-                        closure.create.append(`${ni.name}.innerHTML = ${JSON.stringify(ni.template.text.html)};`);
+                        closure_create.append(`${ni.name}.innerHTML = ${JSON.stringify(ni.template.text.html)};`);
                     }
                     if (typeof(ni.template.text) === 'string')
                     {
-                        closure.create.append(`${ni.name}.innerText = ${JSON.stringify(ni.template.text)};`);
+                        closure_create.append(`${ni.name}.innerText = ${JSON.stringify(ni.template.text)};`);
                     }
                     continue;
                 }
@@ -582,7 +585,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             // Add all the child nodes to this node
             if (ni.childNodes?.length)
             {
-                closure.create.append(`${ni.name}.append(${ni.spreadChildDomNodes()});`);
+                closure_create.append(`${ni.name}.append(${ni.spreadChildDomNodes()});`);
             }
             closure.current_xmlns = save_xmlns;
         }
@@ -628,8 +631,8 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 bindings.set(ni.template.bind, true);
 
                 // Generate it
-                closure.bind.append(`model${member(ni.template.bind)} = ${ni.name};`);
-                closure.unbind.append(`model${member(ni.template.bind)} = null;`);
+                closure_bind.append(`model${member(ni.template.bind)} = ${ni.name};`);
+                closure_unbind.append(`model${member(ni.template.bind)} = null;`);
                 return true;
             }
 
@@ -653,37 +656,48 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 closure.addLocal(listener_name);
 
                 // Add listener
-                closure.create.append(`${listener_name} = helpers.addEventListener(() => model, ${ni.name}, ${JSON.stringify(eventName)}, refs[${refs.length}]);`);
+                closure_create.append(`${listener_name} = helpers.addEventListener(() => model, ${ni.name}, ${JSON.stringify(eventName)}, refs[${refs.length}]);`);
                 refs.push(handler);
 
-                closure.destroy.append(`${listener_name}?.();`);
-                closure.destroy.append(`${listener_name} = null;`);
+                closure_destroy.append(`${listener_name}?.();`);
+                closure_destroy.append(`${listener_name} = null;`);
 
                 return true;
+            }
+
+            if (key == "input")
+            {
+                let inputName = `${ni.name}_in`;
+                closure.addLocal(inputName);
+                closure_create.append(`${inputName} = helpers.input(refs[${refs.length}])`);
+                closure_post_create.push(`${inputName}.create(${ni.name}, context);`);
+                refs.push(ni.template[key]);
+                closure_update.append(`${inputName}.update()`);
+                closure_destroy.append(`${inputName}.destroy()`);
             }
 
             if (key == "debug_create")
             {
                 if (typeof(ni.template[key]) === 'function')
                 {
-                    closure.create.append(`if (${format_callback(refs.length)})`);
-                    closure.create.append(`  debugger;`);
+                    closure_create.append(`if (${format_callback(refs.length)})`);
+                    closure_create.append(`  debugger;`);
                     refs.push(ni.template[key]);
                 }
                 else if (ni.template[key])
-                    closure.create.append("debugger;");
+                    closure_create.append("debugger;");
                 return true;
             }
             if (key == "debug_update")
             {
                 if (typeof(ni.template[key]) === 'function')
                 {
-                    closure.update.append(`if (${format_callback(refs.length)})`);
-                    closure.update.append(`  debugger;`);
+                    closure_update.append(`if (${format_callback(refs.length)})`);
+                    closure_update.append(`  debugger;`);
                     refs.push(ni.template[key]);
                 }
                 else if (ni.template[key])
-                    closure.update.append("debugger;");
+                    closure_update.append("debugger;");
                 return true;
             }
             if (key == "debug_render")
@@ -715,9 +729,9 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 let code = formatter();
 
                 need_update_temp();
-                closure.update.append(`temp = ${format_callback(refs.length)};`);
-                closure.update.append(`if (temp !== ${prevName})`);
-                closure.update.append(`  ${formatter(prevName + " = temp")};`);
+                closure_update.append(`temp = ${format_callback(refs.length)};`);
+                closure_update.append(`if (temp !== ${prevName})`);
+                closure_update.append(`  ${formatter(prevName + " = temp")};`);
 
                 // Store the callback in the context callback array
                 refs.push(value);
@@ -725,7 +739,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             else
             {
                 // Static value, just output it directly
-                closure.create.append(formatter(JSON.stringify(value)));
+                closure_create.append(formatter(JSON.stringify(value)));
             }
         }
     }

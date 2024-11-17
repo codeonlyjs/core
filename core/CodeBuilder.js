@@ -43,34 +43,8 @@ export function CodeBuilder()
         append("}");
     }
 
-    function enterCollapsibleBlock(...header)
-    {
-        let cblock = {
-            pos: this.lines.length,
-        }
-        this.append(header);
-        cblock.headerLineCount = this.lines.length - cblock.pos;
-        return cblock;
-    }
-
-    function leaveCollapsibleBlock(cblock, ...footer)
-    {
-        // Was anything output to the blocK
-        if (this.lines.length == cblock.pos + cblock.headerLineCount)
-        {
-            // No, remove the headers
-            this.lines.splice(cblock.pos, cblock.headerLineCount);
-        }
-        else
-        {
-            this.append(footer);
-        }
-    }
-
     return {
         append,
-        enterCollapsibleBlock,
-        leaveCollapsibleBlock,
         indent,
         unindent,
         braced,
