@@ -674,6 +674,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
                 refs.push(ni.template[key]);
                 closure_update.append(`${inputName}.update()`);
                 closure_destroy.append(`${inputName}.destroy()`);
+                return true;
             }
 
             if (key == "debug_create")
