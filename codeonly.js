@@ -13,6 +13,7 @@ export * from "./core/Fluent.js";
 export * from "./core/Notify.js";
 export * from "./core/PageCache.js";
 export * from "./core/htmlEncode.js";
+export * from "./core/input.js";
 
 export * from "./core/DocumentScrollPosition.js";
 export * from "./core/Router.js";
