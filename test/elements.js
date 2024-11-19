@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { env, Template, Html } from "../codeonly.js";
+import { env, Template, html } from "../codeonly.js";
 
 test("Static Comment", () => {
     let r = Template.compile({
@@ -76,7 +76,7 @@ test("Dynamic Text Node", () => {
 
 test("Static Single-Node HTML", () => {
 
-    let r = Template.compile(Html.raw("Hello World"))();
+    let r = Template.compile(html("Hello World"))();
 
     assert.equal(r.isSingleRoot, true);
     assert.equal(r.rootNodes[0].nodeType, 3);
@@ -85,7 +85,7 @@ test("Static Single-Node HTML", () => {
 
 test("Static Multi-Node HTML", () => {
 
-    let r = Template.compile(Html.raw("<div>Hello</div><div>World</div>"))();
+    let r = Template.compile(html("<div>Hello</div><div>World</div>"))();
 
     assert.equal(r.isSingleRoot, false);
     assert.equal(r.rootNodes.length, 2);
@@ -97,7 +97,7 @@ test("Static Multi-Node HTML", () => {
 
 test("Empty HTML Node", () => {
 
-    let r = Template.compile(Html.raw(""))();
+    let r = Template.compile(html(""))();
 
     assert.equal(r.isSingleRoot, false);
     assert.equal(r.rootNodes.length, 0);
@@ -106,7 +106,7 @@ test("Empty HTML Node", () => {
 test("Dynamic HTML Node", () => {
 
     let val = "foo";
-    let r = Template.compile(() => Html.raw(val))();
+    let r = Template.compile(() => html(val))();
 
     let contentNodes = r.rootNodes.filter(x => x.nodeValue != "");
     assert.equal(contentNodes[0].nodeType, 3);
@@ -144,7 +144,7 @@ test("Inner HTML", () => {
 
     let r = Template.compile({
         type: "DIV",
-        text: Html.raw("Hello World"),
+        text: html("Hello World"),
     })();
 
     assert.equal(r.rootNodes[0].nodeName, "DIV");

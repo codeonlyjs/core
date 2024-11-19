@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Html } from "../codeonly.js";
+import { Template, html } from "../codeonly.js";
 
 
 test("Basic", () => {
@@ -52,7 +52,7 @@ test("Child Nodes with Static HTML", () => {
     let val = "<span>foo</span>";
     let r = Template.compile({
         type: "DIV",
-        text: Html.raw(val),
+        text: html(val),
     })();
 
     assert.equal(r.rootNodes[0].innerHTML, val);
@@ -74,7 +74,7 @@ test("$: Static HTML", () => {
     let val = "<span>foo</span>";
     let r = Template.compile({
         type: "DIV",
-        $: Html.raw(val),
+        $: html(val),
     })();
 
     assert.equal(r.rootNodes[0].innerHTML, val);

@@ -1,4 +1,4 @@
-import { Html } from "./Html.js";
+import { htmlEncode } from "./htmlEncode.js";
 
 export class TemplateLiteralBuilder
 {
@@ -6,7 +6,7 @@ export class TemplateLiteralBuilder
 
     text(text)
     {
-        this.raw(Html.encode(text));
+        this.raw(htmlEncode(text));
     }
 
     raw(text)

@@ -1,5 +1,5 @@
 import { env } from "./Environment.js";
-import { Html } from "./Html.js";
+import { htmlEncode } from "./htmlEncode.js";
 
 export function Placeholder(comment)
 {
@@ -14,7 +14,7 @@ export function Placeholder(comment)
             setMounted(m) { },
             destroy() {},
             update() {},
-            render(w) { w.write(`<!--${Html.encode(comment)}-->`) },
+            render(w) { w.write(`<!--${htmlEncode(comment)}-->`) },
         }
     }
 

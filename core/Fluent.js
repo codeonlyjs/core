@@ -1,4 +1,5 @@
-import { Html } from "./Html.js";
+import { html } from "./HtmlString.js";
+import { htmlEncode } from "./htmlEncode.js";
 
 class TemplateBuilder
 {
@@ -100,8 +101,8 @@ function constructTemplateBuilder(type)
     return fnAppendProxy;
 }
 
-constructTemplateBuilder.raw = Html.raw;
-constructTemplateBuilder.encode = Html.encode;
+constructTemplateBuilder.html = html;
+constructTemplateBuilder.encode = htmlEncode;
 
 // Export the proxied template builder
 export let $ = new Proxy(constructTemplateBuilder,  RootProxy);

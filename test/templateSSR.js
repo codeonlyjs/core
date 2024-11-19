@@ -2,7 +2,7 @@ import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import { SSREnvironment } from "../core/SSREnvironment.js";
 import { compileTemplate } from "../core/TemplateCompilerSSR.js";
-import { Html } from "../core/Html.js";
+import { html } from "../core/HtmlString.js";
 import { Component } from "../core/Component.js";
 import { env, setEnvironment } from "../core/Environment.js";
 import { Window } from "../minidom/Window.js";
@@ -50,7 +50,7 @@ test("Element Attribute (static, raw)", () => {
 
     let r = compileTemplate({
         type: "input",
-        attr_type: Html.raw("text&"),
+        attr_type: html("text&"),
     })();
 
     assert.equal(r.html, `<input type="text&"/>`);
@@ -72,7 +72,7 @@ test("Element Attribute (dynamic, raw)", () => {
 
     let r = compileTemplate({
         type: "input",
-        attr_type: () => Html.raw("text&"),
+        attr_type: () => html("text&"),
     })();
 
     assert.equal(r.html, `<input type="text&"/>`);
@@ -94,7 +94,7 @@ test("Element id (static, raw)", () => {
 
     let r = compileTemplate({
         type: "div",
-        id: Html.raw("mine&"),
+        id: html("mine&"),
     })();
 
     assert.equal(r.html, `<div id="mine&"></div>`);
@@ -117,7 +117,7 @@ test("Element id (dynamic, raw)", () => {
 
     let r = compileTemplate({
         type: "div",
-        id: () => Html.raw("mine&"),
+        id: () => html("mine&"),
     })();
 
     assert.equal(r.html, `<div id="mine&"></div>`);
@@ -140,7 +140,7 @@ test("Element class (static, raw)", () => {
 
     let r = compileTemplate({
         type: "div",
-        class: Html.raw("mine&"),
+        class: html("mine&"),
     })();
 
     assert.equal(r.html, `<div class="mine&"></div>`);
@@ -163,7 +163,7 @@ test("Element class (dynamic, raw)", () => {
 
     let r = compileTemplate({
         type: "div",
-        class: () => Html.raw("mine&"),
+        class: () => html("mine&"),
     })();
 
     assert.equal(r.html, `<div class="mine&"></div>`);
@@ -234,7 +234,7 @@ test("Element style (static, raw)", () => {
 
     let r = compileTemplate({
         type: "div",
-        style: Html.raw("x:y&"),
+        style: html("x:y&"),
     })();
 
     assert.equal(r.html, `<div style="x:y&;"></div>`);
@@ -257,7 +257,7 @@ test("Element style (dynamic, raw)", () => {
 
     let r = compileTemplate({
         type: "div",
-        style: () => Html.raw("x:y&"),
+        style: () => html("x:y&"),
     })();
 
     assert.equal(r.html, `<div style="x:y&;"></div>`);
@@ -341,7 +341,7 @@ test("Element Inner HTML (static)", () => {
 
     let r = compileTemplate({
         type: "div",
-        text: Html.raw("Hello &amp; World")
+        text: html("Hello &amp; World")
     })();
 
     assert.equal(r.html, `<div>Hello &amp; World</div>`);
@@ -352,7 +352,7 @@ test("Element Inner HTML (dynamic)", () => {
 
     let r = compileTemplate({
         type: "div",
-        text: () => Html.raw("Hello &amp; World")
+        text: () => html("Hello &amp; World")
     })();
 
     assert.equal(r.html, `<div>Hello &amp; World</div>`);
@@ -565,7 +565,7 @@ test("Raw Content", () => {
 
     let r = compileTemplate({
         type: "div",
-        $: Html.raw("Apples &amp; Pears"),
+        $: html("Apples &amp; Pears"),
     })();
 
     assert.equal(r.html, `<div>Apples &amp; Pears</div>`);

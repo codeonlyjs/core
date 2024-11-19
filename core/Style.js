@@ -38,3 +38,15 @@ function mountStyles()
     if (!styleNode.parentNode)
         document.head.appendChild(styleNode);
 }
+
+export function css(strings, values)
+{
+    let r = "";
+    for (let i=0; i<strings.length; i++)
+    {
+        r += strings[i];
+        r += values[i];
+    }
+    r += strings[strings.length - 1];
+    Style.declare(r);
+}
