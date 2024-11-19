@@ -129,6 +129,18 @@ function mountStyles()
         document.head.appendChild(styleNode);
 }
 
+function css(strings, values)
+{
+    let r = "";
+    for (let i=0; i<strings.length; i++)
+    {
+        r += strings[i];
+        r += values[i];
+    }
+    r += strings[strings.length - 1];
+    Style.declare(r);
+}
+
 let frameCallbacks = [];
 let needSort = false;
 
@@ -480,101 +492,6 @@ class Component extends EventTarget
 
     static template = {};
 }
-
-class Html
-{
-    static embed(content)
-    {
-        return {
-            type: "embed-slot",
-            content,
-        }
-    }
-
-    static h(level, text)
-    {
-        return {
-            type: `h${level}`,
-            text: text,
-        }
-    }
-    
-    static p(text)
-    {
-        return {
-            type: `p`,
-            text: text,
-        }
-    }
-
-    static a(href, text)
-    {
-        return {
-            type: "a",
-            attr_href: href,
-            text: text,
-        }        
-    }
-
-    static raw(text)
-    {
-        return html(text);
-    }
-
-    static encode(str)
-    {
-        if (str === null || str === undefined)
-            return "";
-        return (""+str).replace(/["'&<>]/g, function(x) {
-            switch (x) 
-            {
-                case '\"': return '&quot;';
-                case '&': return '&amp;';
-                case '\'':return '&#39;';
-                case '<': return '&lt;';
-                case '>': return '&gt;';
-            }
-        });
-    }
-}
-
-/*
-class HtmlSSR
-{
-    static title(text)
-    {
-        return {
-            type: "title",
-            text: text,
-        }
-    }
-
-    static style(content)
-    {
-        return {
-            type: "style",
-            text: content,
-        }
-    }
-
-    static linkStyle(url)
-    {
-        return {
-            type: "link",
-            attr_href: url,
-            attr_type: "text/css",
-            attr_rel: "stylesheet",
-        }
-    }
-}
-
-if (!true)
-{
-    Object.getOwnPropertyNames(HtmlSSR)
-        .filter(x => HtmlSSR[x] instanceof Function)
-        .forEach(x => Html[x] = HtmlSSR[x]);
-}
-*/
 
 // Converts a URL pattern string to a regex
 function urlPattern(pattern)
@@ -1009,6 +926,22 @@ let TransitionNone =
     finish: function() {},
 };
 
+function htmlEncode(str)
+{
+    if (str === null || str === undefined)
+        return "";
+    return (""+str).replace(/["'&<>]/g, function(x) {
+        switch (x) 
+        {
+            case '\"': return '&quot;';
+            case '&': return '&amp;';
+            case '\'':return '&#39;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+        }
+    });
+}
+
 class TemplateBuilder
 {
     constructor(type)
@@ -1108,8 +1041,8 @@ function constructTemplateBuilder(type)
     return fnAppendProxy;
 }
 
-constructTemplateBuilder.raw = Html.raw;
-constructTemplateBuilder.encode = Html.encode;
+constructTemplateBuilder.html = html;
+constructTemplateBuilder.encode = htmlEncode;
 
 // Export the proxied template builder
 let $ = new Proxy(constructTemplateBuilder,  RootProxy);
@@ -2171,7 +2104,7 @@ class TemplateHelpers
         if (text instanceof HtmlString)
             return text.html;
         else
-            return Html.encode(text);
+            return htmlEncode(text);
     }
 
     static renderToString(renderFn)
@@ -2198,7 +2131,7 @@ class TemplateHelpers
         if (text instanceof HtmlString)
             style = text.html;
         else
-            style = Html.encode(text);
+            style = htmlEncode(text);
         style = style.trim();
         if (!style.endsWith(";"))
             style += ";";
@@ -2214,7 +2147,7 @@ class TemplateHelpers
         if (text instanceof HtmlString)
             style = text.html;
         else
-            style = Html.encode(text);
+            style = htmlEncode(text);
         style = style.trim();
         style += ";";
         return `${styleName}:${style}`;
@@ -3894,7 +3827,7 @@ function Placeholder(comment)
             setMounted(m) { },
             destroy() {},
             update() {},
-            render(w) { w.write(`<!--${Html.encode(comment)}-->`); },
+            render(w) { w.write(`<!--${htmlEncode(comment)}-->`); },
         }
     };
 
@@ -5036,4 +4969,4 @@ if (typeof(document) !== "undefined")
     setEnvironment(new BrowserEnvironment());
 }
 
-export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, Html, HtmlString, Notify, PageCache, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, env, html, nextFrame, notify, postNextFrame, setEnvironment, transition, urlPattern };
+export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, HtmlString, Notify, PageCache, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, css, env, html, htmlEncode, nextFrame, notify, postNextFrame, setEnvironment, transition, urlPattern };
