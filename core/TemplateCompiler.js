@@ -351,7 +351,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             let slotNames = new Set(ni.template.type.slots ?? []);
             if (slotNames.size > 0)
             {
-                closure_create.append(`${ni.name}.create()`);
+                closure_create.append(`${ni.name}.create?.()`);
             }
 
             let auto_update = ni.template.update === "auto";
