@@ -368,7 +368,7 @@ export class ForEachBlock
                         n.remove();
                 }
                 if (this.#mounted)
-                    this.emptyDome.setMounted(false);
+                    this.emptyDom.setMounted(false);
                 this.emptyDom.destroy();
                 this.emptyDom = null;
             }
