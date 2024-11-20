@@ -133,6 +133,8 @@ export class EmbedSlot
         {
             this.replaceContent(this.#content.call(this.#context.model, this.#context.model, this.#context));
         }
+
+        this.#contentObject?.update?.();
     }
 
     bind()

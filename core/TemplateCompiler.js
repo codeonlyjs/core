@@ -344,6 +344,7 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             // Create component
             addNodeLocal(ni);
             closure_create.append(`${ni.name} = new refs[${refs.length}]();`);
+            closure_create.append(`${ni.name}.create()`);
             refs.push(ni.template.type);
 
             let slotNames = new Set(ni.template.type.slots ?? []);
