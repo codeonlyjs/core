@@ -2866,6 +2866,10 @@ class EmbedSlot
         {
             this.replaceContent(this.#content.call(this.#context.model, this.#context.model, this.#context));
         }
+
+        // Update place holder
+        if (!this.#contentValue)
+            this.#contentObject?.update?.();
     }
 
     bind()
@@ -4525,7 +4529,13 @@ function compileTemplateCode(rootTemplate, compilerOptions)
             closure_create.append(`${ni.name} = new refs[${refs.length}]();`);
             refs.push(ni.template.type);
 
+            // If component has slots, create the object before attempting
+            // to assign the content values
             let slotNames = new Set(ni.template.type.slots ?? []);
+            if (slotNames.length > 0)
+            {
+                closure_create.append(`${ni.name}.create()`);
+            }
 
             let auto_update = ni.template.update === "auto";
             let auto_modified_name = false;
