@@ -344,10 +344,15 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
             // Create component
             addNodeLocal(ni);
             closure_create.append(`${ni.name} = new refs[${refs.length}]();`);
-            closure_create.append(`${ni.name}.create()`);
             refs.push(ni.template.type);
 
+            // If component has slots, create the object before attempting
+            // to assign the content values
             let slotNames = new Set(ni.template.type.slots ?? []);
+            if (slotNames.length > 0)
+            {
+                closure_create.append(`${ni.name}.create()`);
+            }
 
             let auto_update = ni.template.update === "auto";
             let auto_modified_name = false;

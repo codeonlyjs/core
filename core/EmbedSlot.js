@@ -134,7 +134,9 @@ export class EmbedSlot
             this.replaceContent(this.#content.call(this.#context.model, this.#context.model, this.#context));
         }
 
-        this.#contentObject?.update?.();
+        // Update place holder
+        if (!this.#contentValue)
+            this.#contentObject?.update?.();
     }
 
     bind()
