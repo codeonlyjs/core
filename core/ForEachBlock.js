@@ -282,8 +282,6 @@ export class ForEachBlock
             this.#patch_existing(newItems, newKeys, range_start + pos, pos, newItems.length - pos);
 
         // Destroy remaining spare items
-        if (this.#mounted)
-            setItemsMounted(spare, false);
         destroyItems(spare);
 
         // Update empty list indicator
@@ -296,8 +294,11 @@ export class ForEachBlock
             let useSpare = Math.min(spare.length, op.count);
             if (useSpare)
             {
-                this.#insert_dom(op.index + range_start, spare.splice(0, useSpare));
+                let items = spare.splice(0, useSpare);
+                this.#insert_dom(op.index + range_start, items);
                 this.#patch_existing(newItems, newKeys, op.index + range_start, op.index, useSpare);
+                if (this.#mounted)
+                    setItemsMounted(items, true);
             }
             if (useSpare < op.count)
             {
@@ -307,7 +308,10 @@ export class ForEachBlock
 
         function op_delete(op)
         {
-            spare.push(...this.#remove_dom(op.index + range_start, op.count));
+            let items = this.#remove_dom(op.index + range_start, op.count)
+            if (this.#mounted)
+                setItemsMounted(items, false);
+            spare.push(...items);
         }
 
         function op_store(op)
