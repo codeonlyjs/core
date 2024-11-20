@@ -4532,9 +4532,9 @@ function compileTemplateCode(rootTemplate, compilerOptions)
             // If component has slots, create the object before attempting
             // to assign the content values
             let slotNames = new Set(ni.template.type.slots ?? []);
-            if (slotNames.length > 0)
+            if (slotNames.size > 0)
             {
-                closure_create.append(`${ni.name}.create()`);
+                closure_create.append(`${ni.name}.create?.()`);
             }
 
             let auto_update = ni.template.update === "auto";
