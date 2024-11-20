@@ -164,8 +164,11 @@ export class EmbedSlot
     replaceContent(value)
     {
         // Same value?
-        if (this.#contentValue == value || HtmlString.areEqual(this.#contentValue, value))
-            return;
+        if (this.#contentValue === value || HtmlString.areEqual(this.#contentValue, value))
+        {
+            if (value || this.#contentObject)   // Make sure placeholder constructed
+                return;
+        }
 
         // Capture old content and nodes
         let oldContentObject = this.#contentObject;
