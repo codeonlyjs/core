@@ -236,7 +236,7 @@ export class TemplateHelpers
                 // Work out new actual style
                 let newComputed;
                 if (newVal === true)
-                    newComputed = prevComputed;
+                    newComputed = prevDisplay;
                 else if (newVal === false || newVal === null || newVal === undefined)
                     newComputed = "none";
                 else
