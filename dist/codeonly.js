@@ -1567,6 +1567,10 @@ class Router
                     route.handler = h;
                     return route;
                 }
+                
+                // External page load
+                if (result === null)
+                    return null;
             }
             else
             {
@@ -1574,9 +1578,6 @@ class Router
                 return route;
             }
 
-            // External page load
-            if (result === null)
-                return null;
         }
 
         // Dummy handler
