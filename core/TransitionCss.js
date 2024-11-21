@@ -195,6 +195,15 @@ export function TransitionCss(options, ctx)
             }
 
             await while_busy(1);
+
+            if (mode == "enter-leave")
+            {
+                finish_leave();
+            }
+            else if (mode == "leave-enter")
+            {
+                finish_enter();
+            }
         }
         else
         {
