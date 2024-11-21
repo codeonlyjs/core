@@ -93,7 +93,7 @@ export class TemplateHelpers
         }
         else
         {
-            node.innerText = text;
+            node.textContent = text;
         }
     }
 

@@ -16,7 +16,7 @@ test("Single root component at root level", () => {
     })();
 
     assert.equal(r.isSingleRoot, true);
-    assert.equal(r.rootNode.innerText, "foo");
+    assert.equal(r.rootNode.textContent, "foo");
 
 });
 
@@ -39,7 +39,7 @@ test("Single root component as child", () => {
     })();
 
     assert.equal(r.isSingleRoot, true);
-    assert.equal(r.rootNode.childNodes[0].innerText, "foo");
+    assert.equal(r.rootNode.childNodes[0].textContent, "foo");
 });
 
 
@@ -302,11 +302,11 @@ test("Component Embed Slots (single root)", () => {
     })();
 
     assert.equal(r.anchor.rootNode.nodeName, "a");
-    assert.equal(r.anchor.rootNode.innerText, "foo");
+    assert.equal(r.anchor.rootNode.textContent, "foo");
 
     val = "bar";
     r.update();
-    assert.equal(r.anchor.rootNode.innerText, "bar");
+    assert.equal(r.anchor.rootNode.textContent, "bar");
 
 });
 
@@ -338,11 +338,11 @@ test("Component Embed Slots (multi root)", () => {
     })();
 
     assert.equal(r.anchor.rootNode.nodeName, "a");
-    assert.equal(r.anchor.rootNode.innerText, "foo-baz");
+    assert.equal(r.anchor.rootNode.textContent, "foo-baz");
 
     val = "bar";
     r.update();
-    assert.equal(r.anchor.rootNode.innerText, "bar-baz");
+    assert.equal(r.anchor.rootNode.textContent, "bar-baz");
 
 });
 

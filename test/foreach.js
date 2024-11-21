@@ -32,7 +32,7 @@ test("ForEach Content Static", () => {
 function assert_foreach_content(r, items, actual, expected, opts)
 {
     // Initial
-    assert_iterables(Array.from(actual().map(x => x.innerText)), Array.from(expected()));
+    assert_iterables(Array.from(actual().map(x => x.textContent)), Array.from(expected()));
 
     // Append
     items.push("D", "E");
@@ -96,7 +96,7 @@ function assert_foreach_content(r, items, actual, expected, opts)
         r.update();
 
         // Check items match
-        assert_iterables(actual().map(x => x.innerText), expected());
+        assert_iterables(actual().map(x => x.textContent), expected());
     }
 }
 
@@ -259,17 +259,17 @@ test("ForEach Content (index sensitive)", () => {
         ]
     })();
 
-    assert_iterables(["A0", "B1", "C2"], r.rootNode.childNodes.slice(1, -1).map(x => x.innerText));
+    assert_iterables(["A0", "B1", "C2"], r.rootNode.childNodes.slice(1, -1).map(x => x.textContent));
 
     items.unshift("Z");
     r.update();
 
-    assert_iterables(["Z0", "A1", "B2", "C3"], r.rootNode.childNodes.slice(1, -1).map(x => x.innerText));
+    assert_iterables(["Z0", "A1", "B2", "C3"], r.rootNode.childNodes.slice(1, -1).map(x => x.textContent));
 
     items.splice(2, 1);
     r.update();
 
-    assert_iterables(["Z0", "A1", "C2"], r.rootNode.childNodes.slice(1, -1).map(x => x.innerText));
+    assert_iterables(["Z0", "A1", "C2"], r.rootNode.childNodes.slice(1, -1).map(x => x.textContent));
 });
 
 
@@ -302,14 +302,14 @@ test("ForEach Content (nested)", () => {
 
     assert_iterables([
         "A1", "A2", "B3", "B4"
-        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.innerText));
+        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.textContent));
 
     items[0].subItems.push("3");
     r.update();
 
     assert_iterables([
         "A1", "A2", "A3", "B3", "B4"
-        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.innerText));
+        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.textContent));
 
 });
 
@@ -339,16 +339,16 @@ test("ForEach Content (with else block)", () => {
 
     assert_iterables([
         "Empty!",
-        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.innerText));
+        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.textContent));
 
-    assert.equal(r.empty.innerText, "Empty!");
+    assert.equal(r.empty.textContent, "Empty!");
 
 
     items = [ "apples", "bananas" ];
     r.update();
     assert_iterables([
         "apples", "bananas",
-        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.innerText));
+        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.textContent));
     assert.equal(r.empty, null);
 
 
@@ -356,15 +356,15 @@ test("ForEach Content (with else block)", () => {
     r.update();
     assert_iterables([
         "Empty!",
-        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.innerText));
-    assert.equal(r.empty.innerText, "Empty!");
+        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.textContent));
+    assert.equal(r.empty.textContent, "Empty!");
 
 
     items = [ "foo", "bar" ];
     r.update();
     assert_iterables([
         "foo", "bar"
-        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.innerText));
+        ], r.rootNode.childNodes.filter(x => x.nodeType == 1).map(x => x.textContent));
     assert.equal(r.empty, null);
 });
 
@@ -426,9 +426,9 @@ test("ForEach Update Count Check", async () => {
         ]
     })();
 
-    assert.equal(r.rootNode.childNodes[1].innerText, "Apples");
-    assert.equal(r.rootNode.childNodes[2].innerText, "Pears");
-    assert.equal(r.rootNode.childNodes[3].innerText, "Bananas");
+    assert.equal(r.rootNode.childNodes[1].textContent, "Apples");
+    assert.equal(r.rootNode.childNodes[2].textContent, "Pears");
+    assert.equal(r.rootNode.childNodes[3].textContent, "Bananas");
 
     // There shouldn't be any updates yet
     assert.equal(ItemComponent.updateCount, 0);
@@ -437,10 +437,10 @@ test("ForEach Update Count Check", async () => {
     r.update();
 
     // Check the new item got added 
-    assert.equal(r.rootNode.childNodes[1].innerText, "Apples");
-    assert.equal(r.rootNode.childNodes[2].innerText, "Pears");
-    assert.equal(r.rootNode.childNodes[3].innerText, "Bananas");
-    assert.equal(r.rootNode.childNodes[4].innerText, "Berries");
+    assert.equal(r.rootNode.childNodes[1].textContent, "Apples");
+    assert.equal(r.rootNode.childNodes[2].textContent, "Pears");
+    assert.equal(r.rootNode.childNodes[3].textContent, "Bananas");
+    assert.equal(r.rootNode.childNodes[4].textContent, "Berries");
 
     // There still shouldn't be any updates, because we've only added new
     // items, not updated existing ones

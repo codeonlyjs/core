@@ -38,18 +38,18 @@ test("Instantiate Component", () => {
     assert(c.rootNode != null);
     assert.equal(c.rootNodes.length, 1);
     assert(!c.isMultiRoot);
-    assert.equal(c.rootNode.childNodes[0].innerText, "Hello World");
+    assert.equal(c.rootNode.childNodes[0].textContent, "Hello World");
 });
 
 
 test("Update Component", () => {
 
     let c = new TestComponent();
-    assert.equal(c.rootNode.childNodes[0].innerText, "Hello World");
+    assert.equal(c.rootNode.childNodes[0].textContent, "Hello World");
 
     c.value = "foo";
     c.update();
-    assert.equal(c.rootNode.childNodes[0].innerText, "foo");
+    assert.equal(c.rootNode.childNodes[0].textContent, "foo");
 });
 
 test("Component as direct child node", () => {
@@ -60,7 +60,7 @@ test("Component as direct child node", () => {
     })();
 
     assert.equal(r.rootNodes[0].nodeType, 1);
-    assert.equal(r.rootNodes[0].childNodes[0].innerText, "Hello World");
+    assert.equal(r.rootNodes[0].childNodes[0].textContent, "Hello World");
 });
 
 test("Invalidate Component", async () => {

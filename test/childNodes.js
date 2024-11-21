@@ -29,10 +29,10 @@ test("Child Nodes with Dynamic Text", () => {
         ]
     })();
 
-    assert.equal(r.rootNodes[0].childNodes[0].innerText, val);
+    assert.equal(r.rootNodes[0].childNodes[0].textContent, val);
     val = "bar";
     r.update();
-    assert.equal(r.rootNodes[0].childNodes[0].innerText, val);
+    assert.equal(r.rootNodes[0].childNodes[0].textContent, val);
 });
 
 
@@ -44,7 +44,7 @@ test("Child Nodes with Static Text", () => {
         text: val,
     })();
 
-    assert.equal(r.rootNodes[0].innerText, val);
+    assert.equal(r.rootNodes[0].textContent, val);
 });
 
 test("Child Nodes with Static HTML", () => {
@@ -66,7 +66,7 @@ test("$: Static Text", () => {
         $: val,
     })();
 
-    assert.equal(r.rootNodes[0].innerText, val);
+    assert.equal(r.rootNodes[0].textContent, val);
 });
 
 test("$: Static HTML", () => {

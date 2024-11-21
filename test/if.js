@@ -79,13 +79,13 @@ test("If-Else", () => {
     })();
 
     assert.equal(r.rootNode.childNodes[0].nodeType, 1);
-    assert.equal(r.rootNode.childNodes[0].innerText, "foo");
+    assert.equal(r.rootNode.childNodes[0].textContent, "foo");
 
     val = false;
     r.update();
 
     assert.equal(r.rootNode.childNodes[0].nodeType, 1);
-    assert.equal(r.rootNode.childNodes[0].innerText, "bar");
+    assert.equal(r.rootNode.childNodes[0].textContent, "bar");
 });
 
 test("If-ElseIf", () => {
@@ -108,13 +108,13 @@ test("If-ElseIf", () => {
     })();
 
     assert.equal(r.rootNode.childNodes[0].nodeType, 1);
-    assert.equal(r.rootNode.childNodes[0].innerText, "foo");
+    assert.equal(r.rootNode.childNodes[0].textContent, "foo");
 
     val = 2;
     r.update();
 
     assert.equal(r.rootNode.childNodes[0].nodeType, 1);
-    assert.equal(r.rootNode.childNodes[0].innerText, "bar");
+    assert.equal(r.rootNode.childNodes[0].textContent, "bar");
 
     val = 3;
     r.update();
@@ -148,19 +148,19 @@ test("If-ElseIf-Else", () => {
     })();
 
     assert.equal(r.rootNode.childNodes[0].nodeType, 1);
-    assert.equal(r.rootNode.childNodes[0].innerText, "foo");
+    assert.equal(r.rootNode.childNodes[0].textContent, "foo");
 
     val = 2;
     r.update();
 
     assert.equal(r.rootNode.childNodes[0].nodeType, 1);
-    assert.equal(r.rootNode.childNodes[0].innerText, "bar");
+    assert.equal(r.rootNode.childNodes[0].textContent, "bar");
 
     val = 3;
     r.update();
 
     assert.equal(r.rootNode.childNodes[0].nodeType, 1);
-    assert.equal(r.rootNode.childNodes[0].innerText, "baz");
+    assert.equal(r.rootNode.childNodes[0].textContent, "baz");
 });
 
 test("If Foreach Fragment", () => {

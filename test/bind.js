@@ -36,7 +36,7 @@ test("Non-root Element", () => {
         ]
     })({ model });
 
-    assert.equal(model.myPara.innerText, "foo");
+    assert.equal(model.myPara.textContent, "foo");
 });
 
 test("Conditionally Included Element", () => {
@@ -60,7 +60,7 @@ test("Conditionally Included Element", () => {
         ]
     })({ model });
 
-    assert.equal(model.myPara.innerText, "foo");
+    assert.equal(model.myPara.textContent, "foo");
     assert.equal(model.myPara, model._p);
 
     val = false;
@@ -70,7 +70,7 @@ test("Conditionally Included Element", () => {
 
     val = true;
     r.update();
-    assert.equal(model.myPara.innerText, "foo");
+    assert.equal(model.myPara.textContent, "foo");
     assert.equal(model.myPara, model._p);
 });
 
@@ -95,7 +95,7 @@ test("Simple Rebind", () => {
     })(ctx);
 
     // check bound
-    assert.equal(model.myPara.innerText, "foo");
+    assert.equal(model.myPara.textContent, "foo");
 
     // Create a new model, store it in the context and rebind
     let model2 = {};
@@ -103,7 +103,7 @@ test("Simple Rebind", () => {
     r.rebind();
 
     assert.equal(model.myPara, null);
-    assert.equal(model2.myPara.innerText, "foo");
+    assert.equal(model2.myPara.textContent, "foo");
 });
 
 
@@ -129,7 +129,7 @@ test("Conditional Rebind", () => {
     })(ctx);
 
     // check bound
-    assert.equal(model.myPara.innerText, "foo");
+    assert.equal(model.myPara.textContent, "foo");
 
     // Turn off with conditional
     val = false;
@@ -138,7 +138,7 @@ test("Conditional Rebind", () => {
 
     val = true;
     r.update();
-    assert.equal(model.myPara.innerText, "foo");
+    assert.equal(model.myPara.textContent, "foo");
 
     // Create a new model, store it in the context and rebind
     let model2 = {};
@@ -147,7 +147,7 @@ test("Conditional Rebind", () => {
 
     // Should now be bound to the new model
     assert.equal(model.myPara, null);
-    assert.equal(model2.myPara.innerText, "foo");
+    assert.equal(model2.myPara.textContent, "foo");
 
     // Turn off with condition and check nulled
     val = false;

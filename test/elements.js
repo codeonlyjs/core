@@ -90,9 +90,9 @@ test("Static Multi-Node HTML", () => {
     assert.equal(r.isSingleRoot, false);
     assert.equal(r.rootNodes.length, 2);
     assert.equal(r.rootNodes[0].nodeType, 1);
-    assert.equal(r.rootNodes[0].innerText, "Hello");
+    assert.equal(r.rootNodes[0].textContent, "Hello");
     assert.equal(r.rootNodes[1].nodeType, 1);
-    assert.equal(r.rootNodes[1].innerText, "World");
+    assert.equal(r.rootNodes[1].textContent, "World");
 });
 
 test("Empty HTML Node", () => {
@@ -137,7 +137,7 @@ test("Inner Text", () => {
     })();
 
     assert.equal(r.rootNodes[0].nodeName, "DIV");
-    assert.equal(r.rootNodes[0].innerText, "Hello World");
+    assert.equal(r.rootNodes[0].textContent, "Hello World");
 });
 
 test("Inner HTML", () => {
@@ -159,11 +159,11 @@ test("Dynamic Text", () => {
         text: () => text,
     })();
 
-    assert.equal(r.rootNodes[0].innerText, "foo");
+    assert.equal(r.rootNodes[0].textContent, "foo");
 
     text = 'bar';
     r.update();
-    assert.equal(r.rootNodes[0].innerText, "bar");
+    assert.equal(r.rootNodes[0].textContent, "bar");
 });
 
 

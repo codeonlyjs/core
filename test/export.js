@@ -28,7 +28,7 @@ test("Non-root Export", () => {
         ]
     })();
 
-    assert.equal(r.myPara.innerText, "foo");
+    assert.equal(r.myPara.textContent, "foo");
 });
 
 test("Export conditional", () => {
@@ -47,7 +47,7 @@ test("Export conditional", () => {
         ]
     })();
 
-    assert.equal(r.myPara.innerText, "foo");
+    assert.equal(r.myPara.textContent, "foo");
 
     val = false;
     r.update();
@@ -55,6 +55,6 @@ test("Export conditional", () => {
 
     val = true;
     r.update();
-    assert.equal(r.myPara.innerText, "foo");
+    assert.equal(r.myPara.textContent, "foo");
 });
 

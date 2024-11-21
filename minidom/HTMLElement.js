@@ -43,7 +43,7 @@ export class HTMLElement extends Element
         this.append(...nodes);
     }
 
-    get innerText()
+    get textContent()
     {
         let buf = "";
         for (let ch of this.childNodes)
@@ -51,7 +51,7 @@ export class HTMLElement extends Element
             switch (ch.nodeType)
             {
                 case 1:
-                    buf += ch.innerText;
+                    buf += ch.textContent;
                     break;
                 
                 case 3:
@@ -62,7 +62,7 @@ export class HTMLElement extends Element
         return buf.replace(/\s+/g, ' ');
     }
 
-    set innerText(value)
+    set textContent(value)
     {
         // Remove all child nodes
         this.childNodes.forEach(x => x.remove());
