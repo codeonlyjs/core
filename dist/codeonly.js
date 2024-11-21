@@ -2196,7 +2196,7 @@ class TemplateHelpers
         }
         else
         {
-            node.innerText = text;
+            node.textContent = text;
         }
     }
 
@@ -4761,7 +4761,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                     }
                     if (typeof(ni.template.text) === 'string')
                     {
-                        closure_create.append(`${ni.name}.innerText = ${JSON.stringify(ni.template.text)};`);
+                        closure_create.append(`${ni.name}.textContent = ${JSON.stringify(ni.template.text)};`);
                     }
                     continue;
                 }
