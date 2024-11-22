@@ -1,6 +1,4 @@
 
-export let env = null;
-
 export class EnvironmentBase extends EventTarget
 {
     constructor()
@@ -43,8 +41,11 @@ export class EnvironmentBase extends EventTarget
     }
 }
 
-export function setEnvironment(newEnv)
+export let getEnv;
+
+
+export function setEnvProvider(fnProvideEnvironment)
 {
-    env = newEnv;
+    getEnv = fnProvideEnvironment;
 }
 

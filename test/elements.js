@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { env, Template, html } from "../core/index.js";
+import { getEnv, Template, html } from "../core/index.js";
 
 test("Static Comment", () => {
     let r = Template.compile({
@@ -54,7 +54,7 @@ test("Dynamic Text Node", () => {
     let val = "foo";
     let r = Template.compile(() => val)();
 
-    let outer = env.document.createElement("div");
+    let outer = getEnv().document.createElement("div");
     outer.append(...r.rootNodes);
 
     assert.equal(outer.childNodes.length, 3);

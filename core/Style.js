@@ -1,4 +1,4 @@
-import { env } from "./Environment.js";
+import { getEnv } from "./Environment.js";
 
 let allStyles = [];
 let pendingStyles = [];
@@ -10,8 +10,8 @@ export class Style
     {
         allStyles.push(css);
         pendingStyles.push(css);
-        if (env.browser)
-            env.requestAnimationFrame(mountStyles);
+        if (getEnv().browser)
+            getEnv().requestAnimationFrame(mountStyles);
     }
 
     static get all()

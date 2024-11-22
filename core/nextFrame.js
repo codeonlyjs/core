@@ -1,4 +1,4 @@
-import { env } from "./Environment.js";
+import { getEnv } from "./Environment.js";
 
 let frameCallbacks = [];
 let needSort = false;
@@ -22,7 +22,7 @@ export function nextFrame(callback, order)
     // If it's the first one, request animation callback
     if (frameCallbacks.length == 1)
     {
-        env.requestAnimationFrame(function() {
+        getEnv().requestAnimationFrame(function() {
 
             // Capture pending callbacks
             let pending = frameCallbacks;

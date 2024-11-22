@@ -1,4 +1,4 @@
-import { env } from "../core/Environment.js";
+import { getEnv } from "../core/Environment.js";
 import { whenLoaded } from "../core/Utils.js";
 import { nextFrame } from "../core/nextFrame.js";
 import { DocumentScrollPosition } from "./DocumentScrollPosition.js";
@@ -10,12 +10,12 @@ export class ViewStateRestoration
         this.#router = router;
 
         // Disable browser scroll restoration
-        if (env.window.history.scrollRestoration) {
-           env.window.history.scrollRestoration = "manual";
+        if (getEnv().window.history.scrollRestoration) {
+           getEnv().window.history.scrollRestoration = "manual";
         }
 
         // Reload saved view states from session storage
-        let savedViewStates = env.window.sessionStorage.getItem("codeonly-view-states");
+        let savedViewStates = getEnv().window.sessionStorage.getItem("codeonly-view-states");
         if (savedViewStates)
         {
             this.#viewStates = JSON.parse(savedViewStates);
@@ -47,7 +47,7 @@ export class ViewStateRestoration
             };
 
             // Load view state
-            whenLoaded(env, () => {
+            whenLoaded(getEnv(), () => {
                 nextFrame(() => {
 
                     // Restore view state
@@ -59,7 +59,7 @@ export class ViewStateRestoration
                         DocumentScrollPosition.set(to.viewState);
 
                     // Jump to hash
-                    if (env.browser)
+                    if (getEnv().browser)
                     {
                         let elHash = document.getElementById(to.url.hash.substring(1));
                         elHash?.scrollIntoView();
@@ -68,7 +68,7 @@ export class ViewStateRestoration
             });
         });
 
-        env.window.addEventListener("beforeunload", (event) => {
+        getEnv().window.addEventListener("beforeunload", (event) => {
             this.captureViewState();
         });
 
@@ -93,6 +93,6 @@ export class ViewStateRestoration
     }
     saveViewStates()
     {
-        env.window.sessionStorage.setItem("codeonly-view-states", JSON.stringify(this.#viewStates));
+        getEnv().window.sessionStorage.setItem("codeonly-view-states", JSON.stringify(this.#viewStates));
     }
 }

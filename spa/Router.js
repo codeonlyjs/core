@@ -1,4 +1,4 @@
-import { env } from "../core/Environment.js";
+import { getEnv } from "../core/Environment.js";
 import { urlPattern } from "./urlPattern.js";
 
 export class Router

@@ -4,7 +4,7 @@ import { strict as assert } from "node:assert";
 import { WebHistoryRouterDriver } from "../spa/WebHistoryRouterDriver.js";
 import { ViewStateRestoration } from "../spa/ViewStateRestoration.js";
 import "./mockdom.js";
-import { env } from "../core/Environment.js";
+import { getEnv } from "../core/Environment.js";
 
 function asyncOp()
 {
@@ -104,7 +104,7 @@ class MockRouter extends EventTarget
     async go(delta)
     {
         // Navigate backwards
-        env.window.history.go(delta);
+        getEnv().window.history.go(delta);
 
         // Wait for history to attempt load
         // on this router
@@ -112,31 +112,31 @@ class MockRouter extends EventTarget
 
         // A cancelled navigation will call window.history.go
         // again, we need to wait for that to be dispatched
-        await env.window.waitAnimationFrames();
+        await getEnv().window.waitAnimationFrames();
     }
 }
 
 test("load new session", async () => {
 
-    env.reset();
+    getEnv().reset();
     let mr = new MockRouter();
     let route = await mr.start();
     assert(route != null);
-    assert.deepEqual(route.url, new URL(env.window.location));
+    assert.deepEqual(route.url, new URL(getEnv().window.location));
     assert.equal(route.state.sequence, 0);
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.equal(route.mockViewState, undefined);
 });
 
 test("load existing session", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     // Setup existing session
-    env.window.sessionStorage.setItem("codeonly-view-states", JSON.stringify({
+    getEnv().window.sessionStorage.setItem("codeonly-view-states", JSON.stringify({
         2: { x:2 },
     }));
-    env.window.history.replaceState({
+    getEnv().window.history.replaceState({
         sequence: 2,
     });
 
@@ -150,14 +150,14 @@ test("load existing session", async () => {
 
     // View state restoration is delayed until next frame
     assert.deepEqual(viewState, undefined );
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.deepEqual(viewState, { x: 2 } );
 });
 
 
 test("navigate", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     // Start router
     let mr = new MockRouter();
@@ -166,12 +166,12 @@ test("navigate", async () => {
     let route = await mr.navigate("/path");
     assert.equal(mr.current, route);
     assert.equal(mr.current.url.pathname, "/path");
-    assert.equal(mr.current.url.pathname, env.window.location.pathname);
+    assert.equal(mr.current.url.pathname, getEnv().window.location.pathname);
 });
 
 test("cancelled navigate", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     // Start router
     let mr = new MockRouter();
@@ -182,13 +182,13 @@ test("cancelled navigate", async () => {
     let route = await mr.navigate("/cancel");
     assert.equal(route, null);
     assert.equal(mr.current, oldRoute);
-    assert.equal(mr.current.url.pathname, env.window.location.pathname);
+    assert.equal(mr.current.url.pathname, getEnv().window.location.pathname);
 });
 
 
 test("popstate", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     // Start router
     let mr = new MockRouter();
@@ -211,7 +211,7 @@ test("popstate", async () => {
 
 test("cancel navigate backwards", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     // Start router
     let mr = new MockRouter();
@@ -226,7 +226,7 @@ test("cancel navigate backwards", async () => {
     await mr.go(-1);
     assert.equal(mr.current.url.pathname, "/cancel_leave");
     assert.equal(mr.current.state.sequence, 1);
-    assert.equal(mr.current.url.pathname, env.window.location.pathname);
+    assert.equal(mr.current.url.pathname, getEnv().window.location.pathname);
 });
 
 
@@ -234,7 +234,7 @@ test("cancel navigate backwards", async () => {
 
 test("cancel navigate forwards", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     // Start router
     let mr = new MockRouter();
@@ -253,13 +253,13 @@ test("cancel navigate forwards", async () => {
 
     assert.equal(mr.current.url.pathname, "/foo");
     assert.equal(mr.current.state.sequence, 1);
-    assert.equal(mr.current.url.pathname, env.window.location.pathname);
+    assert.equal(mr.current.url.pathname, getEnv().window.location.pathname);
 });
 
 
 test("view state restoration (via router)", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     let viewState;
 
@@ -269,17 +269,17 @@ test("view state restoration (via router)", async () => {
     mr.restoreViewState = (vs) => viewState = vs;
 
     await mr.start(mr);
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.equal(viewState, undefined);
     viewState = "start";
 
     await mr.navigate("/foo");
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.equal(viewState, undefined);
     viewState = "foo";
 
     await mr.navigate("/bar");
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.equal(viewState, undefined);
     viewState = "bar";
     
@@ -297,7 +297,7 @@ test("view state restoration (via router)", async () => {
 
 test("view state restoration (via route handler)", async () => {
 
-    env.reset();
+    getEnv().reset();
 
     let viewState;
 
@@ -308,17 +308,17 @@ test("view state restoration (via route handler)", async () => {
         restoreViewState: (vs) => viewState = vs,
     }
     await mr.start(mr);
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.equal(viewState, undefined);
     viewState = "start";
 
     await mr.navigate("/foo");
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.equal(viewState, undefined);
     viewState = "foo";
 
     await mr.navigate("/bar");
-    await env.window.waitAnimationFrames();
+    await getEnv().window.waitAnimationFrames();
     assert.equal(viewState, undefined);
     viewState = "bar";
     

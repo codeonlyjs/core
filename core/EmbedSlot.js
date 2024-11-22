@@ -2,7 +2,7 @@ import { Plugins } from "./Plugins.js";
 import { is_constructor } from "./Utils.js";
 import { HtmlString } from "./HtmlString.js";
 import { TemplateNode } from "./TemplateNode.js";
-import { env } from "./Environment.js";
+import { getEnv } from "./Environment.js";
 import { TransitionNone } from "./TransitionNone.js";
 
 export class EmbedSlot
@@ -65,8 +65,8 @@ export class EmbedSlot
     {
         this.#context = options.context;
         this.#placeholderConstructor = options.nodes[1];
-        this.#headSentinal = env.document?.createTextNode("");
-        this.#tailSentinal = env.document?.createTextNode("");
+        this.#headSentinal = getEnv().document?.createTextNode("");
+        this.#tailSentinal = getEnv().document?.createTextNode("");
         this.#ownsContent = options.data.ownsContent ?? true;
 
         // Load now
@@ -194,7 +194,7 @@ export class EmbedSlot
         else if (value instanceof HtmlString)
         {
             // Convert node
-            let span = env.document.createElement('span');
+            let span = getEnv().document.createElement('span');
             span.innerHTML = value.html;
             newContentObject = [ ...span.childNodes ];
             newContentObject.forEach(x => x.remove());
@@ -202,14 +202,14 @@ export class EmbedSlot
         else if (typeof(value) === 'string')
         {
             // Convert to node
-            newContentObject = [ env.document.createTextNode(value) ]
+            newContentObject = [ getEnv().document.createTextNode(value) ]
         }
         else if (Array.isArray(value))
         {
             // TODO: assert all are Node objects
             newContentObject = value;
         }
-        else if (env.Node !== undefined && value instanceof env.Node)
+        else if (getEnv().Node !== undefined && value instanceof getEnv().Node)
         {
             // Wrap single node in an array
             newContentObject = [ value ];

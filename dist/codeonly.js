@@ -1,5 +1,3 @@
-let env = null;
-
 class EnvironmentBase extends EventTarget
 {
     constructor()
@@ -42,9 +40,12 @@ class EnvironmentBase extends EventTarget
     }
 }
 
-function setEnvironment(newEnv)
+let getEnv;
+
+
+function setEnvProvider(fnProvideEnvironment)
 {
-    env = newEnv;
+    getEnv = fnProvideEnvironment;
 }
 
 class HtmlString
@@ -101,7 +102,7 @@ class Style
     {
         allStyles.push(css);
         pendingStyles.push(css);
-        env.requestAnimationFrame(mountStyles);
+        getEnv().requestAnimationFrame(mountStyles);
     }
 
     static get all()
@@ -163,7 +164,7 @@ function nextFrame(callback, order)
     // If it's the first one, request animation callback
     if (frameCallbacks.length == 1)
     {
-        env.requestAnimationFrame(function() {
+        getEnv().requestAnimationFrame(function() {
 
             // Capture pending callbacks
             let pending = frameCallbacks;
@@ -197,7 +198,7 @@ class Template
 {
     static compile()
     {
-        return env.compileTemplate(...arguments);
+        return getEnv().compileTemplate(...arguments);
     }
 }
 
@@ -364,7 +365,7 @@ class Component extends EventTarget
         {
             this.#loadError = null;
             this.invalidate();  
-            env.enterLoading();
+            getEnv().enterLoading();
             this.dispatchEvent(new Event("loading"));
         }
         try
@@ -382,7 +383,7 @@ class Component extends EventTarget
             {
                 this.invalidate();
                 this.dispatchEvent(new Event("loaded"));
-                env.leaveLoading();
+                getEnv().leaveLoading();
             }
         }
     }
@@ -1758,10 +1759,10 @@ class TemplateNode
             this.kind = "html";
             this.html = template.html;
 
-            if (env.document)
+            if (getEnv().document)
             {
                 // Use div to parse HTML
-                let div = env.document.createElement('div');
+                let div = getEnv().document.createElement('div');
                 div.innerHTML = template.html;
 
                 // Store nodes
@@ -2013,8 +2014,8 @@ class EmbedSlot
     {
         this.#context = options.context;
         this.#placeholderConstructor = options.nodes[1];
-        this.#headSentinal = env.document?.createTextNode("");
-        this.#tailSentinal = env.document?.createTextNode("");
+        this.#headSentinal = getEnv().document?.createTextNode("");
+        this.#tailSentinal = getEnv().document?.createTextNode("");
         this.#ownsContent = options.data.ownsContent ?? true;
 
         // Load now
@@ -2142,7 +2143,7 @@ class EmbedSlot
         else if (value instanceof HtmlString)
         {
             // Convert node
-            let span = env.document.createElement('span');
+            let span = getEnv().document.createElement('span');
             span.innerHTML = value.html;
             newContentObject = [ ...span.childNodes ];
             newContentObject.forEach(x => x.remove());
@@ -2150,14 +2151,14 @@ class EmbedSlot
         else if (typeof(value) === 'string')
         {
             // Convert to node
-            newContentObject = [ env.document.createTextNode(value) ];
+            newContentObject = [ getEnv().document.createTextNode(value) ];
         }
         else if (Array.isArray(value))
         {
             // TODO: assert all are Node objects
             newContentObject = value;
         }
-        else if (env.Node !== undefined && value instanceof env.Node)
+        else if (getEnv().Node !== undefined && value instanceof getEnv().Node)
         {
             // Wrap single node in an array
             newContentObject = [ value ];
@@ -2563,8 +2564,8 @@ class ForEachBlock
         this.itemDoms = [];
 
         // Sentinal nodes
-        this.#headSentinal = env.document?.createComment(" enter foreach block ");
-        this.#tailSentinal = env.document?.createComment(" leave foreach block ");
+        this.#headSentinal = getEnv().document?.createComment(" enter foreach block ");
+        this.#tailSentinal = getEnv().document?.createComment(" leave foreach block ");
 
         // Single vs multi-root op helpers
         if (this.itemConstructor.isSingleRoot)
@@ -3044,7 +3045,7 @@ function Placeholder(comment)
 {
     let fn = function()
     {
-        let node = env.document?.createComment(comment);
+        let node = getEnv().document?.createComment(comment);
 
         return {
             get rootNode() { return node; },
@@ -3260,7 +3261,7 @@ class IfBlock
         // Multi-root if blocks need a sentinal to mark position
         // in case one of the multi-root branches has no elements
         if (!this.isSingleRoot)
-            this.headSentinal = env.document?.createComment(" if ");
+            this.headSentinal = getEnv().document?.createComment(" if ");
     }
 
     destroy()
@@ -4173,7 +4174,7 @@ function compileTemplate(rootTemplate, compilerOptions)
         if (!context)
             context = {};
         context.$instanceId = _nextInstanceId++;
-        return templateFunction(env, code.refs, TemplateHelpers, context ?? {});
+        return templateFunction(getEnv(), code.refs, TemplateHelpers, context ?? {});
     };
 
     // Store meta data about the component on the function since we need this before 
@@ -4200,7 +4201,8 @@ class BrowserEnvironment extends EnvironmentBase
 
 if (typeof(document) !== "undefined")
 {
-    setEnvironment(new BrowserEnvironment());
+    let env = new BrowserEnvironment();
+    setEnvironment(() => env);
 }
 
 // Converts a URL pattern string to a regex
@@ -4707,7 +4709,7 @@ class WebHistoryRouterDriver
         this.#router = router;
 
         // Listen for clicks on links
-        env.document.body.addEventListener("click", (ev) => {
+        getEnv().document.body.addEventListener("click", (ev) => {
             if (ev.defaultPrevented)
                 return;
             let a = ev.target.closest("a");
@@ -4717,8 +4719,8 @@ class WebHistoryRouterDriver
                     return;
 
                 let href = a.getAttribute("href");
-                let url = new URL(href, env.window.location);
-                if (url.origin == env.window.location.origin)
+                let url = new URL(href, getEnv().window.location);
+                if (url.origin == getEnv().window.location.origin)
                 {
                     try
                     {
@@ -4741,7 +4743,7 @@ class WebHistoryRouterDriver
         });
 
         // Listen for pop state
-        env.window.addEventListener("popstate", async (event) => {
+        getEnv().window.addEventListener("popstate", async (event) => {
 
             if (this.#ignoreNextPop)
             {
@@ -4751,7 +4753,7 @@ class WebHistoryRouterDriver
 
             // Load
             let loadId = this.#loadId + 1;
-            let url = this.#router.internalize(new URL(env.window.location));
+            let url = this.#router.internalize(new URL(getEnv().window.location));
             let state = event.state ?? { sequence: this.current.state.sequence + 1 };
             if (!await this.load(url, state, { navMode: "pop" }))
             {
@@ -4761,17 +4763,17 @@ class WebHistoryRouterDriver
                 if (loadId == this.#loadId)
                 {
                     this.#ignoreNextPop = true;
-                    env.window.history.go(this.current.state.sequence - state.sequence);
+                    getEnv().window.history.go(this.current.state.sequence - state.sequence);
                 }
             }
         });
 
 
         // Do initial navigation
-        let url = this.#router.internalize(new URL(env.window.location));
-        let state = env.window.history.state ?? { sequence: 0 };
+        let url = this.#router.internalize(new URL(getEnv().window.location));
+        let state = getEnv().window.history.state ?? { sequence: 0 };
         let route = await this.load(url, state, { navMode: "start" });
-        env.window.history.replaceState(state, null);
+        getEnv().window.history.replaceState(state, null);
         return route;
     }
 
@@ -4791,10 +4793,10 @@ class WebHistoryRouterDriver
     {
         if (this.current.state.sequence == 0)
         {
-            let url = new URL("/", this.#router.internalize(new URL(env.window.location)));
+            let url = new URL("/", this.#router.internalize(new URL(getEnv().window.location)));
             let state = { sequence: 0 };
 
-            env.window.history.replaceState(
+            getEnv().window.history.replaceState(
                 state, 
                 "", 
                 this.#router.externalize(url),
@@ -4804,14 +4806,14 @@ class WebHistoryRouterDriver
         }
         else
         {
-            env.window.history.back();
+            getEnv().window.history.back();
         }
     }
 
     replace(url)
     {
         if (typeof(url) === 'string')
-            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
+            url = new URL(url, this.#router.internalize(new URL(getEnv().window.location)));
 
         if (url !== undefined)
         {
@@ -4820,7 +4822,7 @@ class WebHistoryRouterDriver
             url = this.#router.externalize(url).href;
         }
 
-        env.window.history.replaceState(
+        getEnv().window.history.replaceState(
             this.current.state, 
             "", 
             url
@@ -4832,7 +4834,7 @@ class WebHistoryRouterDriver
         // Convert to URL
         if (typeof(url) === 'string')
         {
-            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
+            url = new URL(url, this.#router.internalize(new URL(getEnv().window.location)));
         }
 
         // Load the route
@@ -4844,7 +4846,7 @@ class WebHistoryRouterDriver
             return route;
 
         // Update history
-        env.window.history.pushState(
+        getEnv().window.history.pushState(
             route.state, 
             "", 
             this.#router.externalize(url)
@@ -4913,12 +4915,12 @@ class ViewStateRestoration
         this.#router = router;
 
         // Disable browser scroll restoration
-        if (env.window.history.scrollRestoration) {
-           env.window.history.scrollRestoration = "manual";
+        if (getEnv().window.history.scrollRestoration) {
+           getEnv().window.history.scrollRestoration = "manual";
         }
 
         // Reload saved view states from session storage
-        let savedViewStates = env.window.sessionStorage.getItem("codeonly-view-states");
+        let savedViewStates = getEnv().window.sessionStorage.getItem("codeonly-view-states");
         if (savedViewStates)
         {
             this.#viewStates = JSON.parse(savedViewStates);
@@ -4949,7 +4951,7 @@ class ViewStateRestoration
                 this.saveViewStates();
             }
             // Load view state
-            whenLoaded(env, () => {
+            whenLoaded(getEnv(), () => {
                 nextFrame(() => {
 
                     // Restore view state
@@ -4969,7 +4971,7 @@ class ViewStateRestoration
             });
         });
 
-        env.window.addEventListener("beforeunload", (event) => {
+        getEnv().window.addEventListener("beforeunload", (event) => {
             this.captureViewState();
         });
 
@@ -4994,8 +4996,8 @@ class ViewStateRestoration
     }
     saveViewStates()
     {
-        env.window.sessionStorage.setItem("codeonly-view-states", JSON.stringify(this.#viewStates));
+        getEnv().window.sessionStorage.setItem("codeonly-view-states", JSON.stringify(this.#viewStates));
     }
 }
 
-export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, HtmlString, Notify, PageCache, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, css, env, html, htmlEncode, input, nextFrame, notify, postNextFrame, setEnvironment, transition, urlPattern };
+export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, HtmlString, Notify, PageCache, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, css, getEnv, html, htmlEncode, input, nextFrame, notify, postNextFrame, setEnvProvider, transition, urlPattern };

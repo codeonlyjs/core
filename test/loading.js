@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Component, env } from "../core/index.js";
+import { Component, getEnv } from "../core/index.js";
 
 
 test("loading", async () => {
@@ -37,11 +37,11 @@ test("loaded event", async () => {
     });
 
     let envloaded = 0;
-    env.addEventListener("loaded", (ev) => {
+    getEnv().addEventListener("loaded", (ev) => {
         envloaded++;
     });
     let envloading = 0;
-    env.addEventListener("loading", (ev) => {
+    getEnv().addEventListener("loading", (ev) => {
         envloading++;
     });
 
@@ -49,7 +49,7 @@ test("loaded event", async () => {
         assert.equal(comp.loading, true);
         assert.equal(loading, 1);
 
-        assert.equal(env.loading, true);
+        assert.equal(getEnv().loading, true);
         assert.equal(envloading, 1);
         return 23;
     });
@@ -60,7 +60,7 @@ test("loaded event", async () => {
     assert.equal(loaded, 1);
     assert.equal(loading, 1);
 
-    assert.equal(env.loading, false);
+    assert.equal(getEnv().loading, false);
     assert.equal(envloaded, 1);
     assert.equal(envloading, 1);
 
