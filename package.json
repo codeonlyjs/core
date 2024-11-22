@@ -2,11 +2,11 @@
   "name": "@codeonlyjs/core",
   "version": "0.0.66",
   "description": "A simple, lightweight, code-only front-end Web framework.",
-  "main": "./codeonly.js",
+  "main": "./index.js",
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "rollup": "rollup -c",
+    "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
     "build": "zx build.js"
   },
   "author": "Topten Software",

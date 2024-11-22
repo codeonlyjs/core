@@ -1,6 +1,6 @@
-import { env } from "./Environment.js";
-import { whenLoaded } from "./Utils.js";
-import { nextFrame } from "./nextFrame.js";
+import { env } from "../core/Environment.js";
+import { whenLoaded } from "../core/Utils.js";
+import { nextFrame } from "../core/nextFrame.js";
 import { DocumentScrollPosition } from "./DocumentScrollPosition.js";
 
 export class ViewStateRestoration

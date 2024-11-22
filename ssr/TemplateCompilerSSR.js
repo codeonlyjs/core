@@ -1,17 +1,17 @@
-import { camel_to_dash } from "./Utils.js";
-import { HtmlString, html } from "./HtmlString.js";
-import { htmlEncode } from "./htmlEncode.js";
-import { CloakedValue} from "./CloakedValue.js";
-import { ClosureBuilder } from "./ClosureBuilder.js";
-import { TemplateHelpers } from "./TemplateHelpers.js";
-import { TemplateNode } from "./TemplateNode.js";
-import { env } from "./Environment.js";
-import { member } from "./Utils.js";
-import { TemplateLiteralBuilder} from "./TemplateLiteralBuilder.js";
+import { camel_to_dash } from "../core/Utils.js";
+import { HtmlString, html } from "../core/HtmlString.js";
+import { htmlEncode } from "../core/htmlEncode.js";
+import { CloakedValue} from "../core/CloakedValue.js";
+import { ClosureBuilder } from "../core/ClosureBuilder.js";
+import { TemplateHelpers } from "../core/TemplateHelpers.js";
+import { TemplateNode } from "../core/TemplateNode.js";
+import { env } from "../core/Environment.js";
+import { member } from "../core/Utils.js";
+import { TemplateLiteralBuilder} from "../core/TemplateLiteralBuilder.js";
 
-import "./EmbedSlot.js";
-import "./ForEachBlock.js";
-import "./IfBlock.js";
+import "../core/EmbedSlot.js";
+import "../core/ForEachBlock.js";
+import "../core/IfBlock.js";
 
 export function compileTemplateCode(rootTemplate, compilerOptions)
 {

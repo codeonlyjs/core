@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template } from "../codeonly.js";
+import { Template } from "../core/index.js";
 
 
 test("Root Export", () => {

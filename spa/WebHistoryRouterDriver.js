@@ -1,4 +1,4 @@
-import { env } from "./Environment.js";
+import { env } from "../core/Environment.js";
 
 export class WebHistoryRouterDriver
 {

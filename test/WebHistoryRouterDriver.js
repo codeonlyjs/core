@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 
-import { WebHistoryRouterDriver } from "../core/WebHistoryRouterDriver.js";
-import { ViewStateRestoration } from "../core/ViewStateRestoration.js";
+import { WebHistoryRouterDriver } from "../spa/WebHistoryRouterDriver.js";
+import { ViewStateRestoration } from "../spa/ViewStateRestoration.js";
 import "./mockdom.js";
 import { env } from "../core/Environment.js";
 

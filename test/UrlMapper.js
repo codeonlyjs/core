@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 
-import { UrlMapper } from "../core/UrlMapper.js";
+import { UrlMapper } from "../spa/UrlMapper.js";
 
 test("internalize with base", () => {
     let um = new UrlMapper({ base: "/base/" });

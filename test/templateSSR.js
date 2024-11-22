@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
-import { SSREnvironment } from "../core/SSREnvironment.js";
-import { compileTemplate } from "../core/TemplateCompilerSSR.js";
+import { SSREnvironment } from "../ssr/SSREnvironment.js";
+import { compileTemplate } from "../ssr/TemplateCompilerSSR.js";
 import { html } from "../core/HtmlString.js";
 import { Component } from "../core/Component.js";
 import { env, setEnvironment } from "../core/Environment.js";

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { env, nextFrame, postNextFrame } from "../codeonly.js";
+import { env, nextFrame, postNextFrame } from "../core/index.js";
 
 
 test("single", async () => {

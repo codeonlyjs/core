@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Component } from "../codeonly.js";
+import { Template, Component } from "../core/index.js";
 
 let mountedInstances = [];
 

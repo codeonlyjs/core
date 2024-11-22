@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Component, env } from "../codeonly.js";
+import { Template, Component, env } from "../core/index.js";
 import { EmbedSlot } from "../core/EmbedSlot.js";
 
 

@@ -1,4 +1,4 @@
-import { EnvironmentBase } from "./Environment.js";
+import { EnvironmentBase } from "../core/Environment.js";
 import { compileTemplate } from "./TemplateCompilerSSR.js";
 
 export class SSREnvironment extends EnvironmentBase

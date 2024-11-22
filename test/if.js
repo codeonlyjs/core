@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, env } from "../codeonly.js";
+import { Template, env } from "../core/index.js";
 
 
 test("If (true)", () => {

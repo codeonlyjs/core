@@ -1,8 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, html } from "../codeonly.js";
-
+import { Template, html } from "../core/index.js";
 
 test("Basic", () => {
 

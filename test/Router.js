@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
-import { Router } from "../core/Router.js";
-import { UrlMapper } from "../core/UrlMapper.js";
+import { Router } from "../spa/Router.js";
+import { UrlMapper } from "../spa/UrlMapper.js";
 
 function asyncOp()
 {
