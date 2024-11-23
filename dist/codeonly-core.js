@@ -40,12 +40,12 @@ class EnvironmentBase extends EventTarget
     }
 }
 
-let getEnv;
+let env;
 
 
 function setEnvProvider(fnProvideEnvironment)
 {
-    getEnv = fnProvideEnvironment;
+    env = fnProvideEnvironment;
 }
 
 class HtmlString
@@ -102,7 +102,7 @@ class Style
     {
         allStyles.push(css);
         pendingStyles.push(css);
-        getEnv().requestAnimationFrame(mountStyles);
+        env.requestAnimationFrame(mountStyles);
     }
 
     static get all()
@@ -164,7 +164,7 @@ function nextFrame(callback, order)
     // If it's the first one, request animation callback
     if (frameCallbacks.length == 1)
     {
-        getEnv().requestAnimationFrame(function() {
+        env.requestAnimationFrame(function() {
 
             // Capture pending callbacks
             let pending = frameCallbacks;
@@ -198,7 +198,7 @@ class Template
 {
     static compile()
     {
-        return getEnv().compileTemplate(...arguments);
+        return env.compileTemplate(...arguments);
     }
 }
 
@@ -365,7 +365,7 @@ class Component extends EventTarget
         {
             this.#loadError = null;
             this.invalidate();  
-            getEnv().enterLoading();
+            env.enterLoading();
             this.dispatchEvent(new Event("loading"));
         }
         try
@@ -383,7 +383,7 @@ class Component extends EventTarget
             {
                 this.invalidate();
                 this.dispatchEvent(new Event("loaded"));
-                getEnv().leaveLoading();
+                env.leaveLoading();
             }
         }
     }
@@ -1751,10 +1751,10 @@ class TemplateNode
             this.kind = "html";
             this.html = template.html;
 
-            if (getEnv().document)
+            if (env.document)
             {
                 // Use div to parse HTML
-                let div = getEnv().document.createElement('div');
+                let div = env.document.createElement('div');
                 div.innerHTML = template.html;
 
                 // Store nodes
@@ -2006,8 +2006,8 @@ class EmbedSlot
     {
         this.#context = options.context;
         this.#placeholderConstructor = options.nodes[1];
-        this.#headSentinal = getEnv().document?.createTextNode("");
-        this.#tailSentinal = getEnv().document?.createTextNode("");
+        this.#headSentinal = env.document?.createTextNode("");
+        this.#tailSentinal = env.document?.createTextNode("");
         this.#ownsContent = options.data.ownsContent ?? true;
 
         // Load now
@@ -2135,7 +2135,7 @@ class EmbedSlot
         else if (value instanceof HtmlString)
         {
             // Convert node
-            let span = getEnv().document.createElement('span');
+            let span = env.document.createElement('span');
             span.innerHTML = value.html;
             newContentObject = [ ...span.childNodes ];
             newContentObject.forEach(x => x.remove());
@@ -2143,14 +2143,14 @@ class EmbedSlot
         else if (typeof(value) === 'string')
         {
             // Convert to node
-            newContentObject = [ getEnv().document.createTextNode(value) ];
+            newContentObject = [ env.document.createTextNode(value) ];
         }
         else if (Array.isArray(value))
         {
             // TODO: assert all are Node objects
             newContentObject = value;
         }
-        else if (getEnv().Node !== undefined && value instanceof getEnv().Node)
+        else if (env.Node !== undefined && value instanceof env.Node)
         {
             // Wrap single node in an array
             newContentObject = [ value ];
@@ -2556,8 +2556,8 @@ class ForEachBlock
         this.itemDoms = [];
 
         // Sentinal nodes
-        this.#headSentinal = getEnv().document?.createComment(" enter foreach block ");
-        this.#tailSentinal = getEnv().document?.createComment(" leave foreach block ");
+        this.#headSentinal = env.document?.createComment(" enter foreach block ");
+        this.#tailSentinal = env.document?.createComment(" leave foreach block ");
 
         // Single vs multi-root op helpers
         if (this.itemConstructor.isSingleRoot)
@@ -3037,7 +3037,7 @@ function Placeholder(comment)
 {
     let fn = function()
     {
-        let node = getEnv().document?.createComment(comment);
+        let node = env.document?.createComment(comment);
 
         return {
             get rootNode() { return node; },
@@ -3253,7 +3253,7 @@ class IfBlock
         // Multi-root if blocks need a sentinal to mark position
         // in case one of the multi-root branches has no elements
         if (!this.isSingleRoot)
-            this.headSentinal = getEnv().document?.createComment(" if ");
+            this.headSentinal = env.document?.createComment(" if ");
     }
 
     destroy()
@@ -4166,7 +4166,7 @@ function compileTemplate(rootTemplate, compilerOptions)
         if (!context)
             context = {};
         context.$instanceId = _nextInstanceId++;
-        return templateFunction(getEnv(), code.refs, TemplateHelpers, context ?? {});
+        return templateFunction(env, code.refs, TemplateHelpers, context ?? {});
     };
 
     // Store meta data about the component on the function since we need this before 
@@ -4197,4 +4197,4 @@ if (typeof(document) !== "undefined")
     setEnvironment(() => env);
 }
 
-export { $, BrowserEnvironment, CloakedValue, Component, EnvironmentBase, HtmlString, Notify, Style, Template, TransitionCss, TransitionNone, cloak, css, getEnv, html, htmlEncode, input, nextFrame, notify, postNextFrame, setEnvProvider, transition };
+export { $, BrowserEnvironment, CloakedValue, Component, EnvironmentBase, HtmlString, Notify, Style, Template, TransitionCss, TransitionNone, cloak, css, env, html, htmlEncode, input, nextFrame, notify, postNextFrame, setEnvProvider, transition };

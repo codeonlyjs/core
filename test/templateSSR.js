@@ -4,14 +4,14 @@ import { SSREnvironment } from "../ssr/SSREnvironment.js";
 import { compileTemplate } from "../ssr/TemplateCompilerSSR.js";
 import { html } from "../core/HtmlString.js";
 import { Component } from "../core/Component.js";
-import { getEnv, setEnvProvider } from "../core/Environment.js";
+import { env, setEnvironment } from "../core/Environment.js";
 import { Window } from "../minidom/Window.js";
 
 let e = new SSREnvironment();
-setEnvProvider(() => e);
+setEnvironment(e);
 
 let w = new Window();
-getEnv().requestAnimationFrame = w.requestAnimationFrame.bind(w);
+env.requestAnimationFrame = w.requestAnimationFrame.bind(w);
 
 
 test("Element (bare)", () => {

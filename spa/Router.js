@@ -1,9 +1,14 @@
-import { getEnv } from "../core/Environment.js";
 import { urlPattern } from "./urlPattern.js";
 
 export class Router
 {   
-    constructor(driver, handlers)
+    constructor(handlers)
+    {
+        if (handlers)
+            this.register(handlers);
+    }
+
+    start(driver)
     {
         this.#driver = driver;
         if (driver)
@@ -12,12 +17,6 @@ export class Router
             this.replace = driver.replace.bind(driver);
             this.back = driver.back.bind(driver);
         }
-        if (handlers)
-            this.register(handlers);
-    }
-
-    start()
-    {
         return this.#driver.start(this);
     }
 
@@ -49,22 +48,48 @@ export class Router
     internalize(url) { return this.#mapUrl(url, "internalize"); }
     externalize(url) { return this.#mapUrl(url, "externalize"); }
 
+    #_state = { c: null, p: null, l: [] }
+    
+    get #state()
+    {
+        return this.#driver?.state ?? this.#_state;
+    }
+
+    get #current()
+    {
+        return this.#state.c;
+    }
+    set #current(value)
+    {
+        this.#state.c = value;
+    }
+
+    get #pending()
+    {
+        return this.#state.p;
+    }
+    set #pending(value)
+    {
+        this.#state.p = value;
+    }
+    get #listeners()
+    {
+        return this.#state.l;
+    }
+
     // The current route
-    #current = null;
     get current()
     {
         return this.#current;
     }
 
     // The route currently being switched to
-    #pending = null;
     get pending()
     {
         return this.#pending;
     }
 
 
-    #listeners = [];
     addEventListener(event, handler)
     {
         this.#listeners.push({ event, handler });

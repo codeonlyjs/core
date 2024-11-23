@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, getEnv } from "../core/index.js";
+import { Template, env } from "../core/index.js";
 
 
 test("Fragment", () => {
@@ -27,7 +27,7 @@ test("Fragment (with conditional)", () => {
     assert.equal(r.rootNodes[0].nodeType, 8);
 
     // Attach the root nodes to a div so replaceWith works
-    let outer = getEnv().document.createElement("DIV");
+    let outer = env.document.createElement("DIV");
     outer.append(...r.rootNodes);
 
     // Condition true
@@ -92,7 +92,7 @@ test("Double Nested Fragment (with conditional)", () => {
     })();
 
     // Attach the root nodes to a div so replaceWith works
-    let outer = getEnv().document.createElement("DIV");
+    let outer = env.document.createElement("DIV");
     outer.append(...r.rootNodes);
 
     assert.equal(outer.childNodes.length, 7);

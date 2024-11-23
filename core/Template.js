@@ -1,10 +1,10 @@
-import { getEnv } from "./Environment.js";
+import { env } from "./Environment.js";
 
 
 export class Template
 {
     static compile()
     {
-        return getEnv().compileTemplate(...arguments);
+        return env.compileTemplate(...arguments);
     }
 }

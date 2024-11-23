@@ -41,11 +41,11 @@ export class EnvironmentBase extends EventTarget
     }
 }
 
-export let getEnv;
+export let env;
 
 
-export function setEnvProvider(fnProvideEnvironment)
+export function setEnvironment(newEnv)
 {
-    getEnv = fnProvideEnvironment;
+    env = newEnv;
 }
 

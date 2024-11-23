@@ -1,4 +1,4 @@
-import { EnvironmentBase, setEnvProvider } from "./Environment.js";
+import { EnvironmentBase, setEnvironment } from "./Environment.js";
 import { compileTemplate } from "./TemplateCompiler.js";
 
 export class BrowserEnvironment extends EnvironmentBase
@@ -19,6 +19,6 @@ export class BrowserEnvironment extends EnvironmentBase
 if (typeof(document) !== "undefined")
 {
     let env = new BrowserEnvironment();
-    setEnvironment(() => env);
+    setEnvironment(env);
 }
 

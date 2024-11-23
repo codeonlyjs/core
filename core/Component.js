@@ -1,6 +1,6 @@
 import { nextFrame } from "./nextFrame.js";
 import { Template } from "./Template.js";
-import { getEnv } from "./Environment.js";
+import { env } from "./Environment.js";
 
 export class Component extends EventTarget
 {
@@ -165,7 +165,7 @@ export class Component extends EventTarget
         {
             this.#loadError = null;
             this.invalidate();  
-            getEnv().enterLoading();
+            env.enterLoading();
             this.dispatchEvent(new Event("loading"));
         }
         try
@@ -183,7 +183,7 @@ export class Component extends EventTarget
             {
                 this.invalidate();
                 this.dispatchEvent(new Event("loaded"));
-                getEnv().leaveLoading();
+                env.leaveLoading();
             }
         }
     }

@@ -1,4 +1,5 @@
-import { getEnv } from "../core/Environment.js";
+import { env } from "../core/Environment.js";
+import { ViewStateRestoration } from "./ViewStateRestoration.js";
 
 export class WebHistoryRouterDriver
 {
@@ -6,8 +7,11 @@ export class WebHistoryRouterDriver
     {
         this.#router = router;
 
+        // Connect view state restoration
+        new ViewStateRestoration(router);
+
         // Listen for clicks on links
-        getEnv().document.body.addEventListener("click", (ev) => {
+        env.document.body.addEventListener("click", (ev) => {
             if (ev.defaultPrevented)
                 return;
             let a = ev.target.closest("a");
@@ -17,8 +21,8 @@ export class WebHistoryRouterDriver
                     return;
 
                 let href = a.getAttribute("href");
-                let url = new URL(href, getEnv().window.location);
-                if (url.origin == getEnv().window.location.origin)
+                let url = new URL(href, env.window.location);
+                if (url.origin == env.window.location.origin)
                 {
                     try
                     {
@@ -41,7 +45,7 @@ export class WebHistoryRouterDriver
         });
 
         // Listen for pop state
-        getEnv().window.addEventListener("popstate", async (event) => {
+        env.window.addEventListener("popstate", async (event) => {
 
             if (this.#ignoreNextPop)
             {
@@ -51,7 +55,7 @@ export class WebHistoryRouterDriver
 
             // Load
             let loadId = this.#loadId + 1;
-            let url = this.#router.internalize(new URL(getEnv().window.location));
+            let url = this.#router.internalize(new URL(env.window.location));
             let state = event.state ?? { sequence: this.current.state.sequence + 1 };
             if (!await this.load(url, state, { navMode: "pop" }))
             {
@@ -61,17 +65,17 @@ export class WebHistoryRouterDriver
                 if (loadId == this.#loadId)
                 {
                     this.#ignoreNextPop = true;
-                    getEnv().window.history.go(this.current.state.sequence - state.sequence);
+                    env.window.history.go(this.current.state.sequence - state.sequence);
                 }
             }
         });
 
 
         // Do initial navigation
-        let url = this.#router.internalize(new URL(getEnv().window.location));
-        let state = getEnv().window.history.state ?? { sequence: 0 };
+        let url = this.#router.internalize(new URL(env.window.location));
+        let state = env.window.history.state ?? { sequence: 0 };
         let route = await this.load(url, state, { navMode: "start" });
-        getEnv().window.history.replaceState(state, null);
+        env.window.history.replaceState(state, null);
         return route;
     }
 
@@ -91,10 +95,10 @@ export class WebHistoryRouterDriver
     {
         if (this.current.state.sequence == 0)
         {
-            let url = new URL("/", this.#router.internalize(new URL(getEnv().window.location)));
+            let url = new URL("/", this.#router.internalize(new URL(env.window.location)));
             let state = { sequence: 0 };
 
-            getEnv().window.history.replaceState(
+            env.window.history.replaceState(
                 state, 
                 "", 
                 this.#router.externalize(url),
@@ -104,14 +108,14 @@ export class WebHistoryRouterDriver
         }
         else
         {
-            getEnv().window.history.back();
+            env.window.history.back();
         }
     }
 
     replace(url)
     {
         if (typeof(url) === 'string')
-            url = new URL(url, this.#router.internalize(new URL(getEnv().window.location)));
+            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
 
         if (url !== undefined)
         {
@@ -120,7 +124,7 @@ export class WebHistoryRouterDriver
             url = this.#router.externalize(url).href
         }
 
-        getEnv().window.history.replaceState(
+        env.window.history.replaceState(
             this.current.state, 
             "", 
             url
@@ -132,7 +136,7 @@ export class WebHistoryRouterDriver
         // Convert to URL
         if (typeof(url) === 'string')
         {
-            url = new URL(url, this.#router.internalize(new URL(getEnv().window.location)));
+            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
         }
 
         // Load the route
@@ -144,7 +148,7 @@ export class WebHistoryRouterDriver
             return route;
 
         // Update history
-        getEnv().window.history.pushState(
+        env.window.history.pushState(
             route.state, 
             "", 
             this.#router.externalize(url)

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, getEnv } from "../core/index.js";
+import { Template, env } from "../core/index.js";
 
 
 test("If (true)", () => {
@@ -204,7 +204,7 @@ test("If at root", () => {
         if: () => val,
     })();
 
-    let outer = getEnv().document.createElement("DIV");
+    let outer = env.document.createElement("DIV");
     outer.append(r.rootNode);
 
     assert.equal(r.rootNode.nodeType, 1);
@@ -228,7 +228,7 @@ test("If at root (true)", () => {
         if: true,
     })();
 
-    let outer = getEnv().document.createElement("DIV");
+    let outer = env.document.createElement("DIV");
     outer.append(r.rootNode);
 
     assert.equal(r.rootNode.nodeType, 1);
@@ -241,7 +241,7 @@ test("If at root (false)", () => {
         if: false,
     })();
 
-    let outer = getEnv().document.createElement("DIV");
+    let outer = env.document.createElement("DIV");
     outer.append(r.rootNode);
 
     assert.equal(r.rootNode.nodeType, 8);
@@ -261,7 +261,7 @@ test("If on fragment at root", () => {
         ]
     })();
 
-    let outer = getEnv().document.createElement("DIV");
+    let outer = env.document.createElement("DIV");
     outer.append(...r.rootNodes);
 
     assert.equal(r.rootNodes.length, 1);

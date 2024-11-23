@@ -1,7 +1,7 @@
 import { Plugins } from "./Plugins.js";
 import { Placeholder } from "./Placeholder.js";
 import { TemplateNode } from "./TemplateNode.js";
-import { getEnv } from "./Environment.js";
+import { env } from "./Environment.js";
 import { TransitionNone } from "./TransitionNone.js";
 
 export class IfBlock
@@ -203,7 +203,7 @@ export class IfBlock
         // Multi-root if blocks need a sentinal to mark position
         // in case one of the multi-root branches has no elements
         if (!this.isSingleRoot)
-            this.headSentinal = getEnv().document?.createComment(" if ");
+            this.headSentinal = env.document?.createComment(" if ");
     }
 
     destroy()

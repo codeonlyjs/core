@@ -1,14 +1,14 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { getEnv, nextFrame, postNextFrame } from "../core/index.js";
+import { env, nextFrame, postNextFrame } from "../core/index.js";
 
 
 test("single", async () => {
 
     let invoked = false;
     nextFrame(() => { invoked = true });
-    await getEnv().window.waitAnimationFrames();
+    await env.window.waitAnimationFrames();
     assert(invoked);
 
 });
@@ -19,7 +19,7 @@ test("multiple", async () => {
     nextFrame(() => { invoked++ });
     nextFrame(() => { invoked++ });
     nextFrame(() => { invoked++ });
-    await getEnv().window.waitAnimationFrames();
+    await env.window.waitAnimationFrames();
     assert.equal(invoked, 3);
 
 });
@@ -33,7 +33,7 @@ test("sorted", async () => {
     nextFrame(() => { order.push(0); }, 0);
     nextFrame(() => { order.push(-100); }, -100);
     nextFrame(() => { order.push(100); }, 100);
-    await getEnv().window.waitAnimationFrames();
+    await env.window.waitAnimationFrames();
     assert.deepStrictEqual(order, [-100, -100, 0, 0, 100, 100]);
 
 });
@@ -63,6 +63,6 @@ test("postNextFrame (delayed)", async () => {
     assert.deepEqual(invoked, [0]);
 
     // Dispatched
-    await getEnv().window.waitAnimationFrames();
+    await env.window.waitAnimationFrames();
     assert.deepEqual(invoked, [0, 1, 1, 3]);
 });

@@ -1,4 +1,4 @@
-import { EnvironmentBase, setEnvProvider  } from "../core/Environment.js";
+import { EnvironmentBase, setEnvironment  } from "../core/Environment.js";
 import { compileTemplate } from "../core/TemplateCompiler.js";
 import { Document, Window, Node } from "../minidom/minidom.js";
 
@@ -147,7 +147,7 @@ class MockEnvironment extends EnvironmentBase
 function reset_mock_environment()
 {
     let env = new MockEnvironment();
-    setEnvProvider(() => env);
+    setEnvironment(env);
 }
 
 reset_mock_environment();

@@ -8,7 +8,7 @@ export default {
         replace({
             preventAssignment: true,
             values: {
-                'getEnv().browser': true,
+                'env.browser': true,
             }
         }),
         bundleSize(),
