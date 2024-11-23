@@ -1,4 +1,5 @@
 import { urlPattern } from "./urlPattern.js";
+import { WebHistoryRouterDriver } from "./WebHistoryRouterDriver.js";
 
 export class Router
 {   
@@ -10,6 +11,9 @@ export class Router
 
     start(driver)
     {
+        if (!driver)
+            driver = new WebHistoryRouterDriver();
+            
         this.#driver = driver;
         if (driver)
         {
@@ -327,3 +331,5 @@ export class Router
     }
 }
 
+
+export let router = new Router();
