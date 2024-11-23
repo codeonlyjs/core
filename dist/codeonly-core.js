@@ -43,9 +43,9 @@ class EnvironmentBase extends EventTarget
 let env;
 
 
-function setEnvProvider(fnProvideEnvironment)
+function setEnvironment(newEnv)
 {
-    env = fnProvideEnvironment;
+    env = newEnv;
 }
 
 class HtmlString
@@ -4194,7 +4194,7 @@ class BrowserEnvironment extends EnvironmentBase
 if (typeof(document) !== "undefined")
 {
     let env = new BrowserEnvironment();
-    setEnvironment(() => env);
+    setEnvironment(env);
 }
 
-export { $, BrowserEnvironment, CloakedValue, Component, EnvironmentBase, HtmlString, Notify, Style, Template, TransitionCss, TransitionNone, cloak, css, env, html, htmlEncode, input, nextFrame, notify, postNextFrame, setEnvProvider, transition };
+export { $, BrowserEnvironment, CloakedValue, Component, EnvironmentBase, HtmlString, Notify, Style, Template, TransitionCss, TransitionNone, cloak, css, env, html, htmlEncode, input, nextFrame, notify, postNextFrame, setEnvironment, transition };

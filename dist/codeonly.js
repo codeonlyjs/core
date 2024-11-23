@@ -43,9 +43,9 @@ class EnvironmentBase extends EventTarget
 let env;
 
 
-function setEnvProvider(fnProvideEnvironment)
+function setEnvironment(newEnv)
 {
-    env = fnProvideEnvironment;
+    env = newEnv;
 }
 
 class HtmlString
@@ -4202,7 +4202,7 @@ class BrowserEnvironment extends EnvironmentBase
 if (typeof(document) !== "undefined")
 {
     let env = new BrowserEnvironment();
-    setEnvironment(() => env);
+    setEnvironment(env);
 }
 
 // Converts a URL pattern string to a regex
@@ -4401,10 +4401,267 @@ class DocumentScrollPosition
     }
 }
 
+class ViewStateRestoration
+{
+    constructor(router)
+    {
+        this.#router = router;
+
+        // Disable browser scroll restoration
+        if (env.window.history.scrollRestoration) {
+           env.window.history.scrollRestoration = "manual";
+        }
+
+        // Reload saved view states from session storage
+        let savedViewStates = env.window.sessionStorage.getItem("codeonly-view-states");
+        if (savedViewStates)
+        {
+            this.#viewStates = JSON.parse(savedViewStates);
+        }
+
+        router.addEventListener("mayLeave", (from, to) => {
+            this.captureViewState();
+            return true;
+        });
+
+        router.addEventListener("mayEnter", (from, to) => {
+            if (to.navMode != 'push')
+                to.viewState = this.#viewStates[to.state.sequence];
+        });
+
+        router.addEventListener("didEnter", (from, to) => {
+
+            if (to.navMode == "push")
+            {
+                // Clear any saved view states that can never be revisited
+                for (let k of Object.keys(this.#viewStates))
+                {
+                    if (parseInt(k) > to.state.sequence)
+                    {
+                        delete this.#viewStates[k];
+                    }
+                }
+                this.saveViewStates();
+            }
+            // Load view state
+            whenLoaded(env, () => {
+                nextFrame(() => {
+
+                    // Restore view state
+                    if (to.handler.restoreViewState)
+                        to.handler.restoreViewState(to.viewState, to);
+                    else if (this.#router.restoreViewState)
+                        this.#router.restoreViewState?.(to.viewState, to);
+                    else
+                        DocumentScrollPosition.set(to.viewState);
+
+                    // Jump to hash
+                    {
+                        let elHash = document.getElementById(to.url.hash.substring(1));
+                        elHash?.scrollIntoView();
+                    }
+                });
+            });
+        });
+
+        env.window.addEventListener("beforeunload", (event) => {
+            this.captureViewState();
+        });
+
+    }
+
+    #router;
+    #viewStates = {};
+
+    captureViewState()
+    {
+        let route = this.#router.current;
+        if (route)
+        {
+            if (route.handler.captureViewState)
+                this.#viewStates[route.state.sequence] = route.handler.captureViewState(route);
+            else if (this.#router.captureViewState)
+                this.#viewStates[route.state.sequence] = this.#router.captureViewState?.(route);
+            else
+                this.#viewStates[route.state.sequence] = DocumentScrollPosition.get();
+        }
+        this.saveViewStates();
+    }
+    saveViewStates()
+    {
+        env.window.sessionStorage.setItem("codeonly-view-states", JSON.stringify(this.#viewStates));
+    }
+}
+
+class WebHistoryRouterDriver
+{
+    async start(router)
+    {
+        this.#router = router;
+
+        // Connect view state restoration
+        new ViewStateRestoration(router);
+
+        // Listen for clicks on links
+        env.document.body.addEventListener("click", (ev) => {
+            if (ev.defaultPrevented)
+                return;
+            let a = ev.target.closest("a");
+            if (a)
+            {
+                if (a.hasAttribute("download"))
+                    return;
+
+                let href = a.getAttribute("href");
+                let url = new URL(href, env.window.location);
+                if (url.origin == env.window.location.origin)
+                {
+                    try
+                    {
+                        url = this.#router.internalize(url);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+
+                    this.navigate(url).then(r => {
+                        if (r == null)
+                            window.location.href = href;
+                    });
+
+                    ev.preventDefault();
+                    return true;
+                }
+            }
+        });
+
+        // Listen for pop state
+        env.window.addEventListener("popstate", async (event) => {
+
+            if (this.#ignoreNextPop)
+            {
+                this.#ignoreNextPop = false;
+                return;
+            }
+
+            // Load
+            let loadId = this.#loadId + 1;
+            let url = this.#router.internalize(new URL(env.window.location));
+            let state = event.state ?? { sequence: this.current.state.sequence + 1 };
+            if (!await this.load(url, state, { navMode: "pop" }))
+            {
+                // Load was cancelled, adjust web history position
+                // but only if there hasn't been another load/navigation
+                // since
+                if (loadId == this.#loadId)
+                {
+                    this.#ignoreNextPop = true;
+                    env.window.history.go(this.current.state.sequence - state.sequence);
+                }
+            }
+        });
+
+
+        // Do initial navigation
+        let url = this.#router.internalize(new URL(env.window.location));
+        let state = env.window.history.state ?? { sequence: 0 };
+        let route = await this.load(url, state, { navMode: "start" });
+        env.window.history.replaceState(state, null);
+        return route;
+    }
+
+
+    #loadId = 0;
+    #router;
+    #ignoreNextPop = false;
+    get current() { return this.#router.current }
+
+    async load(url, state, route)
+    {
+        this.#loadId++;
+        return await this.#router.load(url, state, route);
+    }
+
+    back()
+    {
+        if (this.current.state.sequence == 0)
+        {
+            let url = new URL("/", this.#router.internalize(new URL(env.window.location)));
+            let state = { sequence: 0 };
+
+            env.window.history.replaceState(
+                state, 
+                "", 
+                this.#router.externalize(url),
+                );
+
+            this.load(url, state, { navMode: "replace" });
+        }
+        else
+        {
+            env.window.history.back();
+        }
+    }
+
+    replace(url)
+    {
+        if (typeof(url) === 'string')
+            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
+
+        if (url !== undefined)
+        {
+            this.current.pathname = url.pathname;
+            this.current.url = url;
+            url = this.#router.externalize(url).href;
+        }
+
+        env.window.history.replaceState(
+            this.current.state, 
+            "", 
+            url
+            );
+    }
+
+    async navigate(url)
+    {
+        // Convert to URL
+        if (typeof(url) === 'string')
+        {
+            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
+        }
+
+        // Load the route
+        let route = await this.load(url, 
+            { sequence: this.current.state.sequence + 1 }, 
+            { navMode: "push" }
+            );
+        if (!route)
+            return route;
+
+        // Update history
+        env.window.history.pushState(
+            route.state, 
+            "", 
+            this.#router.externalize(url)
+        );
+        return route;
+    }
+}
+
 class Router
 {   
-    constructor(driver, handlers)
+    constructor(handlers)
     {
+        if (handlers)
+            this.register(handlers);
+    }
+
+    start(driver)
+    {
+        if (!driver)
+            driver = new WebHistoryRouterDriver();
+            
         this.#driver = driver;
         if (driver)
         {
@@ -4412,12 +4669,6 @@ class Router
             this.replace = driver.replace.bind(driver);
             this.back = driver.back.bind(driver);
         }
-        if (handlers)
-            this.register(handlers);
-    }
-
-    start()
-    {
         return this.#driver.start(this);
     }
 
@@ -4449,22 +4700,48 @@ class Router
     internalize(url) { return this.#mapUrl(url, "internalize"); }
     externalize(url) { return this.#mapUrl(url, "externalize"); }
 
+    #_state = { c: null, p: null, l: [] }
+    
+    get #state()
+    {
+        return this.#driver?.state ?? this.#_state;
+    }
+
+    get #current()
+    {
+        return this.#state.c;
+    }
+    set #current(value)
+    {
+        this.#state.c = value;
+    }
+
+    get #pending()
+    {
+        return this.#state.p;
+    }
+    set #pending(value)
+    {
+        this.#state.p = value;
+    }
+    get #listeners()
+    {
+        return this.#state.l;
+    }
+
     // The current route
-    #current = null;
     get current()
     {
         return this.#current;
     }
 
     // The route currently being switched to
-    #pending = null;
     get pending()
     {
         return this.#pending;
     }
 
 
-    #listeners = [];
     addEventListener(event, handler)
     {
         this.#listeners.push({ event, handler });
@@ -4702,158 +4979,8 @@ class Router
     }
 }
 
-class WebHistoryRouterDriver
-{
-    async start(router)
-    {
-        this.#router = router;
 
-        // Listen for clicks on links
-        env.document.body.addEventListener("click", (ev) => {
-            if (ev.defaultPrevented)
-                return;
-            let a = ev.target.closest("a");
-            if (a)
-            {
-                if (a.hasAttribute("download"))
-                    return;
-
-                let href = a.getAttribute("href");
-                let url = new URL(href, env.window.location);
-                if (url.origin == env.window.location.origin)
-                {
-                    try
-                    {
-                        url = this.#router.internalize(url);
-                    }
-                    catch
-                    {
-                        return;
-                    }
-
-                    this.navigate(url).then(r => {
-                        if (r == null)
-                            window.location.href = href;
-                    });
-
-                    ev.preventDefault();
-                    return true;
-                }
-            }
-        });
-
-        // Listen for pop state
-        env.window.addEventListener("popstate", async (event) => {
-
-            if (this.#ignoreNextPop)
-            {
-                this.#ignoreNextPop = false;
-                return;
-            }
-
-            // Load
-            let loadId = this.#loadId + 1;
-            let url = this.#router.internalize(new URL(env.window.location));
-            let state = event.state ?? { sequence: this.current.state.sequence + 1 };
-            if (!await this.load(url, state, { navMode: "pop" }))
-            {
-                // Load was cancelled, adjust web history position
-                // but only if there hasn't been another load/navigation
-                // since
-                if (loadId == this.#loadId)
-                {
-                    this.#ignoreNextPop = true;
-                    env.window.history.go(this.current.state.sequence - state.sequence);
-                }
-            }
-        });
-
-
-        // Do initial navigation
-        let url = this.#router.internalize(new URL(env.window.location));
-        let state = env.window.history.state ?? { sequence: 0 };
-        let route = await this.load(url, state, { navMode: "start" });
-        env.window.history.replaceState(state, null);
-        return route;
-    }
-
-
-    #loadId = 0;
-    #router;
-    #ignoreNextPop = false;
-    get current() { return this.#router.current }
-
-    async load(url, state, route)
-    {
-        this.#loadId++;
-        return await this.#router.load(url, state, route);
-    }
-
-    back()
-    {
-        if (this.current.state.sequence == 0)
-        {
-            let url = new URL("/", this.#router.internalize(new URL(env.window.location)));
-            let state = { sequence: 0 };
-
-            env.window.history.replaceState(
-                state, 
-                "", 
-                this.#router.externalize(url),
-                );
-
-            this.load(url, state, { navMode: "replace" });
-        }
-        else
-        {
-            env.window.history.back();
-        }
-    }
-
-    replace(url)
-    {
-        if (typeof(url) === 'string')
-            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
-
-        if (url !== undefined)
-        {
-            this.current.pathname = url.pathname;
-            this.current.url = url;
-            url = this.#router.externalize(url).href;
-        }
-
-        env.window.history.replaceState(
-            this.current.state, 
-            "", 
-            url
-            );
-    }
-
-    async navigate(url)
-    {
-        // Convert to URL
-        if (typeof(url) === 'string')
-        {
-            url = new URL(url, this.#router.internalize(new URL(env.window.location)));
-        }
-
-        // Load the route
-        let route = await this.load(url, 
-            { sequence: this.current.state.sequence + 1 }, 
-            { navMode: "push" }
-            );
-        if (!route)
-            return route;
-
-        // Update history
-        env.window.history.pushState(
-            route.state, 
-            "", 
-            this.#router.externalize(url)
-        );
-        return route;
-    }
-}
+let router = new Router();
 
 class UrlMapper
 {
@@ -4908,96 +5035,4 @@ class UrlMapper
     }
 }
 
-class ViewStateRestoration
-{
-    constructor(router)
-    {
-        this.#router = router;
-
-        // Disable browser scroll restoration
-        if (env.window.history.scrollRestoration) {
-           env.window.history.scrollRestoration = "manual";
-        }
-
-        // Reload saved view states from session storage
-        let savedViewStates = env.window.sessionStorage.getItem("codeonly-view-states");
-        if (savedViewStates)
-        {
-            this.#viewStates = JSON.parse(savedViewStates);
-        }
-
-        router.addEventListener("mayLeave", (from, to) => {
-            this.captureViewState();
-            return true;
-        });
-
-        router.addEventListener("mayEnter", (from, to) => {
-            if (to.navMode != 'push')
-                to.viewState = this.#viewStates[to.state.sequence];
-        });
-
-        router.addEventListener("didEnter", (from, to) => {
-
-            if (to.navMode == "push")
-            {
-                // Clear any saved view states that can never be revisited
-                for (let k of Object.keys(this.#viewStates))
-                {
-                    if (parseInt(k) > to.state.sequence)
-                    {
-                        delete this.#viewStates[k];
-                    }
-                }
-                this.saveViewStates();
-            }
-            // Load view state
-            whenLoaded(env, () => {
-                nextFrame(() => {
-
-                    // Restore view state
-                    if (to.handler.restoreViewState)
-                        to.handler.restoreViewState(to.viewState, to);
-                    else if (this.#router.restoreViewState)
-                        this.#router.restoreViewState?.(to.viewState, to);
-                    else
-                        DocumentScrollPosition.set(to.viewState);
-
-                    // Jump to hash
-                    {
-                        let elHash = document.getElementById(to.url.hash.substring(1));
-                        elHash?.scrollIntoView();
-                    }
-                });
-            });
-        });
-
-        env.window.addEventListener("beforeunload", (event) => {
-            this.captureViewState();
-        });
-
-    }
-
-    #router;
-    #viewStates = {};
-
-    captureViewState()
-    {
-        let route = this.#router.current;
-        if (route)
-        {
-            if (route.handler.captureViewState)
-                this.#viewStates[route.state.sequence] = route.handler.captureViewState(route);
-            else if (this.#router.captureViewState)
-                this.#viewStates[route.state.sequence] = this.#router.captureViewState?.(route);
-            else
-                this.#viewStates[route.state.sequence] = DocumentScrollPosition.get();
-        }
-        this.saveViewStates();
-    }
-    saveViewStates()
-    {
-        env.window.sessionStorage.setItem("codeonly-view-states", JSON.stringify(this.#viewStates));
-    }
-}
-
-export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, HtmlString, Notify, PageCache, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, css, env, html, htmlEncode, input, nextFrame, notify, postNextFrame, setEnvProvider, transition, urlPattern };
+export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, EnvironmentBase, HtmlString, Notify, PageCache, Router, Style, Template, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, cloak, css, env, html, htmlEncode, input, nextFrame, notify, postNextFrame, router, setEnvironment, transition, urlPattern };
