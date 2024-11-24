@@ -2,9 +2,9 @@ import { CharacterData } from "./CharacterData.js";
 
 export class Text extends CharacterData
 {
-    constructor(document, data)
+    constructor(document, data, raw)
     {
-        super(document, data);
+        super(document, data, raw);
     }
 
     get nodeType() { return 3; }
@@ -12,11 +12,11 @@ export class Text extends CharacterData
     
     cloneNode(deep) 
     {
-        return new Text(this.document, this.data); 
+        return new Text(this.document, this); 
     }
-
-    get html()
+    
+    render(w)
     {
-        return this.data;
+        w.write(this.raw);
     }
 }

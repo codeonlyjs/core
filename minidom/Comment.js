@@ -2,9 +2,9 @@ import { CharacterData } from "./CharacterData.js";
 
 export class Comment extends CharacterData
 {
-    constructor(document, data)
+    constructor(document, data, raw)
     {
-        super(document, data);
+        super(document, data, raw);
     }
 
     get nodeType() { return 8; }
@@ -12,11 +12,13 @@ export class Comment extends CharacterData
 
     cloneNode(deep) 
     {
-        return new Comment(this.document, this.data); 
+        return new Comment(this.document, this); 
     }
 
-    get html()
+    render(w)
     {
-        return `<!--${this.data}-->`;
+        w.write("<!--");
+        w.write(this.raw);
+        w.write("-->");
     }
 }

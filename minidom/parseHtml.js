@@ -12,7 +12,6 @@ export function parseHtml(document, str)
     function nextToken()
     {
         token = tokens(...arguments);
-        console.log(token);
         return token;
     }
 
@@ -33,7 +32,7 @@ export function parseHtml(document, str)
             // Text?
             if (token.text)
             {
-                let node = document.createTextNode(token.text);
+                let node = document.createTextNode(token.text, true);
                 node.sourcePos = { start: token.start, end: token.end };
                 nodes.push(node);
                 nextToken();
@@ -43,7 +42,7 @@ export function parseHtml(document, str)
             // Comment?
             if (token.comment)
             {
-                let node = document.createComment(token.comment)
+                let node = document.createComment(token.comment, true)
                 node.sourcePos = { start: token.start, end: token.end };
                 nodes.push(node);
                 nextToken();
@@ -92,7 +91,7 @@ export function parseHtml(document, str)
                     }
 
                     // Set attribute value
-                    node.setAttribute(attribName, attribValue);
+                    node.setAttribute(attribName, attribValue, true);
                 }
 
                 // Self closing tag?

@@ -303,7 +303,7 @@ test("Static Display (true)", () => {
         display: true,
     })();
 
-    assert.equal(r.rootNodes[0].getAttribute("style"), undefined);
+    assert.equal(r.rootNodes[0].getAttribute("style"), null);
 });
 
 test("Static Display (string)", () => {

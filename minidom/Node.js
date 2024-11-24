@@ -91,4 +91,11 @@ export class Node
                 this.listeners[i].handler(ev);
         }
     }
+
+    get html()
+    {
+        let str = "";
+        this.render({ write: function(x) { str += x } });
+        return str;
+    }
 }

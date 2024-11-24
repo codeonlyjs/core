@@ -16,7 +16,7 @@ export class HTMLElement extends Element
         let newNode = new HTMLElement(this.document, this.nodeType);
 
         // Clone attributes
-        for (let [k,v] of this.attributes)
+        for (let [k,v] of this.rawAttributes)
             newNode.setAttribute(k,v);
 
         // Clone child nodes

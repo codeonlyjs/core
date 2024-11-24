@@ -1,8 +1,7 @@
 import fs from "node:fs";
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { Document, parseHtml } from "../minidom/index.js";
-
+import { Document, parseHtml, CharacterData } from "../minidom/index.js";
 
 test("text node", () => {
     let nodes = parseHtml(new Document(), "Hello World");
@@ -11,11 +10,39 @@ test("text node", () => {
     assert.equal(nodes[0].nodeValue, "Hello World");
 });
 
+test("named entity", () => {
+    let nodes = parseHtml(new Document(), "Hello &lt;World&gt;");
+    assert.equal(nodes.length, 1);
+    assert.equal(nodes[0].nodeType, 3);
+    assert.equal(nodes[0].nodeValue, "Hello <World>");
+});
+
+test("decimal entity", () => {
+    let nodes = parseHtml(new Document(), "Hello &#60;World&#62;");
+    assert.equal(nodes.length, 1);
+    assert.equal(nodes[0].nodeType, 3);
+    assert.equal(nodes[0].nodeValue, "Hello <World>");
+});
+
+test("hex entity", () => {
+    let nodes = parseHtml(new Document(), "Hello &#x3C;World&#X3E;");
+    assert.equal(nodes.length, 1);
+    assert.equal(nodes[0].nodeType, 3);
+    assert.equal(nodes[0].nodeValue, "Hello <World>");
+});
+
 test("comment", () => {
     let nodes = parseHtml(new Document(), "<!-- comment -->");
     assert.equal(nodes.length, 1);
     assert.equal(nodes[0].nodeType, 8);
     assert.equal(nodes[0].nodeValue, " comment ");
+});
+
+test("comment with entity", () => {
+    let nodes = parseHtml(new Document(), "<!-- &lt;comment&gt; -->");
+    assert.equal(nodes.length, 1);
+    assert.equal(nodes[0].nodeType, 8);
+    assert.equal(nodes[0].nodeValue, " <comment> ");
 });
 
 test("element", () => {
@@ -34,6 +61,11 @@ test("element with attribute", () => {
 test("element with quoted attribute", () => {
     let nodes = parseHtml(new Document(), "<tag attr=\"value\"/>");
     assert.equal(nodes[0].getAttribute("attr"), "value");
+});
+
+test("element with attribute with entity", () => {
+    let nodes = parseHtml(new Document(), "<tag attr=\"&lt;value&gt;\"/>");
+    assert.equal(nodes[0].getAttribute("attr"), "<value>");
 });
 
 test("element with child nodes", () => {

@@ -1,4 +1,5 @@
 import { Node } from "./Node.js"
+import { CharacterData } from "./CharacterData.js";
 
 export class Element extends Node
 {
@@ -15,40 +16,51 @@ export class Element extends Node
     get nodeType() { return 1; }
     get nodeName() { return this.#nodeName; }
     get childNodes() { return this.#childNodes; }
-    get attributes() { return this.#attributes; }
+    get rawAttributes() { return this.#attributes; }
     get hasChildNodes() { return this.#childNodes.length > 0; }
     get id() { return this.#attributes.get("id") ?? "" }
 
-    get html()
+    render(w)
     {
-        let r = `<${this.nodeName}`;
+        w.write("<");
+        w.write(this.nodeName);
+
         if (this.attributes)
         {
             for (let [key,value] of this.attributes)
             {
-                r += ` ${key}=\"${value}\"`;
+                w.write(" ");
+                w.write(key);
+                w.write("=\"");
+                w.write(value.raw);
+                w.write("\"");
             }
         }
+        
         if (this.#childNodes)
         {
-            r += ">";
-            this.#childNodes.forEach(x => r += x.html);
-            r += `</${this.nodeName}>`;
+            w.write(">");
+            this.#childNodes.forEach(x => x.render(w));
+            w.write("</");
+            w.write(this.nodeName);
+            w.write(">");
         }
         else
         {
-            r += "/>";
+            w.write("/>");
         }
-        return r;
     }
 
-    setAttribute(name, value)
+    setAttribute(name, value, raw)
     {
-        this.attributes.set(name, value);
+        this.#attributes.set(name, new CharacterData(null, value, raw));
     }
-    getAttribute(name, value)
+    getAttribute(name)
     {
-        return this.attributes.get(name);
+        let att = this.#attributes.get(name);
+        if (!att)
+            return null;
+        return att.data;
     }
 
     append(...nodes)

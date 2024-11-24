@@ -22,13 +22,13 @@ export class Document extends HTMLElement
     {
         return new HTMLElement(this, tagName);
     }
-    createTextNode(data)
+    createTextNode(data, raw)
     {
-        return new Text(this, data);
+        return new Text(this, data, raw);
     }
-    createComment(data)
+    createComment(data, raw)
     {
-        return new Comment(this, data);
+        return new Comment(this, data, raw);
     }
 }
 
