@@ -6,12 +6,26 @@ export class BrowserEnvironment extends EnvironmentBase
     constructor()
     {
         super();
-        this.browser = true;
-        this.document = document;
         this.compileTemplate = compileTemplate;
-        this.window = window;
-        this.requestAnimationFrame = window.requestAnimationFrame.bind(window);
-        this.Node = Node;
+        this.browser = true;    
+        this.document = document;
+        this.window = window;   
+    }
+
+    mount(component, el)
+    {
+        if (typeof(el) === 'string')
+        {
+            el = document.querySelector(el);
+        }
+        el.append(...component.rootNodes);
+        component.setMounted(true);
+    }
+    unmount(component)
+    {
+        if (component.created)
+            component.rootNodes.forEach(x => x. remove());
+        component.setMounted(false);
     }
 }
 

@@ -5,10 +5,19 @@ export function tokenizer(str)
     let end = str.length;
     let intag = false;
 
-    return function nextToken(attributeValue)
+    return function nextToken(...args)
+    {
+        let start = pos;
+        let token = nextTokenInternal(...args);
+        token.start = start;
+        token.end = pos;
+        return token;
+    }
+
+    function nextTokenInternal(attributeValue)
     {
         if (pos >= end)
-            return '\0';
+            return { token: '\0' };
 
 
         if (!intag && char() == '<')
@@ -23,14 +32,14 @@ export function tokenizer(str)
                 let comment = str.substring(start, pos);
                 if (pos < end)
                     pos+=3;
-                return { comment };
+                return { token: "comment", comment };
             }
             
             intag = true;
             if (char(1) == '/')
             {
                 pos += 2;
-                return "</";
+                return { token: "</" };
             }
         }
             
@@ -51,7 +60,7 @@ export function tokenizer(str)
                 let val = str.substring(start, pos);
                 if (str[pos] == term)
                     pos++;
-                return { string: val }
+                return { token: "string", string: val }
             }
 
             // Unquoted attribute value
@@ -61,7 +70,7 @@ export function tokenizer(str)
                 pos++;
                 while (is_attribute_value_char(char()))
                     pos++;
-                return { string: str.substring(start, pos) }
+                return { token: "string", string: str.substring(start, pos) }
             }
 
             // Identifier
@@ -71,7 +80,7 @@ export function tokenizer(str)
                 pos++;
                 while (is_identifier_char(char()))
                     pos++;
-                return { identifier: str.substring(start, pos) };
+                return { token: "identifier", identifier: str.substring(start, pos) };
             }
 
             switch (char())
@@ -81,12 +90,12 @@ export function tokenizer(str)
                     {
                         pos += 2;
                         intag = false;
-                        return '/>';
+                        return { token: '/>' };
                     }
                     else
                     {
                         pos++;
-                        return '/';
+                        return { token: '/' };
                     }
                 
                 case '>':
@@ -94,7 +103,7 @@ export function tokenizer(str)
                     break;
             }
 
-            return str[pos++];
+            return { token: str[pos++] }
         }
         else
         {
@@ -102,7 +111,7 @@ export function tokenizer(str)
             while (pos < end && str[pos] != '<')
                 pos++;
 
-            return { text: str.substring(start, pos) };
+            return { token: "text", text: str.substring(start, pos) };
         }
     }
 

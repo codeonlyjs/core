@@ -11,7 +11,7 @@ export class Style
         allStyles.push(css);
         pendingStyles.push(css);
         if (env.browser)
-            env.requestAnimationFrame(mountStyles);
+            env.window.requestAnimationFrame(mountStyles);
     }
 
     static get all()

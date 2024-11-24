@@ -22,7 +22,7 @@ export function nextFrame(callback, order)
     // If it's the first one, request animation callback
     if (frameCallbacks.length == 1)
     {
-        env.requestAnimationFrame(function() {
+        env.window.requestAnimationFrame(function() {
 
             // Capture pending callbacks
             let pending = frameCallbacks;

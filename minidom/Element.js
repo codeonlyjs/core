@@ -17,6 +17,7 @@ export class Element extends Node
     get childNodes() { return this.#childNodes; }
     get attributes() { return this.#attributes; }
     get hasChildNodes() { return this.#childNodes.length > 0; }
+    get id() { return this.#attributes.get("id") ?? "" }
 
     get html()
     {

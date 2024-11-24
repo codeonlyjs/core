@@ -4,6 +4,14 @@
   "description": "A simple, lightweight, code-only front-end Web framework.",
   "main": "./index.js",
   "type": "module",
+  "exports": {
+    "node": {
+      "import": "./index.js"
+    },
+    "default": {
+      "import": "./spa/index.js"
+    }
+  },
   "scripts": {
     "test": "node --test",
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",

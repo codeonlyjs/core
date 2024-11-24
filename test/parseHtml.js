@@ -1,6 +1,7 @@
+import fs from "node:fs";
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { Document, parseHtml } from "../minidom/minidom.js";
+import { Document, parseHtml } from "../minidom/index.js";
 
 
 test("text node", () => {
@@ -53,3 +54,4 @@ test("element with mixed child nodes", () => {
     assert.equal(nodes[0].childNodes[2].nodeType, 1);
     assert.equal(nodes[0].childNodes[2].nodeName, "inner");
 });
+

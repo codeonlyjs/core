@@ -11,6 +11,10 @@ export class Router
 
     start(driver)
     {
+        // Quit if already started
+        if (this.#driver)
+            return;
+
         if (!driver)
             driver = new WebHistoryRouterDriver();
             

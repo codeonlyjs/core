@@ -1,5 +1,7 @@
 import { tokenizer } from "./tokenizer.js";
 
+let selfClosing = /area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr/i;
+
 // Mini parser converts HTML to an array of nodes
 // (lots of limitations, good enough for mocking)
 export function parseHtml(document, str)
@@ -9,14 +11,16 @@ export function parseHtml(document, str)
 
     function nextToken()
     {
-        return token = tokens(...arguments);
+        token = tokens(...arguments);
+        console.log(token);
+        return token;
     }
 
     nextToken();
 
     let finalNodes = parseNodes();
 
-    if (token != '\0')
+    if (token.token != '\0')
         throw new Error("syntax error: expected eof");
 
     return finalNodes;
@@ -24,12 +28,14 @@ export function parseHtml(document, str)
     function parseNodes()
     {
         let nodes = [];
-        while (token != '\0'  && token != '</')
+        while (token.token != '\0'  && token.token != '</')
         {
             // Text?
             if (token.text)
             {
-                nodes.push(document.createTextNode(token.text));
+                let node = document.createTextNode(token.text);
+                node.sourcePos = { start: token.start, end: token.end };
+                nodes.push(node);
                 nextToken();
                 continue;
             }
@@ -37,14 +43,18 @@ export function parseHtml(document, str)
             // Comment?
             if (token.comment)
             {
-                nodes.push(document.createComment(token.comment));
+                let node = document.createComment(token.comment)
+                node.sourcePos = { start: token.start, end: token.end };
+                nodes.push(node);
                 nextToken();
                 continue;
             }
 
             // Tag
-            if (token == '<')
+            if (token.token == '<')
             {
+                let outerStart = token.start;
+
                 // Skip it
                 nextToken();
 
@@ -55,13 +65,15 @@ export function parseHtml(document, str)
                 }
 
                 let node = document.createElement(token.identifier);
+                node.sourcePos = { start: outerStart };
                 nodes.push(node);
+                nextToken(true);
 
                 // Parse attributes
-                while (token != '\0' && token != '>' && token != '/>')
+                while (token.token != '\0' && token.token != '>' && token.token != '/>')
                 {
                     // Get attribute name, quit if tag closed
-                    let attribName = nextToken(true);
+                    let attribName = token;
                     if (attribName.string === undefined)
                         break;
 
@@ -70,13 +82,13 @@ export function parseHtml(document, str)
                     let attribValue = attribName;
 
                     // Assigned value?
-                    if (nextToken() == '=')
+                    if (nextToken().token == '=')
                     {
                         let val = nextToken(true);
                         if (val.string === undefined)
                             throw new Error("syntax error, expected value after '='");
                         attribValue = val.string;
-                        nextToken();
+                        nextToken(true);
                     }
 
                     // Set attribute value
@@ -84,28 +96,38 @@ export function parseHtml(document, str)
                 }
 
                 // Self closing tag?
-                if (token == '/>')
+                if (token.token == '/>')
                 {
+                    node.sourcePos.end = token.end;
                     nextToken();
                     continue;
                 }
 
-                if (token != '>')
+                if (token.token != '>')
                 {
                     throw new Error("syntax error: expected '>' || '/>'");
                 }
                 nextToken();
 
+                if (node.nodeName.match(selfClosing))
+                {
+                    node.sourcePos.end = token.end;
+                    continue;
+                }
+
+                node.sourcePos.innerStart = token.end;
+
                 // Parse child nodes
                 node.append(...parseNodes());
 
-                if (token == '</')
+                if (token.token == '</')
                 {
+                    node.sourcePos.innerEnd = token.start;
                     nextToken();
                     if (token.identifier != node.nodeName)
                         throw new Error("mismatched tags");
                     nextToken();
-                    if (token != '>')
+                    if (token.token != '>')
                         throw new Error("expected '>' for closing tag");
                     nextToken();
                 }

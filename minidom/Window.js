@@ -1,5 +1,13 @@
+import { Document } from "./Document.js";
+
 export class Window extends EventTarget
 {
+    constructor()
+    {
+        super();
+        this.document = new Document();
+    }
+
     requestAnimationFrame(callback) 
     { 
         setImmediate(callback);

@@ -275,20 +275,12 @@ export class Component extends EventTarget
 
     mount(el)
     {
-        if (typeof(el) === 'string')
-        {
-            el = document.querySelector(el);
-        }
-        el.append(...this.rootNodes);
-        this.setMounted(true);
-        return this;
+        env.mount(this, el);
     }
 
     unmount()
     {
-        if (this.#domTree)
-            this.rootNodes.forEach(x => x. remove());
-        this.setMounted(false);
+        env.unmount(this);
     }
 
     static template = {};

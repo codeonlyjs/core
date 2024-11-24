@@ -209,7 +209,7 @@ export class EmbedSlot
             // TODO: assert all are Node objects
             newContentObject = value;
         }
-        else if (env.Node !== undefined && value instanceof env.Node)
+        else if (value.nodeType !== undefined)
         {
             // Wrap single node in an array
             newContentObject = [ value ];
