@@ -27,3 +27,8 @@ export function whenLoaded(target, callback)
     else
         callback();
 }
+
+export function untilLoaded(target)
+{
+    return new Promise((res) => whenLoaded(target, res));
+}

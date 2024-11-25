@@ -94,7 +94,7 @@ test("unquoted attribute value", () => {
     assert.equal(tokens().identifier, 'tag');
     assert.equal(tokens().identifier, 'attr');
     assert.equal(tokens().token, '=' );
-    assert.equal(tokens(true).string, 'some-value-23');
+    assert.equal(tokens("attribute").string, 'some-value-23');
     assert.equal(tokens().token, '>');
     assert.equal(tokens().token, '\0' );
 });

@@ -1,5 +1,7 @@
 import { Node } from "./Node.js"
 import { CharacterData } from "./CharacterData.js";
+import { querySelector, querySelectorAll } from "./parseSelector.js";
+import { selfClosing } from "./parseHtml.js";
 
 export class Element extends Node
 {
@@ -20,22 +22,31 @@ export class Element extends Node
     get hasChildNodes() { return this.#childNodes.length > 0; }
     get id() { return this.#attributes.get("id") ?? "" }
 
+    querySelector() { return querySelector(this, ...arguments); }
+    querySelectorAll() { return querySelectorAll(this, ...arguments); }
+
     render(w)
     {
         w.write("<");
         w.write(this.nodeName);
 
-        if (this.attributes)
+        for (let [key,value] of this.#attributes)
         {
-            for (let [key,value] of this.attributes)
-            {
-                w.write(" ");
-                w.write(key);
-                w.write("=\"");
-                w.write(value.raw);
-                w.write("\"");
-            }
+            w.write(" ");
+            w.write(key);
+            w.write("=\"");
+            w.write(value.raw);
+            w.write("\"");
         }
+
+        if (this.nodeName.match(selfClosing))
+        {
+            if (this.hasChildNodes)
+                throw new Error("Self closing tag has child elements");
+            w.write(">");
+            return;
+        }
+
         
         if (this.#childNodes)
         {

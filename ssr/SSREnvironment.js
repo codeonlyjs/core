@@ -3,7 +3,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { EnvironmentBase, setEnvironment } from "../core/Environment.js";
 import { Style } from "../core/Style.js";
-import { whenLoaded } from '../core/Utils.js';
+import { untilLoaded } from '../core/Utils.js';
 import { compileTemplate } from "../core/TemplateCompiler.js";
 import { router } from "../spa/Router.js";
 import { SSRRouterDriver } from "./SSRRouterDriver.js";
@@ -62,7 +62,7 @@ export class SSREnvironment extends EnvironmentBase
             mounts: {},
             window: new Window(),
         };
-        await this.asyncStore.run(store, async () => {
+        return await this.asyncStore.run(store, async () => {
 
             // Call entry point
             await Promise.resolve(this.entryModule[this.entryFn]());
@@ -71,13 +71,23 @@ export class SSREnvironment extends EnvironmentBase
             await this.routerDriver.load(url);
 
             // Wait till loaded
-            whenLoaded(this, () => {
+            await untilLoaded(this);
 
-                // Render
-                
+            // Render all mounts
+            let result = { 
+                head: [ `<style class="cossr">${this.css}</style>` ],
+            };
+            for (let k of Object.keys(store.mounts))
+            {
+                if (!result[k])
+                    result[k] = [];
+                let nodes = store.mounts[k].rootNodes;
+                nodes.forEach(x => x.classList.add("cossr"));
+                result[k].push(...nodes.map(x => x.html));
+                store.mounts[k].destroy();
+            }
 
-            });
-
+            return result;
         });
     }
 

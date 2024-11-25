@@ -1,6 +1,6 @@
 import { tokenizer } from "./tokenizer.js";
 
-let selfClosing = /area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr/i;
+export let selfClosing = /area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr/i;
 
 // Mini parser converts HTML to an array of nodes
 // (lots of limitations, good enough for mocking)
@@ -9,9 +9,9 @@ export function parseHtml(document, str)
     let tokens = tokenizer(str);
     let token;
 
-    function nextToken()
+    function nextToken(mode)
     {
-        token = tokens(...arguments);
+        token = tokens(mode);
         return token;
     }
 
@@ -66,7 +66,7 @@ export function parseHtml(document, str)
                 let node = document.createElement(token.identifier);
                 node.sourcePos = { start: outerStart };
                 nodes.push(node);
-                nextToken(true);
+                nextToken("attribute");
 
                 // Parse attributes
                 while (token.token != '\0' && token.token != '>' && token.token != '/>')
@@ -83,11 +83,11 @@ export function parseHtml(document, str)
                     // Assigned value?
                     if (nextToken().token == '=')
                     {
-                        let val = nextToken(true);
+                        let val = nextToken("attribute");
                         if (val.string === undefined)
                             throw new Error("syntax error, expected value after '='");
                         attribValue = val.string;
-                        nextToken(true);
+                        nextToken("attribute");
                     }
 
                     // Set attribute value
@@ -106,18 +106,31 @@ export function parseHtml(document, str)
                 {
                     throw new Error("syntax error: expected '>' || '/>'");
                 }
-                nextToken();
-
+                
                 if (node.nodeName.match(selfClosing))
                 {
+                    nextToken();
                     node.sourcePos.end = token.end;
                     continue;
                 }
 
                 node.sourcePos.innerStart = token.end;
 
-                // Parse child nodes
-                node.append(...parseNodes());
+                if (node.nodeName == "script" || node.nodeName == "style")
+                {
+                    nextToken("/" + node.nodeName);
+                    let textNode = document.createTextNode(token.text, true);
+                    textNode.sourcePos = { start: token.start, end: token.end };
+                    node.appendChild(textNode);
+                    nextToken();
+                }
+                else
+                {
+                    nextToken();
+
+                    // Parse child nodes
+                    node.append(...parseNodes());
+                }
 
                 if (token.token == '</')
                 {
@@ -128,6 +141,7 @@ export function parseHtml(document, str)
                     nextToken();
                     if (token.token != '>')
                         throw new Error("expected '>' for closing tag");
+                    node.sourcePos.end = token.end;
                     nextToken();
                 }
             }

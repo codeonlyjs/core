@@ -5,20 +5,30 @@ export function tokenizer(str)
     let end = str.length;
     let intag = false;
 
-    return function nextToken(...args)
+    return function nextToken(mode)
     {
         let start = pos;
-        let token = nextTokenInternal(...args);
+        let token = nextTokenInternal(mode);
         token.start = start;
         token.end = pos;
         return token;
     }
 
-    function nextTokenInternal(attributeValue)
+    function nextTokenInternal(mode)
     {
         if (pos >= end)
             return { token: '\0' };
 
+        if (mode && mode.startsWith("/"))
+        {
+            let rx = new RegExp(`<\/${mode.substring(1)}\s*>`, "gi");
+            rx.lastIndex = pos;
+            let m = rx.exec(str);
+            let innerEnd = m ? m.index : end;
+            let text = str.substring(pos, innerEnd);
+            pos = innerEnd;
+            return { token: "text", text };
+        }
 
         if (!intag && char() == '<')
             {
@@ -64,7 +74,7 @@ export function tokenizer(str)
             }
 
             // Unquoted attribute value
-            if (attributeValue && is_attribute_value_char(char()))
+            if (mode == "attribute" && is_attribute_value_char(char()))
             {
                 let start = pos;
                 pos++;
