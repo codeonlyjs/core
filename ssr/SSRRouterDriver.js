@@ -1,8 +1,9 @@
+import { getEnv } from "../core/index.js";
+
 export class SSRRouterDriver 
 {
-    constructor(env)
+    constructor()
     {
-        this.env = env;
     }
 
     async start(router)
@@ -20,7 +21,8 @@ export class SSRRouterDriver
     // the environment async store
     get state()
     {
-        let state = this.env.store.routerState;
+        let env = getEnv();
+        let state = env.routerState;
         if (!state)
         {
             state = {
@@ -28,7 +30,7 @@ export class SSRRouterDriver
                 p: null,
                 l: []
             }
-            this.env.store.routerState = state;
+            env.routerState = state;
         }
         return state;
     }

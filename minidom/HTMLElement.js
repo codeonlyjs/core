@@ -33,14 +33,15 @@ export class HTMLElement extends Element
 
     get innerHTML()
     {
+        let inner = super._getInner();
+        if (inner)
+            return inner;
         return this.childNodes.map(x => x.html).join("");
     }
 
     set innerHTML(value)
     {
-        var nodes = parseHtml(this.document, value);
-        this.childNodes.forEach(x => x.remove());
-        this.append(...nodes);
+        super._setInner(value);
     }
 
     get textContent()

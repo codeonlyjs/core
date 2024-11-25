@@ -1,7 +1,7 @@
 import { Node } from "./Node.js"
 import { CharacterData } from "./CharacterData.js";
 import { querySelector, querySelectorAll } from "./parseSelector.js";
-import { selfClosing } from "./parseHtml.js";
+import { parseHtml, selfClosing } from "./parseHtml.js";
 
 export class Element extends Node
 {
@@ -13,17 +13,43 @@ export class Element extends Node
 
     #nodeName;
     #childNodes = [];
+    #inner;
     #attributes = new Map();
 
     get nodeType() { return 1; }
     get nodeName() { return this.#nodeName; }
-    get childNodes() { return this.#childNodes; }
+    get childNodes() 
+    { 
+        if (this.#inner)
+        {
+            if (this.#nodeName == "script" || this.#nodeName == "style")
+            {
+                this.#childNodes = [ document.createTextNode(this.#inner) ];
+            }
+            else
+            {
+                this.#childNodes = parseHtml(this.document, this.#inner);
+            }
+            this.#inner = null;
+        }
+        return this.#childNodes; 
+    }
     get rawAttributes() { return this.#attributes; }
     get hasChildNodes() { return this.#childNodes.length > 0; }
-    get id() { return this.#attributes.get("id") ?? "" }
+    get id() { return this.getAttribute("id") ?? "" }
 
     querySelector() { return querySelector(this, ...arguments); }
     querySelectorAll() { return querySelectorAll(this, ...arguments); }
+
+    _setInner(value)
+    {
+        this.childNodes.forEach(x => x.remove());
+        this.#inner = value;
+    }
+    _getInner()
+    {
+        return this.#inner;
+    }
 
     render(w)
     {
@@ -93,21 +119,21 @@ export class Element extends Node
         });
 
         // Work out where to insert
-        let index = this.#childNodes.indexOf(before);
+        let index = this.childNodes.indexOf(before);
         if (index < 0)
-            index = this.#childNodes.length;
+            index = this.childNodes.length;
 
         // Insert into this node
-        this.#childNodes.splice(index, 0, ...nodes);
+        this.childNodes.splice(index, 0, ...nodes);
     }
 
     removeChild(node)
     {
-        let index = this.#childNodes.indexOf(node);
+        let index = this.childNodes.indexOf(node);
         if (index < 0)
             throw new Error("node a child");
 
-        this.#childNodes.splice(index, 1);
+        this.childNodes.splice(index, 1);
         node._setParentNode(null);
     }
 
