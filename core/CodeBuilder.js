@@ -2,6 +2,7 @@ export function CodeBuilder()
 {
     let lines = [];
     let indentStr = "";
+    let enableSplit = true;
     function append(...code)
     {
         for (let i=0; i<code.length; i++)
@@ -18,7 +19,10 @@ export function CodeBuilder()
             }
             else
             {
-                lines.push(...part.split("\n").map(x => indentStr + x));
+                if (enableSplit)
+                    lines.push(...part.split("\n").map(x => indentStr + x));
+                else
+                    lines.push(indentStr + part);
             }
         }
     }
@@ -50,6 +54,7 @@ export function CodeBuilder()
         braced,
         toString,
         lines,
+        enableSplit(enable) { enableSplit = enable },
         get isEmpty() { return lines.length == 0; },
     }
 }

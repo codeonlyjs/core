@@ -14,6 +14,7 @@ export class Document extends HTMLElement
 
     get nodeType() { return 9; }
     get nodeName() { return "#document"; }
+    get documentElement() { return this.querySelector("html"); }
     get body() { return this.querySelector("body"); }
     get head() { return this.querySelector("head"); }
 

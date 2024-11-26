@@ -51,11 +51,8 @@ export class Element extends Node
         return this.#inner;
     }
 
-    render(w)
+    renderAttributes(w)
     {
-        w.write("<");
-        w.write(this.nodeName);
-
         for (let [key,value] of this.#attributes)
         {
             w.write(" ");
@@ -64,6 +61,14 @@ export class Element extends Node
             w.write(value.raw);
             w.write("\"");
         }
+    }
+
+    render(w)
+    {
+        w.write("<");
+        w.write(this.nodeName);
+
+        this.renderAttributes(w);
 
         if (this.nodeName.match(selfClosing))
         {

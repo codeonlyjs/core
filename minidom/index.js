@@ -6,4 +6,5 @@ export * from "./HTMLElement.js";
 export * from "./Window.js";
 export * from "./Document.js";
 export * from "./parseHtml.js";
+export * from "./prettyHtml.js";
 export * from "./CharacterData.js";
