@@ -69,17 +69,26 @@ export class SSRWorker
 
             // Render all mounts
             let injections = { 
-                head: [ `<style class="cossr">${this.css}</style>` ],
             };
             for (let k of Object.keys(env.mounts))
             {
                 if (!injections[k])
                     injections[k] = [];
                 let nodes = env.mounts[k].rootNodes;
-                nodes.forEach(x => x.classList.add("cossr"));
                 injections[k].push(...nodes.map(x => x.html));
                 env.mounts[k].destroy();
             }
+
+            if (!injections.head)
+                injections.head = [];
+            injections.head.push(`<style>${this.css}</style>`);
+
+            for (let k of Object.keys(injections))
+            {
+                injections[k].unshift(`<!--co-ssr-start-->`);
+                injections[k].push(`<!--co-ssr-end-->`);
+            }
+            injections.head.push(`<meta name="co-ssr" value="true" />`);
 
             return this.htmlInjector.inject(injections);
         });

@@ -90,6 +90,6 @@ test("element with mixed child nodes", () => {
 
 test("complex", () => {
     parseHtml(new Document(), `
-  <script type="module" crossorigin src="/assets/index-CsKFGB6y.js"></script>
+  <div><textarea></textarea></div>
 `);
 });

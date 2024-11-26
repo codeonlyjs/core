@@ -1,6 +1,6 @@
 import { tokenizer } from "./tokenizer.js";
 
-export let selfClosing = /area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr/i;
+export let selfClosing = /^(area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)$/i;
 
 // Mini parser converts HTML to an array of nodes
 // (lots of limitations, good enough for mocking)

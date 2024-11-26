@@ -11,7 +11,7 @@ export class BrowserEnvironment extends EnvironmentBase
         this.browser = true;    
         this.document = document;
         this.window = window;
-        this.hydrateMounts = (document.querySelectorAll(".cossr").length > 0) ? [] : null;
+        this.hydrateMounts = document.head.querySelector("meta[name='co-ssr']") ? [] : null;
         this.pendingStyles = "";
     }
 
@@ -64,13 +64,17 @@ export class BrowserEnvironment extends EnvironmentBase
                 // Remove all ssr rendered content
                 document.querySelectorAll(".cossr").forEach(x => x.remove());
 
-                // Mount pending styles
-                this.mountStyles();
-
                 // Mount components
                 let mounts = this.hydrateMounts;
                 this.hydrateMounts = null;
-                mounts.forEach(x => this.mount(x.component, x.el));
+                mounts.forEach(x => {
+                    removeSsrNodes(x.el),
+                    this.mount(x.component, x.el)
+                });
+
+                // Mount pending styles
+                removeSsrNodes(document.head);
+                this.mountStyles();
 
             })
         }, Number.MAX_SAFE_INTEGER);
@@ -110,3 +114,23 @@ if (typeof(document) !== "undefined")
     setEnvProvider(() => env);
 }
 
+function removeSsrNodes(el)
+{
+    let c = el.firstChild;
+    let inSsr = false;
+    while (c)
+    {
+        let next = c.nextSibling;
+
+        if (c.nodeType == 8 && c.data == "co-ssr-start")
+            inSsr = true;
+
+        if (inSsr)
+            c.remove();
+
+        if (c.nodeType == 8 && c.data == "co-ssr-end")
+            inSsr = false;
+
+        c = next;
+    }
+}
