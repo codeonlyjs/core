@@ -12,6 +12,32 @@ export class BrowserEnvironment extends EnvironmentBase
         this.document = document;
         this.window = window;
         this.hydrateMounts = (document.querySelectorAll(".cossr").length > 0) ? [] : null;
+        this.pendingStyles = "";
+    }
+
+    declareStyle(css)
+    {
+        if (css.length > 0)
+        {
+            this.pendingStyles += "\n" + css;
+            if (!this.hydrateMounts)
+                this.window.requestAnimationFrame(() => this.mountStyles());
+        }
+    }
+
+    mountStyles()
+    {
+        if (this.pendingStyles.length == 0)
+            return;
+
+        if (!this.styleNode)
+            this.styleNode = document.createElement("style");
+
+        this.styleNode.innerHTML += this.pendingStyles + "\n";
+        this.pendingStyles = "";
+
+        if (!this.styleNode.parentNode)
+            document.head.appendChild(this.styleNode);
     }
 
     doHydrate()
@@ -38,6 +64,9 @@ export class BrowserEnvironment extends EnvironmentBase
                 // Remove all ssr rendered content
                 document.querySelectorAll(".cossr").forEach(x => x.remove());
 
+                // Mount pending styles
+                this.mountStyles();
+
                 // Mount components
                 let mounts = this.hydrateMounts;
                 this.hydrateMounts = null;
@@ -47,7 +76,6 @@ export class BrowserEnvironment extends EnvironmentBase
         }, Number.MAX_SAFE_INTEGER);
     }
 
-    
     mount(component, el)
     {
         if (typeof(el) === 'string')

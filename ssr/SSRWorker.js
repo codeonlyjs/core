@@ -36,7 +36,7 @@ export class SSRWorker
             this.entryModule = await import(`file://${path.resolve(options.entryFile)}`);
 
             // Capture registered styles
-            this.css = Style.all;
+            this.css = env.styles;
 
         });
 

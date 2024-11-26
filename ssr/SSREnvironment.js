@@ -13,6 +13,7 @@ export class SSREnvironment extends EnvironmentBase
         this.#window = new Window();
         this.#window.blockAnimationFrames = true;
         this.mounts = {};
+        this.styles = "";
     }
 
     #window;
@@ -24,6 +25,12 @@ export class SSREnvironment extends EnvironmentBase
     get document()
     {
         return this.window.document;
+    }
+
+    declareStyle(css)
+    {
+        if (css.length)
+            this.styles += css + '\n';
     }
 
     mount(component, el)
