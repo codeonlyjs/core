@@ -87,3 +87,9 @@ test("element with mixed child nodes", () => {
     assert.equal(nodes[0].childNodes[2].nodeName, "inner");
 });
 
+
+test("complex", () => {
+    parseHtml(new Document(), `
+  <script type="module" crossorigin src="/assets/index-CsKFGB6y.js"></script>
+`);
+});

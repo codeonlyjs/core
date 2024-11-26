@@ -1,5 +1,6 @@
 import { EnvironmentBase } from "../core/Environment.js";
 import { compileTemplate } from "../core/TemplateCompiler.js";
+import { untilLoaded } from "../core/Utils.js";
 import { Window } from "../minidom/index.js";
 
 export class SSREnvironment extends EnvironmentBase
@@ -10,6 +11,7 @@ export class SSREnvironment extends EnvironmentBase
         this.compileTemplate = compileTemplate;
         this.ssr = true;
         this.#window = new Window();
+        this.#window.blockAnimationFrames = true;
         this.mounts = {};
     }
 
@@ -35,6 +37,22 @@ export class SSREnvironment extends EnvironmentBase
     unmount()
     {
         throw new Error("Unmounting components not supported in SSR environment");
+    }
+
+    async whileBusy()
+    {
+        while (true)
+        {
+            // Wait for loading event
+            if (this.loading)
+                await untilLoaded(this);
+
+            // Dispatch any pending animation frames
+            if (this.#window.dispatchAnimationFrames())
+                continue;
+            
+            break;
+        }
     }
 }
 

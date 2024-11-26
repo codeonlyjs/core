@@ -81,7 +81,7 @@ export function parseHtml(document, str)
                     let attribValue = attribName;
 
                     // Assigned value?
-                    if (nextToken().token == '=')
+                    if (nextToken("attribute").token == '=')
                     {
                         let val = nextToken("attribute");
                         if (val.string === undefined)

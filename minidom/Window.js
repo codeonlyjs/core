@@ -6,18 +6,48 @@ export class Window extends EventTarget
     {
         super();
         this.document = new Document();
+        this.blockAnimationFrames = false;
+        this.pendingAnimationFrames = [];
     }
+
+
 
     requestAnimationFrame(callback) 
     { 
-        setImmediate(callback);
+        if (this.blockAnimationFrames)
+        {
+            this.pendingAnimationFrames.push(callback);
+        }
+        else
+        {
+            setImmediate(callback);
+        }
     }
 
     waitAnimationFrames()
     {
+        if (this.blockAnimationFrames)
+            throw new Error("Can't await animation frames when blocked");
+
         return new Promise((resolve) => {
             setImmediate(() => setImmediate(resolve));
         });
+    }
+
+    dispatchAnimationFrames()
+    {
+        let any = false;
+        while (this.pendingAnimationFrames.length != 0)
+        {
+            let pending = this.pendingAnimationFrames;
+            this.pendingAnimationFrames = [];
+            for (let i=0; i<pending.length; i++)
+            {
+                pending[i]();
+                any = true;
+            }
+        }
+        return any;
     }
 
 /*

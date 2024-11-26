@@ -51,3 +51,8 @@ export function postNextFrame(callback)
     else
         nextFrame(callback, Number.MAX_SAFE_INTEGER);
 }
+
+export function anyPendingFrames()
+{
+    return frameCallbacks.length != 0;
+}

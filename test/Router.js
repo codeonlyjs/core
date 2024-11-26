@@ -2,6 +2,15 @@ import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import { Router } from "../spa/Router.js";
 import { UrlMapper } from "../spa/UrlMapper.js";
+import { setEnvProvider } from "../core/Environment.js";
+
+let fakeenv = {
+    load: function(callback)
+    {
+        return callback();
+    }
+}
+setEnvProvider(() => fakeenv);
 
 function asyncOp()
 {

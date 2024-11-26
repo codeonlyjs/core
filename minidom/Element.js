@@ -73,11 +73,14 @@ export class Element extends Node
             return;
         }
 
-        
-        if (this.#childNodes)
+        let inner = this._getInner();
+        if (inner || this.#childNodes.length > 0)
         {
             w.write(">");
-            this.#childNodes.forEach(x => x.render(w));
+            if (inner)
+                w.write(inner)
+            else
+                this.#childNodes.forEach(x => x.render(w));
             w.write("</");
             w.write(this.nodeName);
             w.write(">");

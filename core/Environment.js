@@ -1,3 +1,4 @@
+import { untilLoaded } from "./Utils.js";
 
 export class EnvironmentBase extends EventTarget
 {
@@ -38,6 +39,11 @@ export class EnvironmentBase extends EventTarget
         {
             this.leaveLoading();
         }
+    }
+
+    untilLoaded()
+    {
+        return untilLoaded(this);
     }
 }
 

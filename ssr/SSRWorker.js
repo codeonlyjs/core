@@ -64,8 +64,8 @@ export class SSRWorker
             // Tell the router driver to load URL
             await this.routerDriver.load(new URL(url));
 
-            // Wait till loaded
-            await untilLoaded(env);
+            // Wait for environment
+            await env.whileBusy();
 
             // Render all mounts
             let injections = { 

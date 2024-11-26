@@ -1,3 +1,4 @@
+import { getEnv } from "../core/Environment.js";
 import { urlPattern } from "./urlPattern.js";
 import { WebHistoryRouterDriver } from "./WebHistoryRouterDriver.js";
 
@@ -125,60 +126,63 @@ export class Router
     // Load a URL with state
     async load(url, state, route)
     {
-        route = route ?? {};
-        
-        let from = this.#current;
+        return getEnv().load(async () => {
 
-        // In page navigation?
-        if (this.#current?.url.pathname == url.pathname && this.#current.url.search == url.search)
-        {
-            let dup = this.#current.handler.hashChange?.(this.#current, route);
-            if (dup !== undefined)
-                route = dup;
-            else
-                route = Object.assign({}, this.#current, route);
-        }
+            route = route ?? {};
+            
+            let from = this.#current;
 
-        route = Object.assign(route, { 
-            current: false,
-            url: new URL(url), 
-            state,
-        });
-
-        this.#pending = route;
-
-        // Match url
-        if (!route.match)
-        {
-            route = await this.matchUrl(url, state, route);
-            if (!route)
-                return null;
-        }
-
-        // Try to load
-        try
-        {
-            if ((await this.tryLoad(route)) !== true)
+            // In page navigation?
+            if (this.#current?.url.pathname == url.pathname && this.#current.url.search == url.search)
             {
-                this.#pending = null;
+                let dup = this.#current.handler.hashChange?.(this.#current, route);
+                if (dup !== undefined)
+                    route = dup;
+                else
+                    route = Object.assign({}, this.#current, route);
             }
-        }
-        catch (err)
-        {
-            this.dispatchCancelEvents(from, route);
-            throw err;
-        }
 
-        // Cancelled?
-        if (this.#pending != route)
-        {
-            this.dispatchCancelEvents(from, route);
-            return null;
-        }
+            route = Object.assign(route, { 
+                current: false,
+                url: new URL(url), 
+                state,
+            });
 
-        this.#pending = null;
-        return route;
+            this.#pending = route;
 
+            // Match url
+            if (!route.match)
+            {
+                route = await this.matchUrl(url, state, route);
+                if (!route)
+                    return null;
+            }
+
+            // Try to load
+            try
+            {
+                if ((await this.tryLoad(route)) !== true)
+                {
+                    this.#pending = null;
+                }
+            }
+            catch (err)
+            {
+                this.dispatchCancelEvents(from, route);
+                throw err;
+            }
+
+            // Cancelled?
+            if (this.#pending != route)
+            {
+                this.dispatchCancelEvents(from, route);
+                return null;
+            }
+
+            this.#pending = null;
+            return route;
+
+        });
     }
 
     dispatchCancelEvents(from, route)
