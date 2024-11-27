@@ -27,8 +27,8 @@ console.log("Build Completed Successfully");
 async function git_tag_and_commit()
 {
     await $`git add .`
-    await $`git commit -m "${pkg.version}" --allow-empty`
-    await $`git tag -f "${pkg.version}"`
+    await $`git commit -m "v${pkg.version}" --allow-empty`
+    await $`git tag -f "v${pkg.version}"`
     await $`git push --quiet`
     await $`git push -f --tags --quiet`
 }
