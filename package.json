@@ -1,6 +1,6 @@
 {
   "name": "@codeonlyjs/core",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "description": "A simple, lightweight, code-only front-end Web framework.",
   "main": "./index.js",
   "type": "module",
