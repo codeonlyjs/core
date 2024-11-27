@@ -30,6 +30,7 @@ export class SSRWorker
 
         // Load entry module
         let env = new SSREnvironment();
+        env.options = options;
         await this.asyncStore.run(env, async () => {
 
             // Load entry point
@@ -53,9 +54,10 @@ export class SSRWorker
         return env;
     }
 
-    async render(url)
+    async render(url, opts)
     {
         let env = new SSREnvironment();
+        env.options = Object.assign(this.options, opts);
         return await this.asyncStore.run(env, async () => {
 
             // Call entry point
