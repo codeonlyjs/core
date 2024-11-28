@@ -1,5 +1,5 @@
 import { getEnv } from "../core/Environment.js"
-import { router } from "./router.js"
+import { router } from "./Router.js"
 
 export async function fetchTextAsset(path)
 {
