@@ -1,19 +1,28 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { EnvironmentBase } from "../core/Environment.js";
 import { compileTemplate } from "../core/TemplateCompiler.js";
 import { untilLoaded } from "../core/Utils.js";
 import { Window } from "../minidom/index.js";
+
 
 export class SSREnvironment extends EnvironmentBase
 {
     constructor(options)
     {
         super();
+        this.options = options;
         this.compileTemplate = compileTemplate;
         this.ssr = true;
         this.#window = new Window();
         this.#window.blockAnimationFrames = true;
         this.mounts = {};
         this.styles = "";
+    }
+
+    get fs()
+    {
+        return fs;
     }
 
     #window;
@@ -60,6 +69,12 @@ export class SSREnvironment extends EnvironmentBase
             
             break;
         }
+    }
+
+    async fetchTextAsset(pathname)
+    {   
+        pathname = path.join(this.options?.assetBase ?? process.cwd(), "." + pathname);
+        return fs.readFile(pathname, "utf8");
     }
 }
 
