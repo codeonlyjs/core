@@ -49,7 +49,6 @@ export class EnvironmentBase extends EventTarget
 
 export let getEnv;
 
-
 export function setEnvProvider(value)
 {
     getEnv = value;

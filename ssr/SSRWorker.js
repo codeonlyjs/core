@@ -13,11 +13,12 @@ export class SSRWorker
 {
     constructor()
     {
-        setEnvProvider(() => this.env);
     }
 
     async init(options)
     {
+        setEnvProvider(() => this.env);
+
         // Store options
         this.options = options;
 
@@ -35,6 +36,26 @@ export class SSRWorker
 
             // Load entry point
             this.entryModule = await import(`file://${path.resolve(options.entryFile)}`);
+
+            if (Array.isArray(this.options.entryMain))
+            {
+                // Look for first matching entry main
+                for (let m of this.options.entryMain)
+                {
+                    if (this.entryModule[m])
+                    {
+                        this.entryMain = m;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                this.entryMain = this.options.entryMain;
+            }
+
+            if (!this.entryMain)
+                throw new Error(`entryMain not found - ${JSON.stringify(this.options.entryMain)}`);
 
             // Capture registered styles
             this.css = env.styles;
@@ -61,7 +82,7 @@ export class SSRWorker
         return await this.asyncStore.run(env, async () => {
 
             // Call entry point
-            await Promise.resolve(this.entryModule[this.options.entryMain]());
+            await Promise.resolve(this.entryModule[this.entryMain]());
 
             // Tell the router driver to load URL
             await this.routerDriver.load(new URL(url));
@@ -92,7 +113,13 @@ export class SSRWorker
             }
             injections.head.push(`<meta name="co-ssr" value="true" />`);
 
-            return this.htmlInjector.inject(injections);
+            let result = Object.assign(
+                {}, 
+                router.current?.ssr ?? {}, 
+                { content: this.htmlInjector.inject(injections) }
+            );
+
+            return result;
         });
     }
 }
