@@ -105,6 +105,15 @@ export class BrowserEnvironment extends EnvironmentBase
             component.rootNodes.forEach(x => x. remove());
         component.setMounted(false);
     }
+
+    async fetchTextAsset(path)
+    {
+        let res = await fetch(path);
+        if (!res.ok)
+            throw new Error(`Failed to fetch '${path}': ${res.status} ${res.statusText}`);
+        return res.text();
+    }
+
 }
 
 

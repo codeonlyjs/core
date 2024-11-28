@@ -22,6 +22,9 @@ export class SSRWorker
         // Store options
         this.options = options;
 
+        // Work out asset base
+        this.options.assetBase = path.dirname(this.options.entryFile);
+
         // Setup router driver
         this.routerDriver = new SSRRouterDriver(this);
         router.start(this.routerDriver);
@@ -30,8 +33,7 @@ export class SSRWorker
         this.asyncStore = new AsyncLocalStorage();
 
         // Load entry module
-        let env = new SSREnvironment();
-        env.options = options;
+        let env = new SSREnvironment(this.options);
         await this.asyncStore.run(env, async () => {
 
             // Load entry point
@@ -75,10 +77,10 @@ export class SSRWorker
         return env;
     }
 
-    async render(url, opts)
+    async render(url, options)
     {
-        let env = new SSREnvironment();
-        env.options = Object.assign(this.options, opts);
+        let mergedOptions = Object.assign({}, this.options, options);
+        let env = new SSREnvironment(mergedOptions);
         return await this.asyncStore.run(env, async () => {
 
             // Call entry point

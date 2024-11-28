@@ -35,9 +35,9 @@ export class UrlMapper
         return url;
     }
 
-    externalize(url)
+    externalize(url, asset)
     {
-        if (this.options.hash)
+        if (!asset && this.options.hash)
         {
             url = new URL(`${url.origin}/#${url.pathname}${url.search}${url.hash}`);
         }
