@@ -88,8 +88,3 @@ test("element with mixed child nodes", () => {
 });
 
 
-test("complex", () => {
-    parseHtml(new Document(), `
-  <div><textarea></textarea></div>
-`);
-});

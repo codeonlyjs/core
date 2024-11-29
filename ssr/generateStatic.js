@@ -17,8 +17,20 @@ export async function generateStatic(options)
         outDir: "./dist",
         baseUrl: "http://localhost/",
         verbose: false,
+        cssUrl: "/assets/styles-[unique].css",
     }, options);
-    
+
+    let baseUnique = Date.now();
+    if (options.cssUrl)
+    {
+        options.cssUrl = options.cssUrl.replace(/\[unique\]/g, () => {
+            let buf = Buffer.alloc(8);
+            buf.writeBigInt64BE(BigInt(baseUnique++));
+            return buf.toString('base64').replace(/\=/, "");
+        });
+    }
+   
+
     // Install module loader hook.  We need to make
     // sure we use our copy of codeonlyjs 
     register('./module_loader_hooks.js', import.meta.url);
@@ -48,6 +60,7 @@ export async function generateStatic(options)
         entryFile: options.entryFile,
         entryMain: options.entryMain,
         entryHtml,
+        cssUrl: options.cssUrl,
     });
     enableModuleHook(false);
 
@@ -76,7 +89,7 @@ export async function generateStatic(options)
         }
         catch (err)
         {
-            console.error(`Page ${u} failed with exception: ${err.message}`);
+            console.error(`Page ${u} failed with exception: ${err.message}\n${err.stack}`);
             continue;
         }
 
@@ -103,26 +116,12 @@ export async function generateStatic(options)
             filename += "index";
         filename += options.ext;
 
-        // Qualify it
-        let outFile = path.join(options.outDir, filename);
-
-        // Make sure directory exists
-        let outDir = path.dirname(outFile);
-        if (!fs.existsSync(outFile))
-            fs.mkdirSync(outDir, { recursive: true });
-
-        // Write it
-        fs.writeFileSync(outFile, r.content, "utf8");
-
-        if (!options.quiet)
-            console.log(`render: ${outFile}`);
-
-        result.files.push(outFile);
+        await writeFile(filename, r.content);
 
         // Find links
         for (let a of doc.querySelectorAll("a"))
         {
-            let u = new URL(a.getAttribute("href"), options.baseUrl);
+            let u = new URL(a.getAttribute("href"), url);
             if (!u.href.startsWith(options.baseUrl))
                 continue;
 
@@ -131,11 +130,38 @@ export async function generateStatic(options)
         }
     }
 
+    // Write it
+    await writeFile(options.cssUrl, await worker.getStyles());
+
+
     result.elapsed = Date.now() - start;
 
     return result;
-}
 
+    function writeFile(url, content)
+    {
+        if (url.startsWith("/"))
+            url = "." + url;
+
+        // Qualify it
+        let outFile = path.join(options.outDir, url);
+
+        // Make sure directory exists
+        let outDir = path.dirname(outFile);
+        if (!fs.existsSync(outDir))
+            fs.mkdirSync(outDir, { recursive: true });
+
+        // Write it
+        fs.writeFileSync(outFile, content, "utf8");
+
+        if (!options.quiet)
+            console.log(`render: ${outFile}`);
+
+        result.files.push(outFile);
+
+        return outFile;
+    }
+}
 
 
 // Given an array of file names, find the first that exists

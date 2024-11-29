@@ -125,7 +125,7 @@ export function prettyHtml(root)
         // Child nodes?
         if (!n.hasChildNodes || start == -1)
         {
-            append("/>");       // No block elements are self closing, so this is fine
+            append(`></${n.nodeName}>`);       // No block elements are self closing, so this is fine
             newline();
             return;
         }
@@ -217,7 +217,7 @@ function splitWhitespace(parent)
             if (parts.length > 1)
             {
                 let newNodes = parts.map(x => parent.document.createTextNode(x, true));
-                n.replaceWith(newNodes);
+                n.replaceWith(...newNodes);
                 i += newNodes.length - 1;
             }
         }

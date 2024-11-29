@@ -259,14 +259,22 @@ export class Component extends EventTarget
         this.#mounted = mounted;
 
         // Add event listeners
+        let needsInvalidate = false;
         if (mounted && this.#listeners)
+        {
             this.#listeners.forEach(x => x.target.addEventListener(x.event, x.handler));
+            needsInvalidate = this.#listeners.length > 0 && this.#domTree;
+        }
 
         // Dispatch to self
         if (mounted)
             this.onMount();
         else
             this.onUnmount();
+
+        // Force invalidate?
+        if (needsInvalidate)
+            this.invalidate();
 
         // Remove event listeners
         if (!mounted && this.#listeners)

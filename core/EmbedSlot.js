@@ -242,11 +242,13 @@ export class EmbedSlot
             tx.leaveNodes(nodesLeaving);
             tx.onWillEnter(() => {
                 this.#tailSentinal.before(...this.#contentNodes);
-                this.#contentObject?.setMounted?.(true);
+                if (this.#mounted)
+                    this.#contentObject?.setMounted?.(true);
             });
             tx.onDidLeave(() => {
                 nodesLeaving.forEach(x => x.remove());
-                oldContentObject?.setMounted?.(false);
+                if (this.#mounted)
+                    oldContentObject?.setMounted?.(false);
                 if (this.#ownsContent)
                     oldContentObject?.destroy?.();
             })

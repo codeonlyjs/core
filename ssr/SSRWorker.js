@@ -1,8 +1,6 @@
 import path from 'node:path';
 
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { Style } from "../core/Style.js";
-import { untilLoaded } from '../core/Utils.js';
 import { router } from "../spa/Router.js";
 import { setEnvProvider } from '../core/Environment.js';
 import { SSREnvironment } from './SSREnvironment.js';
@@ -77,6 +75,11 @@ export class SSRWorker
         return env;
     }
 
+    async getStyles()
+    {
+        return this.css;
+    }
+
     async render(url, options)
     {
         let mergedOptions = Object.assign({}, this.options, options);
@@ -106,7 +109,10 @@ export class SSRWorker
 
             if (!injections.head)
                 injections.head = [];
-            injections.head.push(`<style>${this.css}</style>`);
+            if (this.options.cssUrl)
+                injections.head.push(`<link href="${this.options.cssUrl}" type="text/css" rel="stylesheet" />`);
+            else
+                injections.head.push(`<style>${this.css}</style>`);
 
             for (let k of Object.keys(injections))
             {

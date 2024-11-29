@@ -70,11 +70,17 @@ export class Element extends Node
 
         this.renderAttributes(w);
 
+        if (this.#nodeName === 1)
+        {
+            this.#nodeName = "" + this.#nodeName;
+            console.log(this.html);
+        }
+
         if (this.nodeName.match(selfClosing))
         {
             if (this.hasChildNodes)
                 throw new Error("Self closing tag has child elements");
-            w.write(">");
+            w.write(" />");
             return;
         }
 
@@ -92,7 +98,7 @@ export class Element extends Node
         }
         else
         {
-            w.write("/>");
+            w.write(`></${this.nodeName}>`);
         }
     }
 

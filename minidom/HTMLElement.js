@@ -13,7 +13,7 @@ export class HTMLElement extends Element
     cloneNode(deep) 
     {
         // Create node
-        let newNode = new HTMLElement(this.document, this.nodeType);
+        let newNode = new HTMLElement(this.document, this.nodeName);
 
         // Clone attributes
         for (let [k,v] of this.rawAttributes)

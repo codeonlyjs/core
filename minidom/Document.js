@@ -22,6 +22,12 @@ export class Document extends HTMLElement
     {
         return new HTMLElement(this, tagName);
     }
+    createElementNS(xmlns, tagName)
+    {
+        let el = new HTMLElement(this, tagName, xmlns);
+        el.setAttribute("xmlns", xmlns);
+        return el;
+    }
     createTextNode(data, raw)
     {
         return new Text(this, data, raw);

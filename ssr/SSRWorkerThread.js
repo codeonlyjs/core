@@ -31,6 +31,11 @@ export class SSRWorkerThread
         return this.invoke("render", url);
     }
 
+    getStyles()
+    {
+        return this.invoke("getStyles");
+    }
+
     #nextId = 1;
     #pending = new Map();
 

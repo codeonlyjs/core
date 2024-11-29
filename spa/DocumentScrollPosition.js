@@ -1,18 +1,25 @@
+import { getEnv } from "../core/Environment.js";
 
 export class DocumentScrollPosition
 {
     static get()
     {
-        return { 
-            top: window.pageYOffset || document.documentElement.scrollTop,
-            left: window.pageXOffset || document.documentElement.scrollLeft,
+        if (getEnv().browser)
+        {
+            return { 
+                top: getEnv().window.pageYOffset || getEnv().document.documentElement.scrollTop,
+                left: getEnv().window.pageXOffset || getEnv().document.documentElement.scrollLeft,
+            }
         }
     }
     static set(value)
     {
-        if (!value)
-            window.scrollTo(0, 0);
-        else
-            window.scrollTo(value.left, value.top);
+        if (getEnv().browser)
+        {
+            if (!value)
+                getEnv().window.scrollTo(0, 0);
+            else
+                getEnv().window.scrollTo(value.left, value.top);
+        }
     }
 }

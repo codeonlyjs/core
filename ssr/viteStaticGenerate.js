@@ -19,7 +19,8 @@ export function viteStaticGenerate(options)
         },
         closeBundle: async () => {
             // Generate static files
-            await generateStatic(options);
+            let r = await generateStatic(options);
+            console.log(`Rendered ${r.files.length} files in ${r.elapsed}ms`);
         }
     };
 }

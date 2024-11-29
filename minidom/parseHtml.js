@@ -137,7 +137,10 @@ export function parseHtml(document, str)
                     node.sourcePos.innerEnd = token.start;
                     nextToken();
                     if (token.identifier != node.nodeName)
-                        throw new Error("mismatched tags");
+                    {
+                        console.log(str);
+                        throw new Error(`mismatched tags (expected </${node.nodeName}> not </${token.identifier}> at ${token.start}\n${str.substring(token.start - 50, 100)}`);
+                    }
                     nextToken();
                     if (token.token != '>')
                         throw new Error("expected '>' for closing tag");
