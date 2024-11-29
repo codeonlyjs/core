@@ -1,7 +1,6 @@
 import { Plugins } from "./Plugins.js";
 import { diff_tiny } from "./diff_tiny.js";
 import { TemplateNode } from "./TemplateNode.js";
-import { getEnv } from "./Environment.js";
 
 export class ForEachBlock
 {
@@ -87,8 +86,8 @@ export class ForEachBlock
         this.itemDoms = [];
 
         // Sentinal nodes
-        this.#headSentinal = getEnv().document?.createComment(" enter foreach block ");
-        this.#tailSentinal = getEnv().document?.createComment(" leave foreach block ");
+        this.#headSentinal = coenv.document?.createComment(" enter foreach block ");
+        this.#tailSentinal = coenv.document?.createComment(" leave foreach block ");
 
         // Single vs multi-root op helpers
         if (this.itemConstructor.isSingleRoot)

@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Component, getEnv } from "../core/index.js";
+import { Template, Component } from "../core/index.js";
 
 function assert_iterables(a, b)
 {
@@ -185,7 +185,7 @@ test("ForEach Content (fragment)", () => {
         ]
     })();
 
-    let outer = getEnv().document.createElement("DIV");
+    let outer = coenv.document.createElement("DIV");
     outer.append(...r.rootNodes);
 
     assert_foreach_content(r, items, actual, expected);
@@ -227,7 +227,7 @@ test("ForEach Content (conditional items)", () => {
         ]
     })();
 
-    let outer = getEnv().document.createElement("DIV");
+    let outer = coenv.document.createElement("DIV");
     outer.append(...r.rootNodes);
 
     assert_foreach_content(r, items, actual, expected);
@@ -450,14 +450,14 @@ test("ForEach Update Count Check", async () => {
     // we should get one update
     items[0] = { name: "Apples" };
     r.update();
-    await getEnv().window.waitAnimationFrames();
+    await coenv.window.waitAnimationFrames();
     assert.equal(ItemComponent.updateCount, 1);
 
     // If we change one item with a new object instance with the different key,
     // we should get one update because the old delete item should be re-used
     items[0] = { name: "Watermelon" };
     r.update();
-    await getEnv().window.waitAnimationFrames();
+    await coenv.window.waitAnimationFrames();
     assert.equal(ItemComponent.updateCount, 2);
 
 });

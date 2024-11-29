@@ -15,6 +15,8 @@ export class SSRWorker
 
     async init(options)
     {
+        // Load entry module
+        let env = new SSREnvironment(this.options);
         setEnvProvider(() => this.env);
 
         // Store options
@@ -30,8 +32,6 @@ export class SSRWorker
         // Construct async store
         this.asyncStore = new AsyncLocalStorage();
 
-        // Load entry module
-        let env = new SSREnvironment(this.options);
         await this.asyncStore.run(env, async () => {
 
             // Load entry point
@@ -64,6 +64,11 @@ export class SSRWorker
 
         // Create injector
         this.htmlInjector = new HtmlInjector(this.options.entryHtml);
+    }
+
+    async stop()
+    {
+        // nop
     }
 
 

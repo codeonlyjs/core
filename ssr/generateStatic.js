@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "path";
-import { SSRWorker, Document, prettyHtml } from "@codeonlyjs/core";
-import { register } from 'node:module';
-import { enableModuleHook } from "./module_loader_hooks.js";
+import { SSRWorker } from "./SSRWorker.js";
+import { Document } from "../minidom/Document.js";
+import { prettyHtml } from "../minidom/prettyHtml.js";
+//import { register } from 'node:module';
 
 
 export async function generateStatic(options)
@@ -33,7 +34,7 @@ export async function generateStatic(options)
 
     // Install module loader hook.  We need to make
     // sure we use our copy of codeonlyjs 
-    register('./module_loader_hooks.js', import.meta.url);
+    //register('./module_loader_hooks.js', import.meta.url);
 
     let start = Date.now();
 
@@ -55,14 +56,12 @@ export async function generateStatic(options)
 
     // Create SSRWorker
     let worker = new SSRWorker();
-    enableModuleHook(true);
     await worker.init({
         entryFile: options.entryFile,
         entryMain: options.entryMain,
         entryHtml,
         cssUrl: options.cssUrl,
     });
-    enableModuleHook(false);
 
     // Process all URLs...
     let urlsPending = [...options.entryUrls];
@@ -132,6 +131,8 @@ export async function generateStatic(options)
 
     // Write it
     await writeFile(options.cssUrl, await worker.getStyles());
+
+    await worker.stop();
 
 
     result.elapsed = Date.now() - start;

@@ -1,7 +1,6 @@
 import { HtmlString } from "./HtmlString.js";
 import { is_constructor } from "./Utils.js";
 import { Plugins } from "./Plugins.js";
-import { getEnv } from "./Environment.js";
 import { parseTypeDecl } from "./parseTypeDecl.js";
 
 // Manages information about a node in a template
@@ -54,10 +53,10 @@ export class TemplateNode
             this.kind = "html";
             this.html = template.html;
 
-            if (getEnv().document)
+            if (coenv.document)
             {
                 // Use div to parse HTML
-                let div = getEnv().document.createElement('div');
+                let div = coenv.document.createElement('div');
                 div.innerHTML = template.html;
 
                 // Store nodes

@@ -2,7 +2,6 @@ import { Plugins } from "./Plugins.js";
 import { is_constructor } from "./Utils.js";
 import { HtmlString } from "./HtmlString.js";
 import { TemplateNode } from "./TemplateNode.js";
-import { getEnv } from "./Environment.js";
 import { TransitionNone } from "./TransitionNone.js";
 
 export class EmbedSlot
@@ -65,8 +64,8 @@ export class EmbedSlot
     {
         this.#context = options.context;
         this.#placeholderConstructor = options.nodes[1];
-        this.#headSentinal = getEnv().document?.createTextNode("");
-        this.#tailSentinal = getEnv().document?.createTextNode("");
+        this.#headSentinal = coenv.document?.createTextNode("");
+        this.#tailSentinal = coenv.document?.createTextNode("");
         this.#ownsContent = options.data.ownsContent ?? true;
 
         // Load now
@@ -194,7 +193,7 @@ export class EmbedSlot
         else if (value instanceof HtmlString)
         {
             // Convert node
-            let span = getEnv().document.createElement('span');
+            let span = coenv.document.createElement('span');
             span.innerHTML = value.html;
             newContentObject = [ ...span.childNodes ];
             newContentObject.forEach(x => x.remove());
@@ -202,7 +201,7 @@ export class EmbedSlot
         else if (typeof(value) === 'string')
         {
             // Convert to node
-            newContentObject = [ getEnv().document.createTextNode(value) ]
+            newContentObject = [ coenv.document.createTextNode(value) ]
         }
         else if (Array.isArray(value))
         {

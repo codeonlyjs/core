@@ -1,11 +1,10 @@
-import { getEnv } from "./Environment.js";
 import { htmlEncode } from "./htmlEncode.js";
 
 export function Placeholder(comment)
 {
     let fn = function()
     {
-        let node = getEnv().document?.createComment(comment);
+        let node = coenv.document?.createComment(comment);
 
         return {
             get rootNode() { return node; },

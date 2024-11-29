@@ -5,7 +5,6 @@ import { CloakedValue} from "../core/CloakedValue.js";
 import { ClosureBuilder } from "../core/ClosureBuilder.js";
 import { TemplateHelpers } from "../core/TemplateHelpers.js";
 import { TemplateNode } from "../core/TemplateNode.js";
-import { getEnv } from "../core/Environment.js";
 import { member } from "../core/Utils.js";
 import { TemplateLiteralBuilder} from "../core/TemplateLiteralBuilder.js";
 

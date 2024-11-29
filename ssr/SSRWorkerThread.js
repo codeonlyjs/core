@@ -1,5 +1,4 @@
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
-
 import { SSRWorker } from './SSRWorker.js';
 
 
@@ -36,6 +35,11 @@ export class SSRWorkerThread
         return this.invoke("getStyles");
     }
 
+    stop()
+    {
+        return this.invoke("stop");
+    }
+
     #nextId = 1;
     #pending = new Map();
 
@@ -58,8 +62,15 @@ export class SSRWorkerThread
 
 if (!isMainThread)
 {
+    // Install module loader hook.  We need to make
+    // sure we use our copy of codeonlyjs 
+    //register('./module_loader_hooks.js', import.meta.url);
+
     let worker = new SSRWorker();
-    parentPort.on('message', async (m) => {
+    parentPort.on('message', messageHandler);
+
+    async function messageHandler(m)
+    {
         if (m.method)
         {
             try
@@ -71,6 +82,12 @@ if (!isMainThread)
             {
                 parentPort.postMessage({ id: m.id, err });
             }
+
+            if (m.method == "stop")
+            {
+                parentPort.off('message', messageHandler);
+                return;
+            }
         }
-    });
+    }
 }

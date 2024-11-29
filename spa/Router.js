@@ -1,4 +1,3 @@
-import { getEnv } from "../core/Environment.js";
 import { urlPattern } from "./urlPattern.js";
 import { WebHistoryRouterDriver } from "./WebHistoryRouterDriver.js";
 
@@ -126,7 +125,7 @@ export class Router
     // Load a URL with state
     async load(url, state, route)
     {
-        return getEnv().load(async () => {
+        return coenv.load(async () => {
 
             route = route ?? {};
             

@@ -4,7 +4,6 @@ import { CloakedValue} from "./CloakedValue.js";
 import { ClosureBuilder } from "./ClosureBuilder.js";
 import { TemplateHelpers } from "./TemplateHelpers.js";
 import { TemplateNode } from "./TemplateNode.js";
-import { getEnv } from "./Environment.js";
 import { member } from "./Utils.js";
 
 import "./EmbedSlot.js";
@@ -775,7 +774,7 @@ export function compileTemplate(rootTemplate, compilerOptions)
         if (!context)
             context = {};
         context.$instanceId = _nextInstanceId++;
-        return templateFunction(getEnv(), code.refs, TemplateHelpers, context ?? {});
+        return templateFunction(coenv, code.refs, TemplateHelpers, context ?? {});
     }
 
     // Store meta data about the component on the function since we need this before 

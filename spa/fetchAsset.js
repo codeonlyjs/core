@@ -1,4 +1,3 @@
-import { getEnv } from "../core/Environment.js"
 import { router } from "./Router.js"
 
 export async function fetchTextAsset(path)
@@ -7,15 +6,15 @@ export async function fetchTextAsset(path)
         throw new Error("asset paths must start with '/'");
 
     // Externalize URL
-    if (getEnv().browser && router.urlMapper)
+    if (coenv.browser && router.urlMapper)
     {
-        let url = new URL(path, new URL(getEnv().window.location));
+        let url = new URL(path, new URL(coenv.window.location));
         url = router.urlMapper.externalize(url, true);
         path = url.pathname + url.search;
     }
 
     // Fetch it
-    return getEnv().fetchTextAsset(path);
+    return coenv.fetchTextAsset(path);
 }
 
 export async function fetchJsonAsset(path)

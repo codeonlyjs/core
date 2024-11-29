@@ -1,6 +1,5 @@
 import { HtmlString } from "./HtmlString.js";
 import { htmlEncode } from "./htmlEncode.js";
-import { getEnv } from "./Environment.js";
 import { input } from "./input.js";
 
 export class TemplateHelpers 
@@ -227,7 +226,7 @@ export class TemplateHelpers
                 return;
             value = newVal;
 
-            if (getEnv().browser && getValue.withTransition && node.isConnected)
+            if (coenv.browser && getValue.withTransition && node.isConnected)
             {
                 tx?.finish();
 

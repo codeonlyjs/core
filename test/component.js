@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Component, Template, getEnv } from "../core/index.js";
+import { Component, Template } from "../core/index.js";
 
 class TestComponent extends Component
 {
@@ -70,7 +70,7 @@ test("Invalidate Component", async () => {
 
    comp.invalidate();
    assert.equal(comp.updateCount, 0);
-   await getEnv().window.waitAnimationFrames();
+   await coenv.window.waitAnimationFrames();
    assert.equal(comp.updateCount, 1);
 });
 
@@ -90,11 +90,11 @@ test("Invalidate during Update", async () => {
         comp2.invalidate();
     }
  
-    await getEnv().window.waitAnimationFrames();
+    await coenv.window.waitAnimationFrames();
     comp.invalidate();
     assert.equal(comp.updateCount, 0);
     assert.equal(comp2.updateCount, 0);
-    await getEnv().window.waitAnimationFrames();
+    await coenv.window.waitAnimationFrames();
     assert.equal(comp.updateCount, 1);
     assert.equal(comp2.updateCount, 1);
  });

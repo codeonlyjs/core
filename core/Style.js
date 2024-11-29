@@ -1,11 +1,8 @@
-import { getEnv } from "./Environment.js";
-
-
 export class Style
 {
     static declare(css)
     {
-        getEnv().declareStyle(css);
+        coenv.declareStyle(css);
     }
 }
 

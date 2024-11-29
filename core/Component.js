@@ -1,6 +1,5 @@
 import { nextFrame } from "./nextFrame.js";
 import { Template } from "./Template.js";
-import { getEnv } from "./Environment.js";
 
 export class Component extends EventTarget
 {
@@ -165,7 +164,7 @@ export class Component extends EventTarget
         {
             this.#loadError = null;
             this.invalidate();  
-            getEnv().enterLoading();
+            coenv.enterLoading();
             this.dispatchEvent(new Event("loading"));
         }
         try
@@ -183,7 +182,7 @@ export class Component extends EventTarget
             {
                 this.invalidate();
                 this.dispatchEvent(new Event("loaded"));
-                getEnv().leaveLoading();
+                coenv.leaveLoading();
             }
         }
     }
@@ -283,12 +282,12 @@ export class Component extends EventTarget
 
     mount(el)
     {
-        getEnv().mount(this, el);
+        coenv.mount(this, el);
     }
 
     unmount()
     {
-        getEnv().unmount(this);
+        coenv.unmount(this);
     }
 
     static template = {};

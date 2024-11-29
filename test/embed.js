@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Component, getEnv } from "../core/index.js";
+import { Template, Component } from "../core/index.js";
 import { EmbedSlot } from "../core/EmbedSlot.js";
 
 
@@ -39,7 +39,7 @@ test("Embedded Single Element", () => {
 
     assert(r.slot instanceof EmbedSlot);
 
-    r.slot.content = getEnv().document.createElement("span");
+    r.slot.content = coenv.document.createElement("span");
 
     assert.equal(r.rootNode.childNodes.length, 5);      // pre + post + embed head/tail sentinals + 2x spans
 
@@ -65,8 +65,8 @@ test("Embedded Multiple Elements", () => {
     assert(r.slot instanceof EmbedSlot);
 
     r.slot.content = [
-        getEnv().document.createElement("span"),
-        getEnv().document.createElement("span"),
+        coenv.document.createElement("span"),
+        coenv.document.createElement("span"),
     ]
 
     assert.equal(r.rootNode.childNodes.length, 6);      // pre + post + embed head/tail sentinals + 2x spans
@@ -97,7 +97,7 @@ test("Embedded with Placeholder", () => {
 
     assert(r.slot instanceof EmbedSlot);
 
-    r.slot.content = getEnv().document.createElement('span');
+    r.slot.content = coenv.document.createElement('span');
     r.slot.content.textContent = "embedded content";
 
     assert.equal(r.rootNode.childNodes.length, 5);      // pre + post + embed head/tail sentinals + 2x spans

@@ -1,4 +1,4 @@
-let g_enabled = false;
+let g_enabled = true;
 
 export function enableModuleHook(enable)
 {
