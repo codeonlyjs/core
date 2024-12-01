@@ -1,7 +1,7 @@
 import path from "node:path";
 import { generateStatic } from "./generateStatic.js";
 
-export function viteStaticGenerate(options)
+export function viteGenerateStatic(options)
 {
     return {
         name: 'viteStaticGenerate', 
