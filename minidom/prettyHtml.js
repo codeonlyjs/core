@@ -3,7 +3,7 @@ import { Document } from "../minidom/Document.js"
 import { parseHtml } from "./parseHtml.js"
 
 let rxLiteral = /^(?:pre|textarea|script|style)$/
-let rxBlock = /^(?:address|article|aside|blockquote|body|canvas|dd|div|dl|dt|fieldset|figcaption|figure|footer|form|h1|h2|h3|h4|h5|h6|head|header|hr|html|li|main|meta|nav|noscript|ol|p|pre|script|section|style|table|tfoot|title|ul|video)$/
+let rxBlock = /^(?:address|article|aside|blockquote|body|canvas|dd|div|dl|dt|fieldset|figcaption|figure|footer|form|h1|h2|h3|h4|h5|h6|head|header|hr|html|li|link|main|meta|nav|noscript|ol|p|pre|script|section|style|table|tfoot|title|ul|video)$/
 
 export function prettyHtml(root)
 {
