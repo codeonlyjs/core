@@ -13,7 +13,6 @@ export function Placeholder(comment)
             setMounted(m) { },
             destroy() {},
             update() {},
-            render(w) { w.write(`<!--${htmlEncode(comment)}-->`) },
         }
     }
 

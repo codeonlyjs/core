@@ -219,15 +219,6 @@ export class IfBlock
         this.activeBranch.update();
     }
 
-    render(w)
-    {
-        // Update the active branch
-        if (!this.isSingleRoot)
-            w.write(`<!-- if -->`);
-
-        this.activeBranch.render(w);
-    }
-
 
     unbind()
     {

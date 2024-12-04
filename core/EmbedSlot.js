@@ -271,10 +271,6 @@ export class EmbedSlot
             this.#contentObject?.destroy?.();
     }
 
-    render(w)
-    {
-        this.#contentObject?.render?.(w);
-    }
 }
 
 Plugins.register(EmbedSlot);

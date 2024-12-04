@@ -49,8 +49,6 @@ export class EnvironmentBase extends EventTarget
 
 let getEnv;
 
-console.log("Environment Init");
-
 Object.defineProperty(globalThis, "coenv", {
     get()
     {

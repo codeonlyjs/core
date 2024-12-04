@@ -193,16 +193,6 @@ export class ForEachBlock
         this.#update_range(0, this.itemDoms.length, newItems, newKeys);
     }
     
-    render(w)
-    {
-        w.write(`<!-- enter foreach block -->`);
-        for (let i=0; i<this.itemDoms.length; i++)
-        {
-            this.itemDoms[i].render(w);
-        }
-        w.write(`<!-- leave foreach block -->`);
-    }
-
     #update_range(range_start, range_length, newItems, newKeys)
     {
         let range_end = range_start + range_length;
