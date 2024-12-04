@@ -1,5 +1,4 @@
 import { EnvironmentBase, setEnvProvider  } from "../core/Environment.js";
-import { compileTemplate } from "../core/TemplateCompiler.js";
 import { Document, Window, Node } from "../minidom/index.js";
 
 class History
@@ -129,11 +128,10 @@ class MockEnvironment extends EnvironmentBase
         super();
         this.window = new Window(),
         this.document = this.window.document;
-        this.window.history = new History(this.window),
+        this.window.history = new History(this.window);
         this.window.sessionStorage = new Storage();
         this.window.location =new URL("http://toptensoftware.com/");
-        this.requestAnimationFrame = this.window.requestAnimationFrame.bind(this.window),
-        this.compileTemplate = compileTemplate;
+        this.requestAnimationFrame = this.window.requestAnimationFrame.bind(this.window);
     }
 
     reset()

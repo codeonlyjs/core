@@ -1,5 +1,5 @@
 import { nextFrame } from "./nextFrame.js";
-import { Template } from "./Template.js";
+import { compileTemplate } from "./TemplateCompiler.js";
 
 export class Component extends EventTarget
 {
@@ -22,7 +22,7 @@ export class Component extends EventTarget
 
     static onProvideDomTreeConstructor()
     {
-        return Template.compile(this.onProvideTemplate());
+        return compileTemplate(this.onProvideTemplate());
     }
 
     static onProvideTemplate()

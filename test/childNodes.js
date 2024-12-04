@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, html } from "../core/index.js";
+import { compileTemplate, html } from "../core/index.js";
 
 test("Basic", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             { type: "SPAN", text: "foo" },
@@ -21,7 +21,7 @@ test("Basic", () => {
 test("Child Nodes with Dynamic Text", () => {
 
     let val = "foo";
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             { type: "SPAN", text: () => val },
@@ -38,7 +38,7 @@ test("Child Nodes with Dynamic Text", () => {
 test("Child Nodes with Static Text", () => {
 
     let val = "foo";
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         text: val,
     })();
@@ -49,7 +49,7 @@ test("Child Nodes with Static Text", () => {
 test("Child Nodes with Static HTML", () => {
 
     let val = "<span>foo</span>";
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         text: html(val),
     })();
@@ -60,7 +60,7 @@ test("Child Nodes with Static HTML", () => {
 test("$: Static Text", () => {
 
     let val = "foo";
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: val,
     })();
@@ -71,7 +71,7 @@ test("$: Static Text", () => {
 test("$: Static HTML", () => {
 
     let val = "<span>foo</span>";
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: html(val),
     })();

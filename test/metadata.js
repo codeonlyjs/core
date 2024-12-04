@@ -1,12 +1,12 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template } from "../core/index.js";
+import { compileTemplate } from "../core/index.js";
 
 
 test("Single-root", () => {
 
-    let component = Template.compile({
+    let component = compileTemplate({
         type: "DIV",
         text: "foo",
     });
@@ -17,7 +17,7 @@ test("Single-root", () => {
 
 test("Single-root fragment", () => {
 
-    let component = Template.compile({
+    let component = compileTemplate({
         $: [
             "apples",
         ]
@@ -28,7 +28,7 @@ test("Single-root fragment", () => {
 
 test("Multi-root fragment", () => {
 
-    let component = Template.compile({
+    let component = compileTemplate({
         $: [
             "apples",
             "pears",

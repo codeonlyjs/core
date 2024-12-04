@@ -1,7 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { EnvironmentBase } from "../core/Environment.js";
-import { compileTemplate } from "../core/TemplateCompiler.js";
 import { untilLoaded } from "../core/Utils.js";
 import { Window } from "../minidom/index.js";
 
@@ -12,7 +11,6 @@ export class SSREnvironment extends EnvironmentBase
     {
         super();
         this.options = options;
-        this.compileTemplate = compileTemplate;
         this.ssr = true;
         this.#window = new Window();
         this.#window.blockAnimationFrames = true;

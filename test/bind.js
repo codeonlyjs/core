@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template } from "../core/index.js";
+import { compileTemplate } from "../core/index.js";
 
 
 
@@ -12,7 +12,7 @@ test("Root Element", () => {
         set mydiv(value) { this._mydiv = value; },
     };
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         bind: "mydiv",
     })({ model });
@@ -24,7 +24,7 @@ test("Non-root Element", () => {
 
     let model = {};
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $:
         [
@@ -47,7 +47,7 @@ test("Conditionally Included Element", () => {
     };
 
     let val = true;
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $:
         [
@@ -82,7 +82,7 @@ test("Simple Rebind", () => {
     let model = {};
     let ctx = { model };
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $:
         [
@@ -115,7 +115,7 @@ test("Conditional Rebind", () => {
 
     let val = true;
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $:
         [

@@ -3,7 +3,7 @@ export * from "./HtmlString.js";
 export * from "./CloakedValue.js";
 export * from "./Style.js";
 export * from "./Component.js";
-export * from "./Template.js";
+export * from "./TemplateCompiler.js";
 export * from "./nextFrame.js";
 export * from "./TransitionCss.js";
 export * from "./transition.js";

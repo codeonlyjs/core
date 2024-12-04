@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Component, Template } from "../core/index.js";
+import { Component, compileTemplate } from "../core/index.js";
 
 class TestComponent extends Component
 {
@@ -53,7 +53,7 @@ test("Update Component", () => {
 });
 
 test("Component as direct child node", () => {
-    let r = Template.compile({
+    let r = compileTemplate({
         $: [
             TestComponent,
         ]
@@ -101,7 +101,7 @@ test("Invalidate during Update", async () => {
 
  test("deep update on", () => {
 
-    let template = Template.compile({
+    let template = compileTemplate({
         type: TestComponent,
         update: true,
         export: "comp",
@@ -115,7 +115,7 @@ test("Invalidate during Update", async () => {
 
  test("deep update off", () => {
 
-    let template = Template.compile({
+    let template = compileTemplate({
         type: TestComponent,
         update: false,
         export: "comp",
@@ -131,7 +131,7 @@ test("Invalidate during Update", async () => {
 
     let shouldUpdate = false;
 
-    let template = Template.compile({
+    let template = compileTemplate({
         type: TestComponent,
         update: () => shouldUpdate,
         export: "comp",
@@ -161,7 +161,7 @@ test("Invalidate during Update", async () => {
 
     let prop_value = "foo";
 
-    let template = Template.compile({
+    let template = compileTemplate({
         type: TestComponent,
         update: "auto",
         export: "comp",

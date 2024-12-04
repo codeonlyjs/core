@@ -1,12 +1,12 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template } from "../core/index.js";
+import { compileTemplate } from "../core/index.js";
 
 
 test("Root Export", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         export: "mydiv",
     })();
@@ -16,7 +16,7 @@ test("Root Export", () => {
 
 test("Non-root Export", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $:
         [
@@ -34,7 +34,7 @@ test("Non-root Export", () => {
 test("Export conditional", () => {
 
     let val = true;
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $:
         [

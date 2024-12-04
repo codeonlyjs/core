@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template } from "../core/index.js";
+import { compileTemplate } from "../core/index.js";
 
 
 test("Event", () => {
@@ -9,7 +9,7 @@ test("Event", () => {
     let triggered = false;
     let model = {};
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "BUTTON",
         on_click: (evModel, ev) => {
             // Note triggered

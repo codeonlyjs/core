@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Component } from "../core/index.js";
+import { compileTemplate, Component } from "../core/index.js";
 
 function assert_iterables(a, b)
 {
@@ -10,7 +10,7 @@ function assert_iterables(a, b)
 
 
 test("ForEach Content Static", () => {
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             {
@@ -105,7 +105,7 @@ test("ForEach Content (diff, unkeyed)", () => {
 
     let items = [ "A", "B", "C" ];
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             {
@@ -134,7 +134,7 @@ test("ForEach Content (diff, keyed)", () => {
 
     let items = [ "A", "B", "C" ];
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             {
@@ -167,7 +167,7 @@ test("ForEach Content (fragment)", () => {
 
     let items = [ "A", "B", "C" ];
 
-    let r = Template.compile({
+    let r = compileTemplate({
         $: [
             {
                 foreach: () => items,
@@ -214,7 +214,7 @@ test("ForEach Content (conditional items)", () => {
         return item.charCodeAt(0) % mod == modEq;
     }
 
-    let r = Template.compile({
+    let r = compileTemplate({
         $: [
             {
                 foreach: {
@@ -248,7 +248,7 @@ test("ForEach Content (index sensitive)", () => {
 
     let items = [ "A", "B", "C" ];
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             {
@@ -281,7 +281,7 @@ test("ForEach Content (nested)", () => {
         { name: "B", subItems: [ "3", "4"], },
     ];
 
-    let r = Template.compile(
+    let r = compileTemplate(
     {
         type: "DIV",
         $: 
@@ -318,7 +318,7 @@ test("ForEach Content (with else block)", () => {
 
     let items = [];
 
-    let r = Template.compile(
+    let r = compileTemplate(
     {
         type: "DIV",
         $: [
@@ -412,7 +412,7 @@ test("ForEach Update Count Check", async () => {
         { name: "Bananas" },
     ];
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             {
@@ -526,7 +526,7 @@ test("ForEach Item Life (diff, unkeyed)", () => {
         "Berries",
     ];
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             {
@@ -658,7 +658,7 @@ test("ForEach Item Life (diff, keyed)", () => {
     ];
 
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             {

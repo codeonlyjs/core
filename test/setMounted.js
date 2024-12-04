@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Component } from "../core/index.js";
+import { compileTemplate, Component } from "../core/index.js";
 
 let mountedInstances = [];
 
@@ -43,7 +43,7 @@ test("Component ", () => {
 test("If Block Passthrough", () => {
 
     let val = true;
-    let r = Template.compile({
+    let r = compileTemplate({
         if: () => val,
         $: {
             type: TestComponent,
@@ -84,7 +84,7 @@ test("If Block Passthrough", () => {
 test("Embed Block Passthrough", () => {
 
     let val = true;
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "embed-slot",
         export: "slot",
     })();
@@ -127,7 +127,7 @@ test("ForEach Block Passthrough", () => {
     mountedInstances = [];
     let items = [ 1 ];
 
-    let r = Template.compile({
+    let r = compileTemplate({
         foreach: {
             items: () => items,
         },

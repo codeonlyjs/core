@@ -1,13 +1,11 @@
 import { EnvironmentBase, setEnvProvider } from "./Environment.js";
 import { nextFrame, postNextFrame, anyPendingFrames } from "./nextFrame.js";
-import { compileTemplate } from "./TemplateCompiler.js";
 
 export class BrowserEnvironment extends EnvironmentBase
 {
     constructor()
     {
         super();
-        this.compileTemplate = compileTemplate;
         this.browser = true;    
         this.document = document;
         this.window = window;

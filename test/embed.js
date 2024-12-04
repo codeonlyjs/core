@@ -1,13 +1,13 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Template, Component } from "../core/index.js";
+import { compileTemplate, Component } from "../core/index.js";
 import { EmbedSlot } from "../core/EmbedSlot.js";
 
 
 test("Empty Embed", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             "pre",
@@ -25,7 +25,7 @@ test("Empty Embed", () => {
 
 test("Embedded Single Element", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             "pre",
@@ -50,7 +50,7 @@ test("Embedded Single Element", () => {
 
 test("Embedded Multiple Elements", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             "pre",
@@ -79,7 +79,7 @@ test("Embedded Multiple Elements", () => {
 
 test("Embedded with Placeholder", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             "pre",
@@ -136,7 +136,7 @@ class MyComponent extends Component
 
 test("Embedded Component", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             "pre",
@@ -162,7 +162,7 @@ test("Embedded Component", () => {
 
 test("Embedded Component destroyed", () => {
 
-    let r = Template.compile({
+    let r = compileTemplate({
         type: "DIV",
         $: [
             "pre",
