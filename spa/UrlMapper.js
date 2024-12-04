@@ -1,5 +1,11 @@
+/** Provides URL internalization and externalization */
 export class UrlMapper
 {
+    /** Constructs a new Url Mapper
+     * @param {object} options Options for how to map URLs
+     * @param {string} options.base The base URL of the external URL
+     * @param {boolean} options.hash True to use hashed URLs
+     */
     constructor(options)
     {
         this.options = options;
@@ -11,6 +17,11 @@ export class UrlMapper
         }
     }
 
+    /** Internalizes a URL
+     *
+     * @param {URL} url The URL to internalize
+     * @returns {URL}
+     */
     internalize(url)
     {
         if (this.options.base)
@@ -35,6 +46,12 @@ export class UrlMapper
         return url;
     }
 
+    /** Externalizes a URL
+     *
+     * @param {URL} url The URL to externalize
+     * @param {boolean} [asset] If true, ignores the hash option (used to externalize asset URLs with base only)
+     * @returns {URL}
+     */
     externalize(url, asset)
     {
         if (!asset && this.options.hash)

@@ -6,6 +6,9 @@ import { compileTemplate } from "../core/index.js";
 
 test("If (true)", () => {
 
+    let dtc = compileTemplate({});
+    let dt = dtc({});
+    
     let r = compileTemplate({
         type: "DIV",
         $: [

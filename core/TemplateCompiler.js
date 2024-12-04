@@ -10,7 +10,34 @@ import "./EmbedSlot.js";
 import "./ForEachBlock.js";
 import "./IfBlock.js";
 
-export function compileTemplateCode(rootTemplate, compilerOptions)
+/**
+ * @typedef {object} CLObject
+ * @property {Node[]} rootNodes the root nodes of this object
+ * @property {() => void} update update this object
+ * @property {() => void} destroy destroy this object
+ * @property {(boolean) => void} setMounted notifies this object it's been mounted or unmounted
+ * @property {boolean} [isSingleRoot] - if true, indicates this object will only ever have a single root node
+ * @property {Node} rootNode the root node if isSingleRoot is true
+ */
+
+/**
+ * @typedef {object} DomTreeContext
+ * @property {object} model the model to be used by the domTree
+ */
+
+/**
+ * @typedef {object} _DomTreeExtend
+ * @property {() => void} rebind rebinds the DomTree to a new model object
+ * @typedef {CLObject & _DomTreeExtend} DomTree
+ */
+
+/** 
+ * @typedef {(DomTreeContext) => DomTree} DomTreeConstructor 
+ */
+
+
+
+function compileTemplateCode(rootTemplate, compilerOptions)
 {
     // Every node in the template will get an id, starting at 1.
     let nodeId = 1;
@@ -756,6 +783,10 @@ export function compileTemplateCode(rootTemplate, compilerOptions)
 
 let _nextInstanceId = 1;
 
+/** Compiles a template into a domTreeConstructor function
+ * @param {object} rootTemplate The template to be compiled
+ * @returns {DomTreeConstructor}
+ */
 export function compileTemplate(rootTemplate, compilerOptions)
 {
     compilerOptions = compilerOptions ?? {};

@@ -4,6 +4,7 @@ import { Router } from "../spa/Router.js";
 import { UrlMapper } from "../spa/UrlMapper.js";
 import { setEnvProvider } from "../core/Environment.js";
 
+
 let fakeenv = {
     load: function(callback)
     {

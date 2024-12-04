@@ -1,14 +1,91 @@
 import { urlPattern } from "./urlPattern.js";
 import { WebHistoryRouterDriver } from "./WebHistoryRouterDriver.js";
 
+
+/**
+ * @typedef {object} Route
+ * @property {URL} url The route's URL
+ * @property {Object} state State associated with the route
+ * @property {boolean} current True when this is the current route
+ * @property {RouteHandler} handler The handler associated with this route
+ * @property {Object} [viewState] The route's view state
+ * @property {Object} [page] The page component for this route
+ * @property {string} [title] The route's page title
+ */
+
+/**
+ * @typedef {object} RouteHandler
+ * @property {string | RegExp} [pattern] A string pattern or regular expression to match URL pathnames to this route handler
+ * @property {MatchCallback} [match] A callback to confirm the URL match
+ * @property {RouterEventAsync} [mayEnter] Notifies that a route for this handler may be entered
+ * @property {RouterEventAsync} [mayLeave] Notifies that a route for this handler may be left
+ * @property {RouterEventSync} [didEnter] Notifies that a route for this handler has been entered
+ * @property {RouterEventSync} [didLeave] Notifies that a route for this handler has been left
+ * @property {RouterEventSync} [cancelEnter] Notifies that a route that could have been entered was cancelled
+ * @property {RouterEventSync} [cancelLeave] Notifies that a route that could have been left was cancelled
+ * @property {Number} [order] Order of this route handler when compared to all others (default = 0, lowest first)
+ * @property {CaptureViewStateCallback} [captureViewState] A callback to capture the view state for this route handler's routes
+ * @property {RestoreViewStateCallback} [restoreViewState] A callback to restore the view state for this route handler's routes
+ */
+
+/**
+ * @callback MatchCallback
+ * @param {Route} route The route to match to
+ * @returns {Promise<boolean>}
+ */
+
+/**
+ * @callback RouterEventAsync
+ * @param {Route} from The route being left
+ * @param {Route} to The route being entered
+ * @returns {Promise<boolean>}
+ */
+
+/**
+ * @callback RouterEventSync
+ * @param {Route} from The route being left
+ * @param {Route} to The route being entered
+ * @returns {void}
+ */
+
+/**
+ * @callback RevokeRouteHandlerPredicate
+ * @param {RouteHandler} handler The handler being queried
+ * @returns {boolean} Return true from the handler
+ */
+
+/**
+ * @callback CaptureViewStateCallback
+ * @param {Route} route The route whose view state is being captured
+ * @returns {Object} The captured view state
+ */
+
+/**
+ * @callback RestoreViewStateCallback
+ * @param {Route} route The route whose view state is being restored
+ * @param {Object} viewState The previously captured view state to be restored
+ */
+
+
+/** The Router class - handles URL load requests, creating
+ route objects using route handlers and firing associated
+ events
+*/
 export class Router
 {   
+    /** Constructs a new Router instance 
+     * @param {RouteHandler[]} handlers An array of router handlers to initially register
+     */
     constructor(handlers)
     {
         if (handlers)
             this.register(handlers);
     }
 
+    /** Starts the router, using the specified driver
+     * @param {RouterDriver} driver The router driver to use
+     * @returns {any} The result returned from the driver's start method
+     */
     start(driver)
     {
         // Quit if already started
@@ -53,7 +130,17 @@ export class Router
     }
 
     urlMapper;
+
+    /** Internalizes a URL
+     * @param {URL | string} url The URL to internalize
+     * @returns { URL | string}
+     */
     internalize(url) { return this.#mapUrl(url, "internalize"); }
+
+    /** Externalizes a URL
+     * @param {URL | string} url The URL to internalize
+     * @returns { URL | string}
+     */
     externalize(url) { return this.#mapUrl(url, "externalize"); }
 
     #_state = { c: null, p: null, l: [] }
@@ -85,29 +172,50 @@ export class Router
         return this.#state.l;
     }
 
-    // The current route
+    /** The current route object
+     * @type {Route}
+     */
     get current()
     {
         return this.#current;
     }
 
-    // The route currently being switched to
+    /** The route currently being navigated to
+     * @type {Route}
+     */
     get pending()
     {
         return this.#pending;
     }
 
-
+    /** Adds an event listener
+     * 
+     * Available events are:
+     *   - "mayEnter", "mayLeave" (async, cancellable events)
+     *   - "didEnter" and "didLeave" (sync, non-cancellable events)
+     *   - "cancel" (sync, notification only)
+     *
+     * @param {string} event The event to listen to
+     * @param {RouterEventAsync | RouterEventSync} handler The event handler function
+     */
     addEventListener(event, handler)
     {
         this.#listeners.push({ event, handler });
     }
+
+    /** Removes a previously added event handler
+     *
+     * @param {string} event The event to remove the listener for
+     * @param {RouterEventAsync | RouterEventSync} handler The event handler function to remove
+     */
     removeEventListener(event, handler)
     {
         let index = this.#listeners.findIndex(x => x.event == event && x.handler == handler);
         if (index >= 0)
             this.#listeners.splice(index, 1);
     }
+
+    /** @private */
     async dispatchEvent(event, canCancel, from, to)
     {
         for (let l of this.#listeners)
@@ -122,7 +230,7 @@ export class Router
         return true;
     }
 
-    // Load a URL with state
+    /** @private */
     async load(url, state, route)
     {
         return coenv.load(async () => {
@@ -184,6 +292,7 @@ export class Router
         });
     }
 
+    /** @private */
     dispatchCancelEvents(from, route)
     {
         this.#current?.handler.cancelLeave?.(from, route);
@@ -203,6 +312,7 @@ export class Router
     // new route => didEnter    |
     // event => didEnter        |
     //
+    /** @private */
     async tryLoad(route)
     {
         let oldRoute = this.#current;
@@ -263,6 +373,7 @@ export class Router
         return true;
     }
 
+    /** @private */
     async matchUrl(url, state, route)
     {
         // Sort handlers
@@ -313,6 +424,10 @@ export class Router
 
     #handlers = [];
     #needSort = false;
+
+    /** Registers one or more route handlers with the router
+     * @param {RouteHandler | RouteHandler[]} handler The handler or handlers to register
+     */
     register(handlers)
     {
         if (!Array.isArray(handlers))
@@ -332,11 +447,25 @@ export class Router
         this.#needSort = true;
     }
 
+    /** Revoke previously used handlers by matching to a predicate
+     * @param {RevokeRouteHandlerPredicate} predicate Callback passed each route handler, return true to remove
+     */
     revoke(predicate)
     {
         this.#handlers = this.#handlers.filter(x => !predicate(x));
     }
+
+    /** a callback to capture the view state for this route handler's routes 
+     * @type {CaptureViewStateCallback}
+     */
+    captureViewState;
+
+    /** a callback to restore the view state for this route handler's routes
+     * @type {RestoreViewStateCallback}
+     */
+    restoreViewState;
 }
 
 
+/** The default {@link Router} instance */
 export let router = new Router();

@@ -284,8 +284,8 @@ export class Component extends EventTarget
      * If the silent parameter is `true` the `loading` property isn't set and
      * the component is only invalidated after returning from the callback.
      * 
-     * @param {LoadCallback} callback - the callback to perform the load operation
-     * @param {Boolean} [silent] - whether to perform a silent update
+     * @param {LoadCallback} Callback The callback to perform the load operation
+     * @param {Boolean} [silent] Whether to perform a silent update
      * @returns {any} The result of the callback
      */
     async load(callback, silent)
@@ -374,9 +374,9 @@ export class Component extends EventTarget
      * automatically when the component is mounted, and removed when
      * unmounted
      * 
-     * @param {EventTarget} target - the object dispatching the events
-     * @param {string} event - the event to listen for
-     * @param {Function} [handler] - the event listener to add/remove.  If not 
+     * @param {EventTarget} target The object dispatching the events
+     * @param {string} event The event to listen for
+     * @param {Function} [handler] - The event listener to add/remove.  If not 
      * provided, the component's {@link invalidate} method is used.
      * @returns {void}
      */
@@ -397,9 +397,9 @@ export class Component extends EventTarget
 
     /** Removes an event listener previously registered with {@link listen}
      * 
-     * @param {EventTarget} target - the object dispatching the events
-     * @param {string} event - the event to listen for
-     * @param {Function} [handler] - the event listener to add/remove.  If not 
+     * @param {EventTarget} target The object dispatching the events
+     * @param {string} event The event to listen for
+     * @param {Function} [handler] The event listener to add/remove.  If not 
      * provided, the component's {@link invalidate} method is used.
      * @returns {void}
      */
@@ -465,7 +465,7 @@ export class Component extends EventTarget
 
     /** Mounts this component against an element in the document.
      * 
-     * @param {Element | string} el - the element or an element selected that specifies where to mount the component
+     * @param {Element | string} el The element or an element selected that specifies where to mount the component
      * @returns {void}
      */
     mount(el)
