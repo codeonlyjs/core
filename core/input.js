@@ -1,37 +1,58 @@
-export function input(opts)
+/** 
+ * @typedef {object} InputHandler
+ */
+
+/**
+ * @typedef {object} InputOptions
+ * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding
+ * @property {string} [prop] The name of the property on the target object
+ * @property {string | (model: object) => string} [target] The target object providing the binding property
+ * @property {(value:any) => string} [format] Format the property value into a string for display
+ * @property {(value:string) => any} [parse] Parse a display string into a property value
+ * @property {(model:any, context:any) => any} [get] Get the value of the property
+ * @property {(model:any, value: any, context:any) => void} [set] Set the value of the property
+ * @property {(model:any, event: Event) => any} [on_change] A callback to be invoked when the property value is changed by the user
+ */
+
+/** Declares additional settings for input bindings
+ * @param {InputOptions} options Additional input options
+ * @returns {InputHandler}
+ */
+
+export function input(options)
 {
     let el;
     let ctx;
-    let inputEvent = opts.event ?? "input";
+    let inputEvent = options.event ?? "input";
     let getValue;
     let setValue;
     let castToInput;
     let castFromInput;
     let inputProp;
-    let parseValue = opts.parse ?? (x => x);
-    let formatValue = opts.format ?? (x => x);
+    let parseValue = options.parse ?? (x => x);
+    let formatValue = options.format ?? (x => x);
 
-    if (typeof(opts) === 'string')
-        opts = { prop: opts }
+    if (typeof(options) === 'string')
+        options = { prop: options }
 
-    if (opts.get && opts.set)
+    if (options.get && options.set)
     {
-        getValue = () => opts.get(ctx.model, ctx);
-        setValue = (value) => opts.set(ctx.model, value, ctx);
+        getValue = () => options.get(ctx.model, ctx);
+        setValue = (value) => options.set(ctx.model, value, ctx);
     }
-    else if (typeof(opts.prop) === 'string')
+    else if (typeof(options.prop) === 'string')
     {
         // Resolve base object
         let baseObj;
-        if (opts.target instanceof Function)
-            baseObj = () => opts.target(ctx.model, ctx);
-        else if (opts.target)
-            baseObj = () => opts.target;
+        if (options.target instanceof Function)
+            baseObj = () => options.target(ctx.model, ctx);
+        else if (options.target)
+            baseObj = () => options.target;
         else
             baseObj = () => ctx.model;
 
         // String can be a simple.dotted.property
-        let props = opts.prop.split('.');
+        let props = options.prop.split('.');
         let prop = props.pop()
         function getObj()
         {
@@ -56,7 +77,7 @@ export function input(opts)
             v = parseValue(v);
         if (v !== undefined)
             setValue(v);
-        opts.on_change?.(ctx.model, ev);
+        options.on_change?.(ctx.model, ev);
     }
 
     function update()

@@ -1,5 +1,9 @@
 
-// Converts a URL pattern string to a regex
+/** Converts a URL pattern string to a regular expression string
+ * 
+ * @param {string} pattern The URL pattern to be converted to a regular expression
+ * @returns {string}
+ */
 export function urlPattern(pattern)
 {
     let rx = "^";

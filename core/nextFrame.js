@@ -1,6 +1,13 @@
 let frameCallbacks = [];
 let needSort = false;
 
+/**
+ * Invokes a callback on the next update cycle
+ * 
+ * @param {() => void} callback The callback to be invoked
+ * @param {Number} [order] The priority of the callback in related to others (lowest first, default 0)
+ * @returns {void}
+ */
 export function nextFrame(callback, order)
 {
     if (!callback)
