@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { EnvironmentBase } from "../core/Environment.js";
+import { Environment } from "../core/Environment.js";
 import { untilLoaded } from "../core/Utils.js";
 import { Window } from "../minidom/index.js";
 
-
-export class SSREnvironment extends EnvironmentBase
+/** @internal */
+export class SSREnvironment extends Environment
 {
     constructor(options)
     {

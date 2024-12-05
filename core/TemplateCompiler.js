@@ -12,22 +12,22 @@ import "./IfBlock.js";
 
 /**
  * @typedef {object} CLObject
- * @property {Node[]} rootNodes the root nodes of this object
- * @property {() => void} update update this object
- * @property {() => void} destroy destroy this object
- * @property {(boolean) => void} setMounted notifies this object it's been mounted or unmounted
- * @property {boolean} [isSingleRoot] - if true, indicates this object will only ever have a single root node
- * @property {Node} rootNode the root node if isSingleRoot is true
+ * @property {Node[]} rootNodes The root nodes of this object
+ * @property {() => void} update Update this object
+ * @property {() => void} destroy Destroy this object
+ * @property {(boolean) => void} setMounted Notifies this object it's been mounted or unmounted
+ * @property {boolean} [isSingleRoot] If true, indicates this object will only ever have a single root node
+ * @property {Node} rootNode The root node if isSingleRoot is true
  */
 
 /**
  * @typedef {object} DomTreeContext
- * @property {object} model the model to be used by the domTree
+ * @property {object} model The model to be used by the domTree
  */
 
 /**
  * @typedef {object} _DomTreeExtend
- * @property {() => void} rebind rebinds the DomTree to a new model object
+ * @property {() => void} rebind Rebinds the DomTree to a new model object
  * @typedef {CLObject & _DomTreeExtend} DomTree
  */
 

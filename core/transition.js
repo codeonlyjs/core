@@ -1,16 +1,6 @@
 import { TransitionCss } from "./TransitionCss.js";    
 
 
-/** 
- * @typedef {object} TransitionHandler
- * @property {Function} enterNodes
- * @property {Function} leaveNodes
- * @property {Function} onWillEntry
- * @property {Function} onWillLeave
- * @property {Function} start
- * @property {Function} finish
- */
-
 /** Declares addition settings transition directives
  * @param {object} options
  * @param {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
@@ -59,3 +49,15 @@ export function transition(options)
     // Return value
     return fnValue;
 }
+
+
+/** 
+ * @typedef {object} TransitionHandler
+ * @property {(nodes: Node[]) => void} enterNodes Registers the nodes that will be transitioned in
+ * @property {(nodes: Node[]) => void} leaveNodes Registers the nodes that will be transitioned out
+ * @property {() => void} onWillEnter Registers a callback to be invoked when entry nodes should be added
+ * @property {() => void} onDidLeave Registers callback to be invoked when leaving nodes can be removed
+ * @property {() => void} start Instructs the TransitionHandler to start the transition
+ * @property {() => void} finish Instructs the TranstitionHandler to cancel any pending transition and complete all callbacks.
+ */
+

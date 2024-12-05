@@ -1,5 +1,10 @@
+/** Implements a simple MRU cache that can be used to cache Page components for route handlers */
 export class PageCache
 {
+    /** Constructs a new page cache
+     * @param {object} options Options controlling the cache
+     * @param {number} options.max The maximum number of cache entries to keep
+     */
     constructor(options)
     {
         this.#options = Object.assign({
@@ -10,6 +15,11 @@ export class PageCache
     #cache = [];
     #options;
 
+    /** Get a cached object from the cache, or create a new one
+     * @param {any} key The key for the page
+     * @param {(key: any) => any} factory A callback to create the page item if not in the cache
+     * @return {any}
+     */
     get(key, factory)
     {
         // Unpack URL Objects

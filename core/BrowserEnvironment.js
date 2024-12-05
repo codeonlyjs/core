@@ -1,7 +1,8 @@
-import { EnvironmentBase, setEnvProvider } from "./Environment.js";
+import { Environment, setEnvProvider } from "./Environment.js";
 import { nextFrame, postNextFrame, anyPendingFrames } from "./nextFrame.js";
 
-export class BrowserEnvironment extends EnvironmentBase
+/** @internal */
+export class BrowserEnvironment extends Environment
 {
     constructor()
     {

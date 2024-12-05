@@ -1,3 +1,4 @@
+/** @internal */
 export class Plugins
 {
     static plugins = [

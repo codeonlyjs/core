@@ -1,5 +1,6 @@
 import { Document } from "../minidom/index.js";
 
+/** @internal */
 export class HtmlInjector
 {
     constructor(html)

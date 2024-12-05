@@ -2,6 +2,7 @@ import { whenLoaded } from "../core/Utils.js";
 import { nextFrame } from "../core/nextFrame.js";
 import { DocumentScrollPosition } from "./DocumentScrollPosition.js";
 
+/** @internal */
 export class ViewStateRestoration
 {
     constructor(router)

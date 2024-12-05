@@ -2,6 +2,7 @@ import { HtmlString } from "./HtmlString.js";
 import { htmlEncode } from "./htmlEncode.js";
 import { input } from "./input.js";
 
+/** @internal */
 export class TemplateHelpers 
 {
     static rawText(text)
@@ -294,24 +295,6 @@ export class TemplateHelpers
     { 
         return input(...arguments); 
     };
-
-    /*
-    static cloneNodeRecursive(node) 
-    {
-        // Clone the node deeply
-        let clone = node.cloneNode(true);
-
-        // If the node has children, clone them recursively
-        if (node.hasChildNodes()) 
-        {
-            node.childNodes.forEach(child => {
-                clone.append(this.cloneNodeRecursive(child));
-            });
-        }
-
-        return clone;
-    }
-    */
       
 }
 

@@ -1,5 +1,6 @@
 import { ViewStateRestoration } from "./ViewStateRestoration.js";
 
+/** @internal */
 export class WebHistoryRouterDriver
 {
     async start(router)

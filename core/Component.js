@@ -32,6 +32,7 @@ export class Component extends EventTarget
      * The first time this property is accessed, it calls the 
      * static `onProvideDomTreeConstructor` method to actually provide the
      * instance.
+     * @type {import("./TemplateCompiler").DomTreeConstructor}
     */
     static get domTreeConstructor()
     {
@@ -44,6 +45,7 @@ export class Component extends EventTarget
      * 
      * This method is only called once per component class and should provide
      * a constructor function that can create `domTree` instances.
+     * @returns {import("./TemplateCompiler").DomTreeConstructor}
      */
     static onProvideDomTreeConstructor()
     {
@@ -93,7 +95,7 @@ export class Component extends EventTarget
 
     /** Gets the `domTree` for this component, creating it if necessary 
      * 
-     * @type {domTree}
+     * @type {import("./TemplateCompiler").DomTree}
     */
     get domTree()
     {
@@ -245,8 +247,6 @@ export class Component extends EventTarget
     }
     
     /** Sets the error object associated with the current async data {@link load} operation.
-     *
-     * @type {Error}
      */
     set loadError(value)
     {
@@ -376,8 +376,7 @@ export class Component extends EventTarget
      * 
      * @param {EventTarget} target The object dispatching the events
      * @param {string} event The event to listen for
-     * @param {Function} [handler] - The event listener to add/remove.  If not 
-     * provided, the component's {@link invalidate} method is used.
+     * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link invalidate} method is used.
      * @returns {void}
      */
     listen(target, event, handler)
@@ -431,7 +430,7 @@ export class Component extends EventTarget
 
     #mounted = false;
 
-    /** @private */
+    /** @override */
     setMounted(mounted)
     {
         // Depth first

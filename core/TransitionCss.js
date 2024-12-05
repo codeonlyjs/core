@@ -1,3 +1,4 @@
+/** @internal */
 export function TransitionCss(options, ctx) 
 {
     let onWillEnter;

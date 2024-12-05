@@ -1,0 +1,16 @@
+{
+    "include": [
+        "index.js",
+    ],
+	"compilerOptions": {
+		"allowJs": true,
+		"declaration": true,
+		"noEmit": false,
+        "emitDeclarationOnly": true,
+        "stripInternal": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "outFile": "index.d.ts",
+        "declarationMap": true,
+	}
+}

@@ -1,3 +1,4 @@
+/** @internal */
 export class SSRRouterDriver 
 {
     constructor()

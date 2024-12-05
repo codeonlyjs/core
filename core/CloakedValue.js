@@ -1,3 +1,4 @@
+/** @internal */
 export class CloakedValue
 {
     constructor(value)
@@ -6,6 +7,7 @@ export class CloakedValue
     }
 }
 
+/** @internal */
 export function cloak(value)
 {
     return new CloakedValue(value);

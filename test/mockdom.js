@@ -1,4 +1,4 @@
-import { EnvironmentBase, setEnvProvider  } from "../core/Environment.js";
+import { Environment, setEnvProvider  } from "../core/Environment.js";
 import { Document, Window, Node } from "../minidom/index.js";
 
 class History
@@ -121,7 +121,7 @@ class Storage
 }
 
 
-class MockEnvironment extends EnvironmentBase
+class MockEnvironment extends Environment
 {
     constructor()
     {

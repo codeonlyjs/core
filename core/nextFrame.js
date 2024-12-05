@@ -49,6 +49,12 @@ export function nextFrame(callback, order)
     }
 }
 
+/** 
+ * Invokes a callback after all other nextFrame callbacks have been invoked, or
+ * immediately if there are no pending nextFrame callbacks.
+ * @param {() => void} callback The callback to invoke
+ * @returns {void}
+ */
 export function postNextFrame(callback)
 {
     if (frameCallbacks.length == 0)
@@ -57,6 +63,10 @@ export function postNextFrame(callback)
         nextFrame(callback, Number.MAX_SAFE_INTEGER);
 }
 
+/** 
+ * Check if there are any pending nextFrame callbacks
+ * @returns {boolean}
+ */
 export function anyPendingFrames()
 {
     return frameCallbacks.length != 0;
