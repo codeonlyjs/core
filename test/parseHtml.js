@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { Document, parseHtml, CharacterData } from "../minidom/index.js";
+import { Document, parseHtml, CharacterData } from "../minidom/api.js";
 
 test("text node", () => {
     let nodes = parseHtml(new Document(), "Hello World");

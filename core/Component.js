@@ -430,7 +430,7 @@ export class Component extends EventTarget
 
     #mounted = false;
 
-    /** @override */
+    
     setMounted(mounted)
     {
         // Depth first

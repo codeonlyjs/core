@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { compileTemplate, cloak } from "../core/index.js";
+import { compileTemplate, cloak } from "../core/api.js";
 
 
 test("Single root component at root level", () => {

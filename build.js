@@ -20,7 +20,7 @@ console.log(`Package Version: ${pkg.version}`);
 await $`npm run rollup`
 
 // Generate declarations
-await $`npm run declarations`
+await $`npm run types`
 
 // Tag and commit both repos
 await git_tag_and_commit();

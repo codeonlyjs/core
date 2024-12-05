@@ -3,19 +3,20 @@
   "version": "0.1.86",
   "description": "A simple, lightweight, code-only front-end Web framework.",
   "main": "./index.js",
+  "types": "./index.d.ts",
   "type": "module",
   "exports": {
     "node": {
       "import": "./index.js"
     },
     "default": {
-      "import": "./spa/index.js"
+      "import": "./spa/api.js"
     }
   },
   "scripts": {
     "test": "node --test",
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
-    "declarations": "tsc --project tsconfig.emit.json",
+    "types": "tsc --project tsconfig.emit.json",
     "build": "zx build.js"
   },
   "author": "Topten Software",

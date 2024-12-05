@@ -1,4 +1,4 @@
-import { Document } from "../minidom/index.js";
+import { Document } from "../minidom/api.js";
 
 /** @internal */
 export class HtmlInjector

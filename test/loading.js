@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { Component } from "../core/index.js";
+import { Component } from "../core/api.js";
 
 
 test("loading", async () => {

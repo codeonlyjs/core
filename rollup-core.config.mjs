@@ -3,7 +3,7 @@ import replace from '@rollup/plugin-replace';
 import bundleSize from 'rollup-plugin-bundle-size';
 
 export default {
-    input: "core/index.js",
+    input: "core/api.js",
     plugins: [
         replace({
             preventAssignment: true,

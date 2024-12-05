@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Environment } from "../core/Environment.js";
 import { untilLoaded } from "../core/Utils.js";
-import { Window } from "../minidom/index.js";
+import { Window } from "../minidom/api.js";
 
 /** @internal */
 export class SSREnvironment extends Environment

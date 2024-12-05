@@ -9,7 +9,7 @@ export async function resolve(specifier, context, nextResolve) {
 
     if (g_enabled && specifier == "@codeonlyjs/core")
     {
-        specifier = new URL("./node_modules/@codeonlyjs/core/index.js", import.meta.url).href;
+        specifier = new URL("./node_modules/@codeonlyjs/core/api.js", import.meta.url).href;
     }
 
     return nextResolve(specifier);

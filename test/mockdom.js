@@ -1,5 +1,5 @@
 import { Environment, setEnvProvider  } from "../core/Environment.js";
-import { Document, Window, Node } from "../minidom/index.js";
+import { Document, Window, Node } from "../minidom/api.js";
 
 class History
 {

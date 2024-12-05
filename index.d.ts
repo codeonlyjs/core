@@ -703,8 +703,7 @@ declare module "core/Component" {
          * @type {boolean}
          */
         get mounted(): boolean;
-        /** @override */
-        override setMounted(mounted: any): void;
+        setMounted(mounted: any): void;
         /** Mounts this component against an element in the document.
          *
          * @param {Element | string} el The element or an element selected that specifies where to mount the component
@@ -814,7 +813,7 @@ declare module "core/BrowserEnvironment" {
     }
     import { Environment } from "core/Environment";
 }
-declare module "core/index" {
+declare module "core/api" {
     export * from "core/Environment";
     export * from "core/HtmlString";
     export * from "core/CloakedValue";
@@ -956,10 +955,10 @@ declare module "spa/Router" {
          */
         constructor(handlers: RouteHandler[]);
         /** Starts the router, using the specified driver
-         * @param {RouterDriver} driver The router driver to use
+         * @param {object} driver The router driver to use
          * @returns {any} The result returned from the driver's start method
          */
-        start(driver: RouterDriver): any;
+        start(driver: object): any;
         navigate: any;
         replace: any;
         back: any;
@@ -1169,8 +1168,8 @@ declare module "spa/fetchAsset" {
      */
     export function fetchJsonAsset(path: string): Promise<object>;
 }
-declare module "spa/index" {
-    export * from "core";
+declare module "spa/api" {
+    export * from "core/api";
     export * from "spa/urlPattern";
     export * from "spa/PageCache";
     export * from "spa/DocumentScrollPosition";
@@ -1371,7 +1370,7 @@ declare module "minidom/Window" {
 declare module "minidom/prettyHtml" {
     export function prettyHtml(root: any): string;
 }
-declare module "minidom/index" {
+declare module "minidom/api" {
     export * from "minidom/Node";
     export * from "minidom/Comment";
     export * from "minidom/Text";
@@ -1393,7 +1392,7 @@ declare module "ssr/SSREnvironment" {
         styles: string;
         get fs(): typeof fs;
         get window(): Window;
-        get document(): import("minidom").Document;
+        get document(): import("minidom/Document").Document;
         declareStyle(css: any): void;
         mount(component: any, el: any): void;
         unmount(): void;
@@ -1498,8 +1497,9 @@ declare module "ssr/viteGenerateStatic" {
         closeBundle: () => Promise<void>;
     };
 }
-declare module "ssr/index" {
-    export * from "spa";
+declare module "ssr/api" {
+    export * from "spa/api";
+    export * from "minidom/api";
     export * from "ssr/SSREnvironment";
     export * from "ssr/SSRWorker";
     export * from "ssr/SSRWorkerThread";
@@ -1507,9 +1507,6 @@ declare module "ssr/index" {
     export * from "ssr/viteGenerateStatic";
 }
 declare module "index" {
-    export * from "core";
-    export * from "spa";
-    export * from "ssr";
-    export * from "minidom";
+    export * from "ssr/api";
 }
 //# sourceMappingURL=index.d.ts.map

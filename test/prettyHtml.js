@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { prettyHtml } from "../minidom/index.js";
+import { prettyHtml } from "../minidom/api.js";
 
 test("p", () => {
     let doc = `<p>Hello World</p>`;

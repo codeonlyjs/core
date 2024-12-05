@@ -83,7 +83,7 @@ export class Router
     }
 
     /** Starts the router, using the specified driver
-     * @param {RouterDriver} driver The router driver to use
+     * @param {object} driver The router driver to use
      * @returns {any} The result returned from the driver's start method
      */
     start(driver)

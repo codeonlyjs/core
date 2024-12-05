@@ -1,4 +1,4 @@
-export * from "../core/index.js";
+export * from "../core/api.js";
 
 export * from "./urlPattern.js";
 export * from "./PageCache.js";
