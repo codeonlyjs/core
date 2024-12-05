@@ -16,7 +16,7 @@
   "scripts": {
     "test": "node --test",
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
-    "types": "tsc --project tsconfig.emit.json",
+    "types": "tsc --project tsconfig.emit.json && dts-tool index.d.ts @codeonlyjs/core --strip-internal",
     "build": "zx build.js"
   },
   "author": "Topten Software",
@@ -38,5 +38,8 @@
     "rollup-plugin-bundle-size": "^1.0.3",
     "typescript": "^5.7.2",
     "zx": "^8.2.0"
+  },
+  "dependencies": {
+    "@codeonlyjs/dts-tool": "github:codeonlyjs/dts-tool"
   }
 }

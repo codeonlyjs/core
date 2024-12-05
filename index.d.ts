@@ -1,40 +1,9 @@
-declare module "core/Utils" {
-    /** Convert a camelCaseName to a dashed-name
-     * @internal
-     * @param {string} name The name to convert
-     * @returns {string}
-     */
-    export function camel_to_dash(name: string): string;
-    /** Check if a function is a constructor
-     * @internal
-     * @param {Function} fn The function to check
-     * @returns {boolean}
-     */
-    export function is_constructor(fn: Function): boolean;
-    /** Helper to create member accessor in generated code
-     *
-     * Returns either ".name" or "[name]" depending if name is a valid
-     * javascript identifier
-     *
-     * @internal
-     * @param {string} name Name of the member to be accessed
-     * @returns {string}
-     */
-    export function member(name: string): string;
-    /** Invokes a callback when a target object (environment or component) has finished loading
-     * @internal
-     * @param {object} target The target to check
-     * @param {Function} callback The callback to invoke when load finished (or immediately if not currently loading
-     * @returns {void}
-     */
-    export function whenLoaded(target: object, callback: Function): void;
+declare module "@codeonlyjs/core" {
     /** Returns a promise that resolves when a target objects has finished loading
      * @param {object} target The target to check
      * @returns {Promise<void>}
      */
     export function untilLoaded(target: object): Promise<void>;
-}
-declare module "core/Environment" {
     /** Sets an environment provider
      * @param {() => Environment} value A callback to provide the current environment object
      * @returns {void}
@@ -68,8 +37,6 @@ declare module "core/Environment" {
         untilLoaded(): Promise<void>;
         #private;
     }
-}
-declare module "core/HtmlString" {
     /** Marks a string as being HTML instead of plain text
      *
      * Normally strings passed to templates are treated as plain text.  Wrapping
@@ -92,17 +59,6 @@ declare module "core/HtmlString" {
          */
         html: string;
     }
-}
-declare module "core/CloakedValue" {
-    /** @internal */
-    export function cloak(value: any): CloakedValue;
-    /** @internal */
-    export class CloakedValue {
-        constructor(value: any);
-        value: any;
-    }
-}
-declare module "core/Style" {
     /** Declares a CSS style string to be added to the `<head>` block
      *
      * This function is intended to be used as a template literal tag
@@ -120,8 +76,6 @@ declare module "core/Style" {
          */
         static declare(css: string): void;
     }
-}
-declare module "core/nextFrame" {
     /**
      * Invokes a callback on the next update cycle
      *
@@ -142,8 +96,6 @@ declare module "core/nextFrame" {
      * @returns {boolean}
      */
     export function anyPendingFrames(): boolean;
-}
-declare module "core/CodeBuilder" {
     export function CodeBuilder(): {
         append: (...code: any[]) => void;
         indent: () => void;
@@ -154,8 +106,6 @@ declare module "core/CodeBuilder" {
         enableSplit(enable: any): void;
         readonly isEmpty: boolean;
     };
-}
-declare module "core/ClosureBuilder" {
     export class ClosureBuilder {
         code: {
             append: (...code: any[]) => void;
@@ -198,29 +148,11 @@ declare module "core/ClosureBuilder" {
         toString(): string;
         appendTo(out: any): void;
     }
-}
-declare module "core/htmlEncode" {
     /** Encodes a string to make it safe for use in HTML
      * @param {string} str The string to encode
      * @returns {string}
      */
     export function htmlEncode(str: string): string;
-}
-declare module "core/input" {
-    /**
-     * @typedef {object} InputHandler
-     */
-    /**
-     * @typedef {object} InputOptions
-     * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding
-     * @property {string} [prop] The name of the property on the target object
-     * @property {string | (model: object) => string} [target] The target object providing the binding property
-     * @property {(value:any) => string} [format] Format the property value into a string for display
-     * @property {(value:string) => any} [parse] Parse a display string into a property value
-     * @property {(model:any, context:any) => any} [get] Get the value of the property
-     * @property {(model:any, value: any, context:any) => void} [set] Set the value of the property
-     * @property {(model:any, event: Event) => any} [on_change] A callback to be invoked when the property value is changed by the user
-     */
     /** Declares additional settings for input bindings
      * @param {InputOptions} options Additional input options
      * @returns {InputHandler}
@@ -261,42 +193,7 @@ declare module "core/input" {
          */
         on_change?: (model: any, event: Event) => any;
     };
-}
-declare module "core/TemplateHelpers" {
-    /** @internal */
-    export class TemplateHelpers {
-        static rawText(text: any): string;
-        static renderToString(renderFn: any): string;
-        static renderComponentToString(comp: any): string;
-        static rawStyle(text: any): string;
-        static rawNamedStyle(styleName: any, text: any): string;
-        static createTextNode(text: any): HTMLElement | Text;
-        static setElementAttribute(node: any, attr: any, value: any): void;
-        static setElementText(node: any, text: any): void;
-        static setNodeText(node: any, text: any): any;
-        static setNodeClass(node: any, cls: any, set: any): void;
-        static setNodeStyle(node: any, style: any, value: any): void;
-        static boolClassMgr(ctx: any, node: any, cls: any, getValue: any): () => void;
-        static setNodeDisplay(node: any, show: any, prev_display: any): any;
-        static displayMgr(ctx: any, node: any, getValue: any): () => void;
-        static replaceMany(oldNodes: any, newNodes: any): void;
-        static addEventListener(provideModel: any, el: any, eventName: any, handler: any): () => void;
-        static input(...args: any[]): any;
-    }
-}
-declare module "core/Plugins" {
-    /** @internal */
-    export class Plugins {
-        static plugins: any[];
-        static register(plugin: any): void;
-        static transform(template: any): any;
-        static transformGroup(childNodes: any): void;
-    }
-}
-declare module "core/parseTypeDecl" {
     export function parseTypeDecl(str: any): {};
-}
-declare module "core/TemplateNode" {
     export class TemplateNode {
         constructor(template: any, compilerOptions: any);
         template: any;
@@ -314,8 +211,6 @@ declare module "core/TemplateNode" {
         spreadDomNodes(): string;
         enumAllNodes(): Generator<any, void, any>;
     }
-}
-declare module "core/TransitionNone" {
     export namespace TransitionNone {
         function enterNodes(): void;
         function leaveNodes(): void;
@@ -324,8 +219,6 @@ declare module "core/TransitionNone" {
         function start(): void;
         function finish(): void;
     }
-}
-declare module "core/EmbedSlot" {
     export class EmbedSlot {
         static integrate(template: any, compilerOptions: any): {
             isSingleRoot: boolean;
@@ -352,16 +245,11 @@ declare module "core/EmbedSlot" {
         destroy(): void;
         #private;
     }
-    import { TemplateNode } from "core/TemplateNode";
-}
-declare module "core/diff_tiny" {
     export function diff_tiny(oldArray: any, newArray: any): {
         op: string;
         index: any;
         count: number;
     }[];
-}
-declare module "core/ForEachBlock" {
     export class ForEachBlock {
         static integrate(template: any, compilerOptions: any): {
             isSingleRoot: boolean;
@@ -394,9 +282,6 @@ declare module "core/ForEachBlock" {
         emptyDom: any;
         #private;
     }
-    import { TemplateNode } from "core/TemplateNode";
-}
-declare module "core/Placeholder" {
     export function Placeholder(comment: any): {
         (): {
             readonly rootNode: any;
@@ -408,8 +293,6 @@ declare module "core/Placeholder" {
         };
         isSingleRoot: boolean;
     };
-}
-declare module "core/IfBlock" {
     export class IfBlock {
         static integrate(template: any, compilerOptions: any): {
             isSingleRoot: boolean;
@@ -451,9 +334,6 @@ declare module "core/IfBlock" {
         get rootNode(): any;
         #private;
     }
-    import { TemplateNode } from "core/TemplateNode";
-}
-declare module "core/TemplateCompiler" {
     /** Compiles a template into a domTreeConstructor function
      * @param {object} rootTemplate The template to be compiled
      * @returns {DomTreeConstructor}
@@ -499,8 +379,6 @@ declare module "core/TemplateCompiler" {
     };
     export type DomTree = CLObject & _DomTreeExtend;
     export type DomTreeConstructor = (DomTreeContext: any) => DomTree;
-}
-declare module "core/Component" {
     /** Components are the primary building block for constructing CodeOnly
     applications. They encapsulate program logic, a DOM (aka HTML) template
     and an optional a set of CSS styles.
@@ -522,14 +400,14 @@ declare module "core/Component" {
          * instance.
          * @type {import("./TemplateCompiler").DomTreeConstructor}
         */
-        static get domTreeConstructor(): import("core/TemplateCompiler").DomTreeConstructor;
+        static get domTreeConstructor(): DomTreeConstructor;
         /** Provides the `domTreeConstructor` to be used by this component class.
          *
          * This method is only called once per component class and should provide
          * a constructor function that can create `domTree` instances.
          * @returns {import("./TemplateCompiler").DomTreeConstructor}
          */
-        static onProvideDomTreeConstructor(): import("core/TemplateCompiler").DomTreeConstructor;
+        static onProvideDomTreeConstructor(): DomTreeConstructor;
         /** Provides the template to be used by this component class.
          *
          * This method is only called once per component class and should provide
@@ -590,7 +468,7 @@ declare module "core/Component" {
          *
          * @type {import("./TemplateCompiler").DomTree}
         */
-        get domTree(): import("core/TemplateCompiler").DomTree;
+        get domTree(): DomTree;
         /** Returns true if this component instance has, and will only ever
          * have a single root node
          *
@@ -630,10 +508,6 @@ declare module "core/Component" {
          * @type {boolean}
          */
         get loading(): boolean;
-        /**
-         * @callback LoadCallback
-         * @returns {any}
-         */
         /** Performs an async data load operation.
          *
          * The callback function is typically an async function that performs
@@ -717,17 +591,6 @@ declare module "core/Component" {
         unmount(): void;
         #private;
     }
-}
-declare module "core/TransitionCss" {
-    /** @internal */
-    export function TransitionCss(options: any, ctx: any): {
-        enterNodes: (nodes: any) => void;
-        leaveNodes: (nodes: any) => void;
-        onWillEnter: (cb: any) => void;
-        onDidLeave: (cb: any) => void;
-        start: () => Promise<void>;
-        finish: () => void;
-    };
     export namespace TransitionCss {
         let defaultClassNames: {
             entering: string;
@@ -738,8 +601,6 @@ declare module "core/TransitionCss" {
             "leave-end": string;
         };
     }
-}
-declare module "core/transition" {
     /** Declares addition settings transition directives
      * @param {object} options
      * @param {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
@@ -784,61 +645,19 @@ declare module "core/transition" {
          */
         finish: () => void;
     };
-}
-declare module "core/Fluent" {
     export let $: any;
-}
-declare module "core/Notify" {
     export function Notify(): {
         (sourceObject: any, ...args: any[]): void;
         addEventListener: (sourceObject: any, handler: any) => void;
         removeEventListener: (sourceObject: any, handler: any) => void;
     };
     export let notify: any;
-}
-declare module "core/BrowserEnvironment" {
-    /** @internal */
-    export class BrowserEnvironment extends Environment {
-        document: Document;
-        window: Window & typeof globalThis;
-        hydrateMounts: any[];
-        pendingStyles: string;
-        declareStyle(css: any): void;
-        mountStyles(): void;
-        styleNode: HTMLStyleElement;
-        doHydrate(): void;
-        mount(component: any, el: any): void;
-        unmount(component: any): void;
-        fetchTextAsset(path: any): Promise<string>;
-    }
-    import { Environment } from "core/Environment";
-}
-declare module "core/api" {
-    export * from "core/Environment";
-    export * from "core/HtmlString";
-    export * from "core/CloakedValue";
-    export * from "core/Style";
-    export * from "core/Component";
-    export * from "core/TemplateCompiler";
-    export * from "core/nextFrame";
-    export * from "core/TransitionCss";
-    export * from "core/transition";
-    export * from "core/TransitionNone";
-    export * from "core/Fluent";
-    export * from "core/Notify";
-    export * from "core/htmlEncode";
-    export * from "core/input";
-    export * from "core/BrowserEnvironment";
-}
-declare module "spa/urlPattern" {
     /** Converts a URL pattern string to a regular expression string
      *
      * @param {string} pattern The URL pattern to be converted to a regular expression
      * @returns {string}
      */
     export function urlPattern(pattern: string): string;
-}
-declare module "spa/PageCache" {
     /** Implements a simple MRU cache that can be used to cache Page components for route handlers */
     export class PageCache {
         /** Constructs a new page cache
@@ -856,95 +675,6 @@ declare module "spa/PageCache" {
         get(key: any, factory: (key: any) => any): any;
         #private;
     }
-}
-declare module "spa/DocumentScrollPosition" {
-    /** @internal */
-    export class DocumentScrollPosition {
-        static get(): {
-            top: any;
-            left: any;
-        };
-        static set(value: any): void;
-    }
-}
-declare module "spa/ViewStateRestoration" {
-    /** @internal */
-    export class ViewStateRestoration {
-        constructor(router: any);
-        captureViewState(): void;
-        saveViewStates(): void;
-        #private;
-    }
-}
-declare module "spa/WebHistoryRouterDriver" {
-    /** @internal */
-    export class WebHistoryRouterDriver {
-        start(router: any): Promise<any>;
-        get current(): any;
-        load(url: any, state: any, route: any): Promise<any>;
-        back(): void;
-        replace(url: any): void;
-        navigate(url: any): Promise<any>;
-        #private;
-    }
-}
-declare module "spa/Router" {
-    /**
-     * @typedef {object} Route
-     * @property {URL} url The route's URL
-     * @property {Object} state State associated with the route
-     * @property {boolean} current True when this is the current route
-     * @property {RouteHandler} handler The handler associated with this route
-     * @property {Object} [viewState] The route's view state
-     * @property {Object} [page] The page component for this route
-     * @property {string} [title] The route's page title
-     */
-    /**
-     * @typedef {object} RouteHandler
-     * @property {string | RegExp} [pattern] A string pattern or regular expression to match URL pathnames to this route handler
-     * @property {MatchCallback} [match] A callback to confirm the URL match
-     * @property {RouterEventAsync} [mayEnter] Notifies that a route for this handler may be entered
-     * @property {RouterEventAsync} [mayLeave] Notifies that a route for this handler may be left
-     * @property {RouterEventSync} [didEnter] Notifies that a route for this handler has been entered
-     * @property {RouterEventSync} [didLeave] Notifies that a route for this handler has been left
-     * @property {RouterEventSync} [cancelEnter] Notifies that a route that could have been entered was cancelled
-     * @property {RouterEventSync} [cancelLeave] Notifies that a route that could have been left was cancelled
-     * @property {Number} [order] Order of this route handler when compared to all others (default = 0, lowest first)
-     * @property {CaptureViewStateCallback} [captureViewState] A callback to capture the view state for this route handler's routes
-     * @property {RestoreViewStateCallback} [restoreViewState] A callback to restore the view state for this route handler's routes
-     */
-    /**
-     * @callback MatchCallback
-     * @param {Route} route The route to match to
-     * @returns {Promise<boolean>}
-     */
-    /**
-     * @callback RouterEventAsync
-     * @param {Route} from The route being left
-     * @param {Route} to The route being entered
-     * @returns {Promise<boolean>}
-     */
-    /**
-     * @callback RouterEventSync
-     * @param {Route} from The route being left
-     * @param {Route} to The route being entered
-     * @returns {void}
-     */
-    /**
-     * @callback RevokeRouteHandlerPredicate
-     * @param {RouteHandler} handler The handler being queried
-     * @returns {boolean} Return true from the handler
-     */
-    /**
-     * @callback CaptureViewStateCallback
-     * @param {Route} route The route whose view state is being captured
-     * @returns {Object} The captured view state
-     */
-    /**
-     * @callback RestoreViewStateCallback
-     * @param {Route} route The route whose view state is being restored
-     * @param {Object} viewState The previously captured view state to be restored
-     */
     /** The Router class - handles URL load requests, creating
      route objects using route handlers and firing associated
      events
@@ -1110,8 +840,6 @@ declare module "spa/Router" {
     export type RevokeRouteHandlerPredicate = (handler: RouteHandler) => boolean;
     export type CaptureViewStateCallback = (route: Route) => any;
     export type RestoreViewStateCallback = (route: Route, viewState: any) => any;
-}
-declare module "spa/UrlMapper" {
     /** Provides URL internalization and externalization */
     export class UrlMapper {
         /** Constructs a new Url Mapper
@@ -1141,8 +869,6 @@ declare module "spa/UrlMapper" {
          */
         externalize(url: URL, asset?: boolean): URL;
     }
-}
-declare module "spa/fetchAsset" {
     /** Fetchs a text asset
      *
      *  In the browser, issues a fetch request for an asset
@@ -1167,15 +893,7 @@ declare module "spa/fetchAsset" {
      * @returns {Promise<object>}
      */
     export function fetchJsonAsset(path: string): Promise<object>;
+
 }
-declare module "spa/api" {
-    export * from "spa/urlPattern";
-    export * from "spa/PageCache";
-    export * from "spa/DocumentScrollPosition";
-    export * from "spa/Router";
-    export * from "spa/WebHistoryRouterDriver";
-    export * from "spa/UrlMapper";
-    export * from "spa/ViewStateRestoration";
-    export * from "spa/fetchAsset";
-}
-//# sourceMappingURL=index.d.ts.map
+
+//# sourceMappingURL=index.d.ts
