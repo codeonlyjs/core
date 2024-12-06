@@ -1,8 +1,6 @@
 {
     "include": [
-        "core/api.js",
-        "spa/api.js",
-        "ssr/api/js",
+        "index.js",
     ],
 	"compilerOptions": {
 		"allowJs": true,

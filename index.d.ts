@@ -893,6 +893,221 @@ declare module "@codeonlyjs/core" {
      * @returns {Promise<object>}
      */
     export function fetchJsonAsset(path: string): Promise<object>;
+    export class Node {
+        constructor(document: any);
+        get document(): any;
+        get parentNode(): any;
+        get hasChildNodes(): boolean;
+        get nodeValue(): any;
+        _setParentNode(value: any): void;
+        get nextSibling(): any;
+        get previousSibling(): any;
+        remove(): void;
+        replaceWith(...newNodes: any[]): void;
+        after(...newNodes: any[]): void;
+        before(...newNodes: any[]): void;
+        addEventListener(name: any, handler: any): void;
+        listeners: any[];
+        removeEventListener(name: any, handler: any): void;
+        fireEvent(name: any, ev: any): void;
+        get html(): string;
+        #private;
+    }
+    export class CharacterData extends Node {
+        static encode(str: any): string;
+        static names: {
+            quot: string;
+            amp: string;
+            lt: string;
+            gt: string;
+        };
+        static decode(str: any): string;
+        constructor(document: any, data: any, isRaw: any);
+        get isRaw(): boolean;
+        get raw(): any;
+        get data(): any;
+        get length(): any;
+        set nodeValue(value: any);
+        get nodeValue(): any;
+        #private;
+    }
+    export class Comment extends CharacterData {
+        get nodeType(): number;
+        get nodeName(): string;
+        cloneNode(deep: any): Comment;
+        render(w: any): void;
+    }
+    export class Text extends CharacterData {
+        get nodeType(): number;
+        get nodeName(): string;
+        cloneNode(deep: any): Text;
+        render(w: any): void;
+    }
+    export function parseSelector(sel: any): {}[];
+    export function querySelectorAll(element: any, sel: any): any;
+    export function querySelector(element: any, sel: any): any;
+    export function tokenizer(str: any): (mode: any) => {
+        token: string;
+        text: any;
+        comment?: undefined;
+        string?: undefined;
+        identifier?: undefined;
+    } | {
+        token: string;
+        comment: any;
+        text?: undefined;
+        string?: undefined;
+        identifier?: undefined;
+    } | {
+        token: string;
+        string: any;
+        text?: undefined;
+        comment?: undefined;
+        identifier?: undefined;
+    } | {
+        token: string;
+        identifier: any;
+        text?: undefined;
+        comment?: undefined;
+        string?: undefined;
+    } | {
+        token: any;
+        text?: undefined;
+        comment?: undefined;
+        string?: undefined;
+        identifier?: undefined;
+    };
+    export function parseHtml(document: any, str: any): any[];
+    export let selfClosing: RegExp;
+    export class Element extends Node {
+        constructor(document: any, nodeName: any);
+        get nodeType(): number;
+        get nodeName(): any;
+        get childNodes(): any[];
+        get rawAttributes(): Map<any, any>;
+        get id(): any;
+        querySelector(...args: any[]): any;
+        querySelectorAll(...args: any[]): any;
+        _setInner(value: any): void;
+        _getInner(): any;
+        renderAttributes(w: any): void;
+        render(w: any): void;
+        setAttribute(name: any, value: any, raw: any): void;
+        getAttribute(name: any): any;
+        append(...nodes: any[]): void;
+        insertBefore(node: any, before: any): void;
+        insertNodesBefore(nodes: any, before: any): void;
+        removeChild(node: any): void;
+        appendChild(node: any): void;
+        #private;
+    }
+    export class ClassList {
+        constructor(owner: any);
+        owner: any;
+        add(className: any): void;
+        remove(className: any): void;
+        has(className: any): boolean;
+    }
+    export class StyleList {
+        constructor(owner: any);
+        owner: any;
+        getList(): any;
+        setList(list: any): void;
+        getProperty(key: any): any;
+        setProperty(key: any, value: any): boolean;
+        removeProperty(key: any): void;
+    }
+    export class HTMLElement extends Element {
+        cloneNode(deep: any): HTMLElement;
+        set innerHTML(value: any);
+        get innerHTML(): any;
+        set textContent(value: string);
+        get textContent(): string;
+        get classList(): any;
+        get style(): any;
+        #private;
+    }
+    export class Document extends HTMLElement {
+        constructor(html: any);
+        get nodeName(): string;
+        get documentElement(): any;
+        get body(): any;
+        get head(): any;
+        createElement(tagName: any): HTMLElement;
+        createElementNS(xmlns: any, tagName: any): HTMLElement;
+        createTextNode(data: any, raw: any): Text;
+        createComment(data: any, raw: any): Comment;
+    }
+    export class Window extends EventTarget {
+        document: Document;
+        blockAnimationFrames: boolean;
+        pendingAnimationFrames: any[];
+        requestAnimationFrame(callback: any): void;
+        waitAnimationFrames(): Promise<any>;
+        dispatchAnimationFrames(): boolean;
+    }
+    export function prettyHtml(root: any): string;
+    import fs from "node:fs/promises";
+    export class SSRWorker {
+        init(options: any): Promise<void>;
+        options: any;
+        routerDriver: SSRRouterDriver;
+        asyncStore: AsyncLocalStorage<any>;
+        entryModule: any;
+        entryMain: any;
+        css: string;
+        htmlInjector: HtmlInjector;
+        stop(): Promise<void>;
+        get env(): any;
+        getStyles(): Promise<string>;
+        render(url: any, options: any): Promise<any>;
+    }
+    import { AsyncLocalStorage } from "async_hooks";
+    export class SSRWorkerThread {
+        worker: Worker;
+        init(options: any): Promise<any>;
+        render(url: any): Promise<any>;
+        getStyles(): Promise<any>;
+        stop(): Promise<any>;
+        invoke(method: any, ...args: any[]): Promise<any>;
+        #private;
+    }
+    import { Worker } from "worker_threads";
+    /** Generates a static generated site (SSG)
+     *
+     * @param {object} options - site generation options
+     * @param {string[]} [options.entryFile] The entry .js file (as an array, first found used)
+     * @param {string[]} [options.entryMain] The name of the entry point function in the entryFile (as an array, first found used)
+     * @param {string[]} [options.entryHtml] The HTML file to use as template for generated files (as an array, first found used)
+     * @param {string[]} [options.entryUrls] The URL's to render (will also recursively render all linked URLs)
+     * @param {string} [options.ext] The extension to append to all generated files (including the period)
+     * @param {boolean} [options.pretty] Prettify the generated HTML
+     * @param {string} [options.outDir] The output directory to write generated files
+     * @param {string} [options.baseUrl] The base URL used to qualify in-page URLs to an external full URL
+     * @param {boolean} [options.verbose] Verbose output
+     * @param {string} [options.cssUrl] Name of the CSS styles file
+     */
+    export function generateStatic(options: {
+        entryFile?: string[];
+        entryMain?: string[];
+        entryHtml?: string[];
+        entryUrls?: string[];
+        ext?: string;
+        pretty?: boolean;
+        outDir?: string;
+        baseUrl?: string;
+        verbose?: boolean;
+        cssUrl?: string;
+    }): Promise<{
+        files: any[];
+        elapsed: number;
+    }>;
+    export function viteGenerateStatic(options: any): {
+        name: string;
+        configResolved: (config: any) => void;
+        buildStart: () => Promise<void>;
+        closeBundle: () => Promise<void>;
+    };
 
 }
 
