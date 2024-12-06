@@ -1,6 +1,6 @@
 {
   "name": "@codeonlyjs/core",
-  "version": "0.1.99",
+  "version": "0.1.100",
   "description": "A simple, lightweight, code-only front-end Web framework.",
   "main": "./index-client.js",
   "module": "./index-client.js",
@@ -40,6 +40,5 @@
     "typescript": "^5.7.2",
     "zx": "^8.2.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
