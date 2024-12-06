@@ -1007,4 +1007,4 @@ declare module "@codeonlyjs/core" {
 
 }
 
-//# sourceMappingURL=../core/index.d.ts.map
+//# sourceMappingURL=index.d.ts.map
