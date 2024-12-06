@@ -19,7 +19,7 @@
   "scripts": {
     "test": "node --test",
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
-    "types": "tsc --project tsconfig.emit.json && dts-tool index.d.ts @codeonlyjs/core --strip-internal",
+    "types": "tsc --project tsconfig.emit.json && dts-tool demod index.d.ts @codeonlyjs/core --strip-internal",
     "build": "zx build.js"
   },
   "author": "Topten Software",
