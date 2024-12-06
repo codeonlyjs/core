@@ -32,6 +32,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@codeonlyjs/dts-tool": "github:codeonlyjs/dts-tool",
     "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "rollup": "^4.24.3",
@@ -40,6 +41,5 @@
     "zx": "^8.2.0"
   },
   "dependencies": {
-    "@codeonlyjs/dts-tool": "github:codeonlyjs/dts-tool"
   }
 }
