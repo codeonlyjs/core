@@ -1108,6 +1108,9 @@ declare module "@codeonlyjs/core" {
         buildStart: () => Promise<void>;
         closeBundle: () => Promise<void>;
     };
+    export * from "core";
+    export * from "spa";
+    export * from "ssr";
 
 }
 

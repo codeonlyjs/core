@@ -1,6 +1,6 @@
 {
     "include": [
-        "index.js",
+        "index-server.js",
     ],
 	"compilerOptions": {
 		"allowJs": true,

@@ -2,18 +2,15 @@
   "name": "@codeonlyjs/core",
   "version": "0.1.98",
   "description": "A simple, lightweight, code-only front-end Web framework.",
-  "main": "./index.js",
+  "main": "./index-client.js",
+  "module": "./index-client.js",
   "types": "./index.d.ts",
   "type": "module",
   "exports": {
-    "node": {
-      "import": {
-        "types": "./index.d.ts",
-        "default": "./index.js"
-      }
-    },
-    "default": {
-      "import": "./index-spa.js"
+    "import": {
+      "types": "./index.d.ts",
+      "browser": "./index-client.js",
+      "default": "./index-server.js"
     }
   },
   "scripts": {
