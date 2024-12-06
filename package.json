@@ -13,7 +13,7 @@
       }
     },
     "default": {
-      "import": "./spa/api.js"
+      "import": "./index-spa.js"
     }
   },
   "scripts": {

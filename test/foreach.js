@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { compileTemplate, Component } from "../core/api.js";
+import { Component } from "../core/Component.js";
+import { compileTemplate } from "../core/TemplateCompiler.js";
 
 function assert_iterables(a, b)
 {

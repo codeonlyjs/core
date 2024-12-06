@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
 import "./mockdom.js";
-import { compileTemplate, html } from "../core/api.js";
+import { compileTemplate } from "../core/TemplateCompiler.js";
+import { html } from "../core/HtmlString.js";
 
 test("Basic", () => {
 
