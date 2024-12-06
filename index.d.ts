@@ -1,33 +1,4 @@
 declare module "@codeonlyjs/core" {
-    /** Convert a camelCaseName to a dashed-name
-     * @internal
-     * @param {string} name The name to convert
-     * @returns {string}
-     */
-    export function camel_to_dash(name: string): string;
-    /** Check if a function is a constructor
-     * @internal
-     * @param {Function} fn The function to check
-     * @returns {boolean}
-     */
-    export function is_constructor(fn: Function): boolean;
-    /** Helper to create member accessor in generated code
-     *
-     * Returns either ".name" or "[name]" depending if name is a valid
-     * javascript identifier
-     *
-     * @internal
-     * @param {string} name Name of the member to be accessed
-     * @returns {string}
-     */
-    export function member(name: string): string;
-    /** Invokes a callback when a target object (environment or component) has finished loading
-     * @internal
-     * @param {object} target The target to check
-     * @param {Function} callback The callback to invoke when load finished (or immediately if not currently loading
-     * @returns {void}
-     */
-    export function whenLoaded(target: object, callback: Function): void;
     /** Returns a promise that resolves when a target objects has finished loading
      * @param {object} target The target to check
      * @returns {Promise<void>}
@@ -87,13 +58,6 @@ declare module "@codeonlyjs/core" {
          * @type {string}
          */
         html: string;
-    }
-    /** @internal */
-    export function cloak(value: any): CloakedValue;
-    /** @internal */
-    export class CloakedValue {
-        constructor(value: any);
-        value: any;
     }
     /** Declares a CSS style string to be added to the `<head>` block
      *
@@ -229,33 +193,6 @@ declare module "@codeonlyjs/core" {
          */
         on_change?: (model: any, event: Event) => any;
     };
-    /** @internal */
-    export class TemplateHelpers {
-        static rawText(text: any): string;
-        static renderToString(renderFn: any): string;
-        static renderComponentToString(comp: any): string;
-        static rawStyle(text: any): string;
-        static rawNamedStyle(styleName: any, text: any): string;
-        static createTextNode(text: any): HTMLElement | Text;
-        static setElementAttribute(node: any, attr: any, value: any): void;
-        static setElementText(node: any, text: any): void;
-        static setNodeText(node: any, text: any): any;
-        static setNodeClass(node: any, cls: any, set: any): void;
-        static setNodeStyle(node: any, style: any, value: any): void;
-        static boolClassMgr(ctx: any, node: any, cls: any, getValue: any): () => void;
-        static setNodeDisplay(node: any, show: any, prev_display: any): any;
-        static displayMgr(ctx: any, node: any, getValue: any): () => void;
-        static replaceMany(oldNodes: any, newNodes: any): void;
-        static addEventListener(provideModel: any, el: any, eventName: any, handler: any): () => void;
-        static input(...args: any[]): any;
-    }
-    /** @internal */
-    export class Plugins {
-        static plugins: any[];
-        static register(plugin: any): void;
-        static transform(template: any): any;
-        static transformGroup(childNodes: any): void;
-    }
     export function parseTypeDecl(str: any): {};
     export class TemplateNode {
         constructor(template: any, compilerOptions: any);
@@ -654,15 +591,6 @@ declare module "@codeonlyjs/core" {
         unmount(): void;
         #private;
     }
-    /** @internal */
-    export function TransitionCss(options: any, ctx: any): {
-        enterNodes: (nodes: any) => void;
-        leaveNodes: (nodes: any) => void;
-        onWillEnter: (cb: any) => void;
-        onDidLeave: (cb: any) => void;
-        start: () => Promise<void>;
-        finish: () => void;
-    };
     export namespace TransitionCss {
         let defaultClassNames: {
             entering: string;
@@ -724,20 +652,6 @@ declare module "@codeonlyjs/core" {
         removeEventListener: (sourceObject: any, handler: any) => void;
     };
     export let notify: any;
-    /** @internal */
-    export class BrowserEnvironment extends Environment {
-        document: Document;
-        window: Window & typeof globalThis;
-        hydrateMounts: any[];
-        pendingStyles: string;
-        declareStyle(css: any): void;
-        mountStyles(): void;
-        styleNode: HTMLStyleElement;
-        doHydrate(): void;
-        mount(component: any, el: any): void;
-        unmount(component: any): void;
-        fetchTextAsset(path: any): Promise<string>;
-    }
     /** Converts a URL pattern string to a regular expression string
      *
      * @param {string} pattern The URL pattern to be converted to a regular expression
@@ -759,31 +673,6 @@ declare module "@codeonlyjs/core" {
          * @return {any}
          */
         get(key: any, factory: (key: any) => any): any;
-        #private;
-    }
-    /** @internal */
-    export class DocumentScrollPosition {
-        static get(): {
-            top: any;
-            left: any;
-        };
-        static set(value: any): void;
-    }
-    /** @internal */
-    export class ViewStateRestoration {
-        constructor(router: any);
-        captureViewState(): void;
-        saveViewStates(): void;
-        #private;
-    }
-    /** @internal */
-    export class WebHistoryRouterDriver {
-        start(router: any): Promise<any>;
-        get current(): any;
-        load(url: any, state: any, route: any): Promise<any>;
-        back(): void;
-        replace(url: any): void;
-        navigate(url: any): Promise<any>;
         #private;
     }
     /** The Router class - handles URL load requests, creating
@@ -1007,4 +896,4 @@ declare module "@codeonlyjs/core" {
 
 }
 
-//# sourceMappingURL=../core/index.d.ts.map
+//# sourceMappingURL=index.d.ts.map
