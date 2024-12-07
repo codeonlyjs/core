@@ -3809,7 +3809,7 @@ class Component extends EventTarget
      * If the silent parameter is `true` the `loading` property isn't set and
      * the component is only invalidated after returning from the callback.
      * 
-     * @param {LoadCallback} Callback The callback to perform the load operation
+     * @param {LoadCallback} callback The callback to perform the load operation
      * @param {Boolean} [silent] Whether to perform a silent update
      * @returns {any} The result of the callback
      */

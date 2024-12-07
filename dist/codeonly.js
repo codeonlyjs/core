@@ -3809,7 +3809,7 @@ class Component extends EventTarget
      * If the silent parameter is `true` the `loading` property isn't set and
      * the component is only invalidated after returning from the callback.
      * 
-     * @param {LoadCallback} Callback The callback to perform the load operation
+     * @param {LoadCallback} callback The callback to perform the load operation
      * @param {Boolean} [silent] Whether to perform a silent update
      * @returns {any} The result of the callback
      */
@@ -5540,7 +5540,7 @@ class Router
     #needSort = false;
 
     /** Registers one or more route handlers with the router
-     * @param {RouteHandler | RouteHandler[]} handler The handler or handlers to register
+     * @param {RouteHandler | RouteHandler[]} handlers The handler or handlers to register
      */
     register(handlers)
     {
@@ -5654,7 +5654,7 @@ class UrlMapper
     }
 }
 
-/** Fetchs a text asset
+/** Fetches a text asset
  * 
  *  In the browser, issues a fetch request for an asset
  *  On the server, uses fs.readFile to load a local file asset
@@ -5682,7 +5682,7 @@ async function fetchTextAsset(path)
     return coenv.fetchTextAsset(path);
 }
 
-/** Fetchs a JSON asset
+/** Fetches a JSON asset
  * 
  *  In the browser, issues a fetch request for an asset
  *  On the server, uses fs.readFile to load a local file asset
