@@ -426,7 +426,7 @@ export class Router
     #needSort = false;
 
     /** Registers one or more route handlers with the router
-     * @param {RouteHandler | RouteHandler[]} handler The handler or handlers to register
+     * @param {RouteHandler | RouteHandler[]} handlers The handler or handlers to register
      */
     register(handlers)
     {

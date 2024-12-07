@@ -16,8 +16,9 @@
   "scripts": {
     "test": "node --test",
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
-    "types": "tsc --project tsconfig.emit.json && dts-tool demod index.d.ts @codeonlyjs/core --strip-internal",
-    "build": "zx build.js"
+    "types": "tsc --project tsconfig.emit.json && dts-tool exports index.raw.d.ts @codeonlyjs/core --out:index.d.ts",
+    "build": "zx build.js",
+    "docs": "typedoc"
   },
   "author": "Topten Software",
   "contributors": [
@@ -37,8 +38,9 @@
     "@rollup/plugin-terser": "^0.4.4",
     "rollup": "^4.24.3",
     "rollup-plugin-bundle-size": "^1.0.3",
+    "typedoc": "^0.27.3",
+    "typedoc-plugin-markdown": "^4.3.1",
     "typescript": "^5.7.2",
     "zx": "^8.2.0"
-  },
-  "dependencies": {}
+  }
 }

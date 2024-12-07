@@ -6,9 +6,12 @@ export class HtmlInjector
     constructor(html)
     {
         this.html = html;
-        this.dom = new Document(html);
-        this.insertMap = new Map();
+        this.#dom = new Document(html);
+        this.#insertMap = new Map();
     }
+
+    #dom;
+    #insertMap;
 
     // Given a object map of { selector: [ html ] }
     // create the final html by inserting each html

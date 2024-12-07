@@ -10,7 +10,7 @@
         "stripInternal": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "outFile": "index.d.ts",
+        "outFile": "index.raw.d.ts",
         "declarationMap": true,
 	}
 }

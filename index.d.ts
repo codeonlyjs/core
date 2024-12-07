@@ -1,9 +1,4 @@
 declare module "@codeonlyjs/core" {
-    /** Returns a promise that resolves when a target objects has finished loading
-     * @param {object} target The target to check
-     * @returns {Promise<void>}
-     */
-    export function untilLoaded(target: object): Promise<void>;
     /** Sets an environment provider
      * @param {() => Environment} value A callback to provide the current environment object
      * @returns {void}
@@ -35,7 +30,6 @@ declare module "@codeonlyjs/core" {
          * @returns {Promise<void>}
          */
         untilLoaded(): Promise<void>;
-        #private;
     }
     /** Marks a string as being HTML instead of plain text
      *
@@ -76,309 +70,6 @@ declare module "@codeonlyjs/core" {
          */
         static declare(css: string): void;
     }
-    /**
-     * Invokes a callback on the next update cycle
-     *
-     * @param {() => void} callback The callback to be invoked
-     * @param {Number} [order] The priority of the callback in related to others (lowest first, default 0)
-     * @returns {void}
-     */
-    export function nextFrame(callback: () => void, order?: number): void;
-    /**
-     * Invokes a callback after all other nextFrame callbacks have been invoked, or
-     * immediately if there are no pending nextFrame callbacks.
-     * @param {() => void} callback The callback to invoke
-     * @returns {void}
-     */
-    export function postNextFrame(callback: () => void): void;
-    /**
-     * Check if there are any pending nextFrame callbacks
-     * @returns {boolean}
-     */
-    export function anyPendingFrames(): boolean;
-    export function CodeBuilder(): {
-        append: (...code: any[]) => void;
-        indent: () => void;
-        unindent: () => void;
-        braced: (cb: any) => void;
-        toString: () => string;
-        lines: any[];
-        enableSplit(enable: any): void;
-        readonly isEmpty: boolean;
-    };
-    export class ClosureBuilder {
-        code: {
-            append: (...code: any[]) => void;
-            indent: () => void;
-            unindent: () => void;
-            braced: (cb: any) => void;
-            toString: () => string;
-            lines: any[];
-            enableSplit(enable: any): void;
-            readonly isEmpty: boolean;
-        };
-        functions: any[];
-        locals: any[];
-        prologs: any[];
-        epilogs: any[];
-        get isEmpty(): boolean;
-        addProlog(): {
-            append: (...code: any[]) => void;
-            indent: () => void;
-            unindent: () => void;
-            braced: (cb: any) => void;
-            toString: () => string;
-            lines: any[];
-            enableSplit(enable: any): void;
-            readonly isEmpty: boolean;
-        };
-        addEpilog(): {
-            append: (...code: any[]) => void;
-            indent: () => void;
-            unindent: () => void;
-            braced: (cb: any) => void;
-            toString: () => string;
-            lines: any[];
-            enableSplit(enable: any): void;
-            readonly isEmpty: boolean;
-        };
-        addLocal(name: any, init: any): void;
-        addFunction(name: any, args: any): ClosureBuilder;
-        getFunction(name: any): any;
-        toString(): string;
-        appendTo(out: any): void;
-    }
-    /** Encodes a string to make it safe for use in HTML
-     * @param {string} str The string to encode
-     * @returns {string}
-     */
-    export function htmlEncode(str: string): string;
-    /** Declares additional settings for input bindings
-     * @param {InputOptions} options Additional input options
-     * @returns {InputHandler}
-     */
-    export function input(options: InputOptions): InputHandler;
-    export type InputHandler = object;
-    export type InputOptions = {
-        /**
-         * The name of the event (usually "change" or "input") to trigger the input binding
-         */
-        event: string;
-        /**
-         * The name of the property on the target object
-         */
-        prop?: string;
-        /**
-         * The target object providing the binding property
-         */
-        target?: string | ((model: object) => string);
-        /**
-         * Format the property value into a string for display
-         */
-        format?: (value: any) => string;
-        /**
-         * Parse a display string into a property value
-         */
-        parse?: (value: string) => any;
-        /**
-         * Get the value of the property
-         */
-        get?: (model: any, context: any) => any;
-        /**
-         * Set the value of the property
-         */
-        set?: (model: any, value: any, context: any) => void;
-        /**
-         * A callback to be invoked when the property value is changed by the user
-         */
-        on_change?: (model: any, event: Event) => any;
-    };
-    export function parseTypeDecl(str: any): {};
-    export class TemplateNode {
-        constructor(template: any, compilerOptions: any);
-        template: any;
-        kind: string;
-        html: string;
-        nodes: any[];
-        integrated: any;
-        childNodes: any;
-        get isSingleRoot(): any;
-        get isComponent(): boolean;
-        get isFragment(): boolean;
-        get isIntegrated(): boolean;
-        enumLocalNodes(): Generator<any, void, any>;
-        spreadChildDomNodes(): string;
-        spreadDomNodes(): string;
-        enumAllNodes(): Generator<any, void, any>;
-    }
-    export namespace TransitionNone {
-        function enterNodes(): void;
-        function leaveNodes(): void;
-        function onWillEnter(cb: any): void;
-        function onDidLeave(cb: any): void;
-        function start(): void;
-        function finish(): void;
-    }
-    export class EmbedSlot {
-        static integrate(template: any, compilerOptions: any): {
-            isSingleRoot: boolean;
-            data: {
-                ownsContent: any;
-                content: any;
-            };
-            nodes: TemplateNode[];
-        };
-        static transform(template: any): any;
-        constructor(options: any);
-        set content(value: any);
-        get content(): any;
-        get rootNodes(): any[];
-        get isSingleRoot(): boolean;
-        set ownsContent(value: boolean);
-        get ownsContent(): boolean;
-        update(): void;
-        bind(): void;
-        unbind(): void;
-        get isAttached(): void;
-        setMounted(mounted: any): void;
-        replaceContent(value: any): void;
-        destroy(): void;
-        #private;
-    }
-    export function diff_tiny(oldArray: any, newArray: any): {
-        op: string;
-        index: any;
-        count: number;
-    }[];
-    export class ForEachBlock {
-        static integrate(template: any, compilerOptions: any): {
-            isSingleRoot: boolean;
-            data: {
-                itemConstructor: any;
-                template: {
-                    items: any;
-                    condition: any;
-                    itemKey: any;
-                };
-            };
-            nodes: TemplateNode[];
-        };
-        static transform(template: any): any;
-        constructor(options: any);
-        itemConstructor: any;
-        outer: any;
-        items: any;
-        condition: any;
-        itemKey: any;
-        emptyConstructor: any;
-        itemDoms: any[];
-        get rootNodes(): any[];
-        setMounted(mounted: any): void;
-        update(): void;
-        itemsLoaded: boolean;
-        bind(): void;
-        unbind(): void;
-        destroy(): void;
-        emptyDom: any;
-        #private;
-    }
-    export function Placeholder(comment: any): {
-        (): {
-            readonly rootNode: any;
-            readonly rootNodes: any[];
-            readonly isSingleRoot: boolean;
-            setMounted(m: any): void;
-            destroy(): void;
-            update(): void;
-        };
-        isSingleRoot: boolean;
-    };
-    export class IfBlock {
-        static integrate(template: any, compilerOptions: any): {
-            isSingleRoot: boolean;
-            nodes: TemplateNode[];
-            data: {
-                key: any;
-                branches: {}[];
-                isSingleRoot: boolean;
-            };
-        };
-        static transform(template: any): any;
-        static transformGroup(templates: any): void;
-        constructor(options: any);
-        isSingleRoot: any;
-        branches: any;
-        key: any;
-        branch_constructors: any[];
-        context: any;
-        activeBranchIndex: number;
-        activeKey: any;
-        activeBranch: {
-            readonly rootNode: any;
-            readonly rootNodes: any[];
-            readonly isSingleRoot: boolean;
-            setMounted(m: any): void;
-            destroy(): void;
-            update(): void;
-        };
-        headSentinal: any;
-        destroy(): void;
-        update(): void;
-        unbind(): void;
-        bind(): void;
-        get isAttached(): boolean;
-        switchActiveBranch(): void;
-        resolveActiveBranch(): number;
-        setMounted(mounted: any): void;
-        get rootNodes(): any[];
-        get rootNode(): any;
-        #private;
-    }
-    /** Compiles a template into a domTreeConstructor function
-     * @param {object} rootTemplate The template to be compiled
-     * @returns {DomTreeConstructor}
-     */
-    export function compileTemplate(rootTemplate: object, compilerOptions: any): DomTreeConstructor;
-    export type CLObject = {
-        /**
-         * The root nodes of this object
-         */
-        rootNodes: Node[];
-        /**
-         * Update this object
-         */
-        update: () => void;
-        /**
-         * Destroy this object
-         */
-        destroy: () => void;
-        /**
-         * Notifies this object it's been mounted or unmounted
-         */
-        setMounted: (boolean: any) => void;
-        /**
-         * If true, indicates this object will only ever have a single root node
-         */
-        isSingleRoot?: boolean;
-        /**
-         * The root node if isSingleRoot is true
-         */
-        rootNode: Node;
-    };
-    export type DomTreeContext = {
-        /**
-         * The model to be used by the domTree
-         */
-        model: object;
-    };
-    export type _DomTreeExtend = {
-        /**
-         * Rebinds the DomTree to a new model object
-         */
-        rebind: () => void;
-    };
-    export type DomTree = CLObject & _DomTreeExtend;
-    export type DomTreeConstructor = (DomTreeContext: any) => DomTree;
     /** Components are the primary building block for constructing CodeOnly
     applications. They encapsulate program logic, a DOM (aka HTML) template
     and an optional a set of CSS styles.
@@ -389,7 +80,6 @@ declare module "@codeonlyjs/core" {
     @extends EventTarget
     */
     export class Component extends EventTarget {
-        static _domTreeConstructor: any;
         /** Gets the `domTreeConstructor` for this component class.
          *
          * A `domTreeConstructor` is the constructor function used to
@@ -421,10 +111,6 @@ declare module "@codeonlyjs/core" {
          */
         static get isSingleRoot(): boolean;
         static nextFrameOrder: number;
-        /** @private */
-        private static _invalidComponents;
-        /** @private */
-        private static invalidateWorker;
         /** The template to be used by this component class */
         static template: {};
         /** Immediately updates this component's DOM elements - even if
@@ -508,6 +194,10 @@ declare module "@codeonlyjs/core" {
          * @type {boolean}
          */
         get loading(): boolean;
+        /**
+         * @callback LoadCallback
+         * @returns {any}
+         */
         /** Performs an async data load operation.
          *
          * The callback function is typically an async function that performs
@@ -521,11 +211,11 @@ declare module "@codeonlyjs/core" {
          * If the silent parameter is `true` the `loading` property isn't set and
          * the component is only invalidated after returning from the callback.
          *
-         * @param {LoadCallback} Callback The callback to perform the load operation
+         * @param {LoadCallback} callback The callback to perform the load operation
          * @param {Boolean} [silent] Whether to perform a silent update
          * @returns {any} The result of the callback
          */
-        load(callback: any, silent?: boolean): any;
+        load(callback: () => any, silent?: boolean): any;
         /** Destroys this components `domTree` returning it to
          * the constructed but not created state.
          *
@@ -589,8 +279,72 @@ declare module "@codeonlyjs/core" {
          * @returns {void}
          */
         unmount(): void;
-        #private;
     }
+    /** Compiles a template into a domTreeConstructor function
+     * @param {object} rootTemplate The template to be compiled
+     * @returns {DomTreeConstructor}
+     */
+    export function compileTemplate(rootTemplate: object, compilerOptions: any): DomTreeConstructor;
+    export type CLObject = {
+        /**
+         * The root nodes of this object
+         */
+        rootNodes: Node[];
+        /**
+         * Update this object
+         */
+        update: () => void;
+        /**
+         * Destroy this object
+         */
+        destroy: () => void;
+        /**
+         * Notifies this object it's been mounted or unmounted
+         */
+        setMounted: (boolean: any) => void;
+        /**
+         * If true, indicates this object will only ever have a single root node
+         */
+        isSingleRoot?: boolean;
+        /**
+         * The root node if isSingleRoot is true
+         */
+        rootNode: Node;
+    };
+    export type DomTreeContext = {
+        /**
+         * The model to be used by the domTree
+         */
+        model: object;
+    };
+    export type _DomTreeExtend = {
+        /**
+         * Rebinds the DomTree to a new model object
+         */
+        rebind: () => void;
+    };
+    export type DomTree = CLObject & _DomTreeExtend;
+    export type DomTreeConstructor = (DomTreeContext: any) => DomTree;
+    /**
+     * Invokes a callback on the next update cycle
+     *
+     * @param {() => void} callback The callback to be invoked
+     * @param {Number} [order] The priority of the callback in related to others (lowest first, default 0)
+     * @returns {void}
+     */
+    export function nextFrame(callback: () => void, order?: number): void;
+    /**
+     * Invokes a callback after all other nextFrame callbacks have been invoked, or
+     * immediately if there are no pending nextFrame callbacks.
+     * @param {() => void} callback The callback to invoke
+     * @returns {void}
+     */
+    export function postNextFrame(callback: () => void): void;
+    /**
+     * Check if there are any pending nextFrame callbacks
+     * @returns {boolean}
+     */
+    export function anyPendingFrames(): boolean;
     export namespace TransitionCss {
         let defaultClassNames: {
             entering: string;
@@ -645,13 +399,64 @@ declare module "@codeonlyjs/core" {
          */
         finish: () => void;
     };
-    export let $: any;
+    export namespace TransitionNone {
+        function enterNodes(): void;
+        function leaveNodes(): void;
+        function onWillEnter(cb: any): void;
+        function onDidLeave(cb: any): void;
+        function start(): void;
+        function finish(): void;
+    }
     export function Notify(): {
         (sourceObject: any, ...args: any[]): void;
         addEventListener: (sourceObject: any, handler: any) => void;
         removeEventListener: (sourceObject: any, handler: any) => void;
     };
-    export let notify: any;
+    /** Encodes a string to make it safe for use in HTML
+     * @param {string} str The string to encode
+     * @returns {string}
+     */
+    export function htmlEncode(str: string): string;
+    /** Declares additional settings for input bindings
+     * @param {InputOptions} options Additional input options
+     * @returns {InputHandler}
+     */
+    export function input(options: InputOptions): InputHandler;
+    export type InputHandler = object;
+    export type InputOptions = {
+        /**
+         * The name of the event (usually "change" or "input") to trigger the input binding
+         */
+        event: string;
+        /**
+         * The name of the property on the target object
+         */
+        prop?: string;
+        /**
+         * The target object providing the binding property
+         */
+        target?: string | ((model: object) => string);
+        /**
+         * Format the property value into a string for display
+         */
+        format?: (value: any) => string;
+        /**
+         * Parse a display string into a property value
+         */
+        parse?: (value: string) => any;
+        /**
+         * Get the value of the property
+         */
+        get?: (model: any, context: any) => any;
+        /**
+         * Set the value of the property
+         */
+        set?: (model: any, value: any, context: any) => void;
+        /**
+         * A callback to be invoked when the property value is changed by the user
+         */
+        on_change?: (model: any, event: Event) => any;
+    };
     /** Converts a URL pattern string to a regular expression string
      *
      * @param {string} pattern The URL pattern to be converted to a regular expression
@@ -673,7 +478,6 @@ declare module "@codeonlyjs/core" {
          * @return {any}
          */
         get(key: any, factory: (key: any) => any): any;
-        #private;
     }
     /** The Router class - handles URL load requests, creating
      route objects using route handlers and firing associated
@@ -728,20 +532,10 @@ declare module "@codeonlyjs/core" {
          * @param {RouterEventAsync | RouterEventSync} handler The event handler function to remove
          */
         removeEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;
-        /** @private */
-        private dispatchEvent;
-        /** @private */
-        private load;
-        /** @private */
-        private dispatchCancelEvents;
-        /** @private */
-        private tryLoad;
-        /** @private */
-        private matchUrl;
         /** Registers one or more route handlers with the router
-         * @param {RouteHandler | RouteHandler[]} handler The handler or handlers to register
+         * @param {RouteHandler | RouteHandler[]} handlers The handler or handlers to register
          */
-        register(handlers: any): void;
+        register(handlers: RouteHandler | RouteHandler[]): void;
         /** Revoke previously used handlers by matching to a predicate
          * @param {RevokeRouteHandlerPredicate} predicate Callback passed each route handler, return true to remove
          */
@@ -754,10 +548,7 @@ declare module "@codeonlyjs/core" {
          * @type {RestoreViewStateCallback}
          */
         restoreViewState: RestoreViewStateCallback;
-        #private;
     }
-    /** The default {@link Router} instance */
-    export let router: Router;
     export type Route = {
         /**
          * The route's URL
@@ -869,7 +660,7 @@ declare module "@codeonlyjs/core" {
          */
         externalize(url: URL, asset?: boolean): URL;
     }
-    /** Fetchs a text asset
+    /** Fetches a text asset
      *
      *  In the browser, issues a fetch request for an asset
      *  On the server, uses fs.readFile to load a local file asset
@@ -881,7 +672,7 @@ declare module "@codeonlyjs/core" {
      * @returns {Promise<string>}
      */
     export function fetchTextAsset(path: string): Promise<string>;
-    /** Fetchs a JSON asset
+    /** Fetches a JSON asset
      *
      *  In the browser, issues a fetch request for an asset
      *  On the server, uses fs.readFile to load a local file asset
@@ -893,186 +684,19 @@ declare module "@codeonlyjs/core" {
      * @returns {Promise<object>}
      */
     export function fetchJsonAsset(path: string): Promise<object>;
-    export class Node {
-        constructor(document: any);
-        get document(): any;
-        get parentNode(): any;
-        get hasChildNodes(): boolean;
-        get nodeValue(): any;
-        _setParentNode(value: any): void;
-        get nextSibling(): any;
-        get previousSibling(): any;
-        remove(): void;
-        replaceWith(...newNodes: any[]): void;
-        after(...newNodes: any[]): void;
-        before(...newNodes: any[]): void;
-        addEventListener(name: any, handler: any): void;
-        listeners: any[];
-        removeEventListener(name: any, handler: any): void;
-        fireEvent(name: any, ev: any): void;
-        get html(): string;
-        #private;
-    }
-    export class CharacterData extends Node {
-        static encode(str: any): string;
-        static names: {
-            quot: string;
-            amp: string;
-            lt: string;
-            gt: string;
-        };
-        static decode(str: any): string;
-        constructor(document: any, data: any, isRaw: any);
-        get isRaw(): boolean;
-        get raw(): any;
-        get data(): any;
-        get length(): any;
-        set nodeValue(value: any);
-        get nodeValue(): any;
-        #private;
-    }
-    export class Comment extends CharacterData {
-        get nodeType(): number;
-        get nodeName(): string;
-        cloneNode(deep: any): Comment;
-        render(w: any): void;
-    }
-    export class Text extends CharacterData {
-        get nodeType(): number;
-        get nodeName(): string;
-        cloneNode(deep: any): Text;
-        render(w: any): void;
-    }
-    export function parseSelector(sel: any): {}[];
-    export function querySelectorAll(element: any, sel: any): any;
-    export function querySelector(element: any, sel: any): any;
-    export function tokenizer(str: any): (mode: any) => {
-        token: string;
-        text: any;
-        comment?: undefined;
-        string?: undefined;
-        identifier?: undefined;
-    } | {
-        token: string;
-        comment: any;
-        text?: undefined;
-        string?: undefined;
-        identifier?: undefined;
-    } | {
-        token: string;
-        string: any;
-        text?: undefined;
-        comment?: undefined;
-        identifier?: undefined;
-    } | {
-        token: string;
-        identifier: any;
-        text?: undefined;
-        comment?: undefined;
-        string?: undefined;
-    } | {
-        token: any;
-        text?: undefined;
-        comment?: undefined;
-        string?: undefined;
-        identifier?: undefined;
-    };
-    export function parseHtml(document: any, str: any): any[];
-    export let selfClosing: RegExp;
-    export class Element extends Node {
-        constructor(document: any, nodeName: any);
-        get nodeType(): number;
-        get nodeName(): any;
-        get childNodes(): any[];
-        get rawAttributes(): Map<any, any>;
-        get id(): any;
-        querySelector(...args: any[]): any;
-        querySelectorAll(...args: any[]): any;
-        _setInner(value: any): void;
-        _getInner(): any;
-        renderAttributes(w: any): void;
-        render(w: any): void;
-        setAttribute(name: any, value: any, raw: any): void;
-        getAttribute(name: any): any;
-        append(...nodes: any[]): void;
-        insertBefore(node: any, before: any): void;
-        insertNodesBefore(nodes: any, before: any): void;
-        removeChild(node: any): void;
-        appendChild(node: any): void;
-        #private;
-    }
-    export class ClassList {
-        constructor(owner: any);
-        owner: any;
-        add(className: any): void;
-        remove(className: any): void;
-        has(className: any): boolean;
-    }
-    export class StyleList {
-        constructor(owner: any);
-        owner: any;
-        getList(): any;
-        setList(list: any): void;
-        getProperty(key: any): any;
-        setProperty(key: any, value: any): boolean;
-        removeProperty(key: any): void;
-    }
-    export class HTMLElement extends Element {
-        cloneNode(deep: any): HTMLElement;
-        set innerHTML(value: any);
-        get innerHTML(): any;
-        set textContent(value: string);
-        get textContent(): string;
-        get classList(): any;
-        get style(): any;
-        #private;
-    }
-    export class Document extends HTMLElement {
-        constructor(html: any);
-        get nodeName(): string;
-        get documentElement(): any;
-        get body(): any;
-        get head(): any;
-        createElement(tagName: any): HTMLElement;
-        createElementNS(xmlns: any, tagName: any): HTMLElement;
-        createTextNode(data: any, raw: any): Text;
-        createComment(data: any, raw: any): Comment;
-    }
-    export class Window extends EventTarget {
-        document: Document;
-        blockAnimationFrames: boolean;
-        pendingAnimationFrames: any[];
-        requestAnimationFrame(callback: any): void;
-        waitAnimationFrames(): Promise<any>;
-        dispatchAnimationFrames(): boolean;
-    }
-    export function prettyHtml(root: any): string;
-    import fs from "node:fs/promises";
     export class SSRWorker {
         init(options: any): Promise<void>;
-        options: any;
-        routerDriver: SSRRouterDriver;
-        asyncStore: AsyncLocalStorage<any>;
-        entryModule: any;
-        entryMain: any;
-        css: string;
-        htmlInjector: HtmlInjector;
         stop(): Promise<void>;
-        get env(): any;
-        getStyles(): Promise<string>;
+        getStyles(): Promise<any>;
         render(url: any, options: any): Promise<any>;
     }
-    import { AsyncLocalStorage } from "async_hooks";
     export class SSRWorkerThread {
-        worker: Worker;
         init(options: any): Promise<any>;
         render(url: any): Promise<any>;
         getStyles(): Promise<any>;
         stop(): Promise<any>;
         invoke(method: any, ...args: any[]): Promise<any>;
-        #private;
     }
-    import { Worker } from "worker_threads";
     /** Generates a static generated site (SSG)
      *
      * @param {object} options - site generation options
@@ -1108,9 +732,6 @@ declare module "@codeonlyjs/core" {
         buildStart: () => Promise<void>;
         closeBundle: () => Promise<void>;
     };
-    export * from "core";
-    export * from "spa";
-    export * from "ssr";
 
 }
 

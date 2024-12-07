@@ -20,51 +20,60 @@ export class SSRWorker
         setEnvProvider(() => this.env);
 
         // Store options
+        /** @internal */
         this.options = options;
 
         // Work out asset base
         this.options.assetBase = path.dirname(this.options.entryFile);
 
         // Setup router driver
-        this.routerDriver = new SSRRouterDriver(this);
-        router.start(this.routerDriver);
+        this.#routerDriver = new SSRRouterDriver(this);
+        router.start(this.#routerDriver);
 
         // Construct async store
-        this.asyncStore = new AsyncLocalStorage();
+        this.#asyncStore = new AsyncLocalStorage();
 
-        await this.asyncStore.run(env, async () => {
+        await this.#asyncStore.run(env, async () => {
 
             // Load entry point
-            this.entryModule = await import(`file://${path.resolve(options.entryFile)}`);
+            this.#entryModule = await import(`file://${path.resolve(options.entryFile)}`);
 
             if (Array.isArray(this.options.entryMain))
             {
                 // Look for first matching entry main
                 for (let m of this.options.entryMain)
                 {
-                    if (this.entryModule[m])
+                    if (this.#entryModule[m])
                     {
-                        this.entryMain = m;
+                        this.#entryMain = m;
                         break;
                     }
                 }
             }
             else
             {
-                this.entryMain = this.options.entryMain;
+                this.#entryMain = this.options.entryMain;
             }
 
-            if (!this.entryMain)
+            if (!this.#entryMain)
                 throw new Error(`entryMain not found - ${JSON.stringify(this.options.entryMain)}`);
 
             // Capture registered styles
-            this.css = env.styles;
+            this.#css = env.styles;
 
         });
 
         // Create injector
-        this.htmlInjector = new HtmlInjector(this.options.entryHtml);
+        this.#htmlInjector = new HtmlInjector(this.options.entryHtml);
     }
+
+    #routerDriver;
+    #htmlInjector;
+    #asyncStore;
+    #entryModule;
+    #entryMain;
+    #css;
+    
 
     async stop()
     {
@@ -72,9 +81,10 @@ export class SSRWorker
     }
 
 
+    /** @internal */
     get env()
     {
-        let env = this.asyncStore.getStore();
+        let env = this.#asyncStore.getStore();
         if (!env)
             throw new Error("No async env store")
         return env;
@@ -82,20 +92,20 @@ export class SSRWorker
 
     async getStyles()
     {
-        return this.css;
+        return this.#css;
     }
 
     async render(url, options)
     {
         let mergedOptions = Object.assign({}, this.options, options);
         let env = new SSREnvironment(mergedOptions);
-        return await this.asyncStore.run(env, async () => {
+        return await this.#asyncStore.run(env, async () => {
 
             // Call entry point
-            await Promise.resolve(this.entryModule[this.entryMain]());
+            await Promise.resolve(this.#entryModule[this.#entryMain]());
 
             // Tell the router driver to load URL
-            await this.routerDriver.load(new URL(url));
+            await this.#routerDriver.load(new URL(url));
 
             // Wait for environment
             await env.whileBusy();
@@ -117,7 +127,7 @@ export class SSRWorker
             if (this.options.cssUrl)
                 injections.head.push(`<link href="${this.options.cssUrl}" type="text/css" rel="stylesheet" />`);
             else
-                injections.head.push(`<style>${this.css}</style>`);
+                injections.head.push(`<style>${this.#css}</style>`);
 
             for (let k of Object.keys(injections))
             {
@@ -129,7 +139,7 @@ export class SSRWorker
             let result = Object.assign(
                 {}, 
                 router.current?.ssr ?? {}, 
-                { content: this.htmlInjector.inject(injections) }
+                { content: this.#htmlInjector.inject(injections) }
             );
 
             return result;

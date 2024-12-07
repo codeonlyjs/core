@@ -1,6 +1,6 @@
 import { router } from "./Router.js"
 
-/** Fetchs a text asset
+/** Fetches a text asset
  * 
  *  In the browser, issues a fetch request for an asset
  *  On the server, uses fs.readFile to load a local file asset
@@ -28,7 +28,7 @@ export async function fetchTextAsset(path)
     return coenv.fetchTextAsset(path);
 }
 
-/** Fetchs a JSON asset
+/** Fetches a JSON asset
  * 
  *  In the browser, issues a fetch request for an asset
  *  On the server, uses fs.readFile to load a local file asset

@@ -17,18 +17,21 @@ export class SSREnvironment extends Environment
         this.mounts = {};
         this.styles = "";
     }
-
+    
+    /** @type {any} */
     get fs()
     {
         return fs;
     }
 
     #window;
+    /** @type {any} */
     get window()
     {
         return this.#window;
     }
 
+    /** @type {any} */
     get document()
     {
         return this.window.document;

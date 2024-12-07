@@ -7,10 +7,10 @@ export class SSRWorkerThread
     constructor()
     {
         // Create worker
-        this.worker = new Worker(new URL(import.meta.url));
+        this.#worker = new Worker(new URL(import.meta.url));
 
         // Hook up event handlers
-        this.worker.on('message', (msg) => {
+        this.#worker.on('message', (msg) => {
             let p = this.#pending.get(msg.id);
             this.#pending.delete[msg.id];
             if (msg.err)
@@ -19,6 +19,8 @@ export class SSRWorkerThread
                 p.resolve(msg.returnValue);
         });
     }
+
+    #worker;
 
     init(options)
     {
@@ -48,7 +50,7 @@ export class SSRWorkerThread
         let id = this.#nextId++;
 
         // Post message to worker
-        this.worker.postMessage({
+        this.#worker.postMessage({
             id, method, args,
         });
 
