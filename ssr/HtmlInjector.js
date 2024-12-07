@@ -22,14 +22,14 @@ export class HtmlInjector
         let insList = [];
         for (let k of Object.keys(injections))
         {
-            let index = this.insertMap.get(k);
+            let index = this.#insertMap.get(k);
             if (index === undefined)
             {
-                let el = this.dom.querySelector(k);
+                let el = this.#dom.querySelector(k);
                 if (!el)
                     throw new Error(`HTML inject failure, can't find selector "${k}"`);
                 index = el.sourcePos.innerEnd;
-                this.insertMap.set(k, index);
+                this.#insertMap.set(k, index);
             }
             insList.push({ index, html: injections[k] });
         }
