@@ -3,6 +3,7 @@
   "file": "index.d.ts",
   "names": [],
   "sources": [
+    "types.d.ts",
     "ssr/viteGenerateStatic.js",
     "ssr/generateStatic.js",
     "ssr/SSRWorkerThread.js",
@@ -17,6 +18,7 @@
     "core/Notify.js",
     "core/TransitionNone.js",
     "core/transition.js",
+    "index.raw.d.ts",
     "core/nextFrame.js",
     "core/TemplateCompiler.js",
     "core/Component.js",
@@ -24,6 +26,6 @@
     "core/HtmlString.js",
     "core/Environment.js"
   ],
-  "mappings": ";;;;;oBmBoFgBoF,cAAcA;;;;iBA/EjBL,WAAWA;QAMXC,OAAOA;;;;QAQhBC,YAAYA;;;;QAUZC,YAAYA;;;;YAURpB,OAAOA;;;;;QASLC,IAAIA;;;;QAgBVoB,WAAWA;;;;;;;;;;oBD7BCL,IAAIA;;;iBAjCPF,UAAUA;eAeZC,QAAQA;;;;;;;;QAFfC,IAAIA;;;;;;;;;oBDMQH,GAAGA;;;iBAnBNF,KAAKA;;;;;eAMPC,OAAOA;;;;;;;;;;;iBDIL7B,SAASA;;;;;;;;;;;mBAwBPC,kBAAkBA;;;;;;;eAatBC,2BAA2BA;;;;;;eAU3BC,iBAAiBA;;;;;;mBAUbC,YAAYA;eAsEhBC,cAAcA;;eAyVdC,QAAQA;;;;;;;;;;;;;;QA/PfC,MAAMA;;;;;;;;;;;QAnENC,UAAUA;;;;;;;QAlFVC,MAAMA;;;;;YAUFC,OAAOA;;;;;YASPC,OAAOA;;;;;;YAaPP,YAAYA;;;;;;YAUZQ,QAAQA;;;;;YAYRC,SAASA;;;;YAYTC,OAAOA;;;;;QAqCXC,QAAQA;;;YAmEJC,SAASA;;;;;YAPVA,SAASA;;;;;YAoBRC,OAAOA;;;;;;;;;;;;;;;;;;;;;;QA2BLC,IAAIA;;;;;;;;;QA8CVC,OAAOA;;;;;;;;;QAiBPC,OAAOA;;;;;;;;;QAYPC,SAASA;;;;;;;;;;QAgBTC,MAAMA;;;;;;;;;QAuBNC,QAAQA;;;;;YAqBJC,OAAOA;QAQXC,UAAUA;;;;;;QAoCVC,KAAKA;;;;;QASLC,OAAOA;;;;;;oBDuTK5B,eAAeA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;oBD3wBfD,SAASA;;;;;;;oBA+CTD,aAAaA;;;;;oBAYbD,gBAAgBA;;;;;;;;;;;;;;;;;;;;;oBDxDhBD,UAAUA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;iBDXtBL,UAAUA;iBACVC,UAAUA;iBACVC,WAAWA;iBACXC,UAAUA;iBACVtB,KAAKA;iBACLuB,MAAMA;;oBDPML,MAAMA;;;;;;;;;oBDIND,UAAUA;;;;;oBDiBVD,KAAKA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;oBDfLD,UAAUA;;iBDLbF,SAASA;;;;;;;;;;;;;QAqBlBC,GAAGA;;;;;;iBDmDMf,MAAMA;;;;;;;;;QAefC,KAAKA;QAYQC,QAAQA;QACRC,OAAOA;QACPC,IAAIA;QA6BjBC,SAASA;;;;;QAMTP,WAAWA;;;;;QAMXC,WAAWA;;;;YAkCPO,OAAOA;;;;YAQPC,OAAOA;;;;;;;;;;;QAeXC,gBAAgBA;;;;;;QAUhBC,mBAAmBA;;;;QA4NnBC,QAAQA;;;;QAsBRC,MAAMA;;;;QAQNC,gBAAgBA;;;;QAKhBC,gBAAgBA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;iBDhdPjB,SAASA;;;;;;;;;;QASTC,OAAOA;;;;;;;;;QAchBC,WAAWA;;;;;;;QA8BXC,WAAWA;;;;;;;;;;;;;oBDzCOJ,cAAcA;;;;;;;;;;;;oBA4BdD,cAAcA;iBDhCvBD,SAASA;QAMZL,IAAIA;QA8DJG,IAAIA;QAeJD,SAASA;QAKTD,MAAMA;;iBD7FHF,eAAeA;QAoBxBC,IAAIA;QAKJC,MAAMA;QAKNC,SAASA;QAKTC,IAAIA;QAQEC,MAAMA;;;;;;;;;;;;;;;;oBDzBMN,cAAcA;;;;;;;;;;;;;;;oBDnBpBD,kBAAkBA",
+  "mappings": ";;;;;oBqBoFgBsF,cAAcA;;;;iBA/EjBL,WAAWA;QAMXC,OAAOA;;;;QAQhBC,YAAYA;;;;QAUZC,YAAYA;;;;YAURpB,OAAOA;;;;;QASLC,IAAIA;;;;QAgBVoB,WAAWA;;;;;;;;;;oBD7BCL,IAAIA;;;iBAjCPF,UAAUA;eAeZC,QAAQA;;;;;;;;QAFfC,IAAIA;;;;;;;;;oBDMQH,GAAGA;;;iBAnBNF,KAAKA;;;;;eAMPC,OAAOA;;;;;;;;;;;iBDIL5B,SAASA;;;;;;;;;;;mBAwBPC,kBAAkBA;;;;;;;eAatBC,2BAA2BA;;;;;;eAU3BC,iBAAiBA;;;;;;mBAUbC,YAAYA;eAsEhBC,cAAcA;;eAyVdC,QAAQA;;;;;;;;;;;;;;QA/PfC,MAAMA;;;;;;;;;;;QAnENC,UAAUA;;;;;;;QAlFVC,MAAMA;;;;;YAUFC,OAAOA;;;;;YASPC,OAAOA;;;;;;YAaPP,YAAYA;;;;;;YAUZQ,QAAQA;;;;;YAYR3D,SAASA;;;;YAYT4D,OAAOA;;;;;QAqCXC,QAAQA;;;YAmEJC,SAASA;;;;;YAPVA,SAASA;;;;;YAoBRC,OAAOA;;;;;;;;;;;;;;;;;;;;;;QA2BLC,IAAIA;;;;;;;;;QA8CVC,OAAOA;;;;;;;;;QAiBPC,OAAOA;;;;;;;;;QAYPC,SAASA;;;;;;;;;;QAgBTC,MAAMA;;;;;;;;;QAuBNC,QAAQA;;;;;YAqBJC,OAAOA;QAQXC,UAAUA;;;;;;QAoCVC,KAAKA;;;;;QASLC,OAAOA;;;;;;oBD6SK3B,eAAeA;;;;;;;;;;;;;;;;;;;;;;oBDjwBfD,SAASA;;;;;;;oBA+CTD,aAAaA;;;;;oBAYbD,gBAAgBA;;YD4nBpBD,iBAAiBA;;;;;;;;;;;;;;;;;;;oBDprBbD,UAAUA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;iBDXtBL,UAAUA;iBACVC,UAAUA;iBACVC,WAAWA;iBACXC,UAAUA;iBACVtB,KAAKA;iBACLuB,MAAMA;;oBDPML,MAAMA;;;;;;;;;oBDIND,UAAUA;;;;;oBDiBVD,KAAKA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;oBDfLD,UAAUA;;iBDLbF,SAASA;;;;;;;;;;;;;QAqBlBC,GAAGA;;;;;;iBDmDMf,MAAMA;;;;;;;;;QAefC,KAAKA;QAYQC,QAAQA;QACRC,OAAOA;QACPC,IAAIA;QA6BjBC,SAASA;;;;;QAMTP,WAAWA;;;;;QAMXC,WAAWA;;;;YAkCPO,OAAOA;;;;YAQPC,OAAOA;;;;;;;;;;;QAeXC,gBAAgBA;;;;;;QAUhBC,mBAAmBA;;;;QA4NnBC,QAAQA;;;;QAsBRC,MAAMA;;;;QAQNC,gBAAgBA;;;;QAKhBC,gBAAgBA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;iBDhdPjB,SAASA;;;;;;;;;;QASTC,OAAOA;;;;;;;;;QAchBC,WAAWA;;;;;;;QA8BXC,WAAWA;;;;;;;;;;;;;oBDzCOJ,cAAcA;;;;;;;;;;;;oBA4BdD,cAAcA;iBDhCvBD,SAASA;QAMZL,IAAIA;QA8DJG,IAAIA;QAeJD,SAASA;QAKTD,MAAMA;;iBD7FHF,eAAeA;QAoBxBC,IAAIA;QAKJC,MAAMA;QAKNC,SAASA;QAKTC,IAAIA;QAQEC,MAAMA;;;;;;;;;;;;;;;;oBDzBMN,cAAcA;;;;;;;;;;;;;;;oBDnBpBD,kBAAkBA;;;;;;qBDFbF,QAAQA;;YAEjBC,SAASA",
   "ignoreList": []
 }

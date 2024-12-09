@@ -285,32 +285,6 @@ declare module "@codeonlyjs/core" {
      * @returns {DomTreeConstructor}
      */
     export function compileTemplate(rootTemplate: object, compilerOptions: any): DomTreeConstructor;
-    export type CLObject = {
-        /**
-         * The root nodes of this object
-         */
-        rootNodes: Node[];
-        /**
-         * Update this object
-         */
-        update: () => void;
-        /**
-         * Destroy this object
-         */
-        destroy: () => void;
-        /**
-         * Notifies this object it's been mounted or unmounted
-         */
-        setMounted: (boolean: any) => void;
-        /**
-         * If true, indicates this object will only ever have a single root node
-         */
-        isSingleRoot?: boolean;
-        /**
-         * The root node if isSingleRoot is true
-         */
-        rootNode: Node;
-    };
     export type DomTreeContext = {
         /**
          * The model to be used by the domTree
@@ -732,7 +706,15 @@ declare module "@codeonlyjs/core" {
         buildStart: () => Promise<void>;
         closeBundle: () => Promise<void>;
     };
-
+    export interface CLObject 
+    {
+        get rootNodes(): Node[];
+        update(): void;
+        destroy(): void;
+        setMounted(mounted: boolean): void;
+        readonly isSingleRoot?: boolean;
+        readonly rootNode?: Node;
+    }
 }
 
 //# sourceMappingURL=index.d.ts.map
