@@ -464,7 +464,7 @@ export class Component extends EventTarget
 
     /** Mounts this component against an element in the document.
      * 
-     * @param {Element | string} el The element or an element selected that specifies where to mount the component
+     * @param {Element | string} el The element or an element selector that specifies where to mount the component
      * @returns {void}
      */
     mount(el)
