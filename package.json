@@ -16,9 +16,9 @@
   "scripts": {
     "test": "node --test",
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
-    "types": "tsc --project tsconfig.emit.json && dts-tool exports index.raw.d.ts @codeonlyjs/core --out:index.d.ts",
+    "types": "tsc --project tsconfig.emit.json && dts-tool flatten @codeonlyjs/core index.raw.d.ts types.d.ts --module:index-server --module:types --out:index.d.ts && dts-tool extract index.d.ts --out:index.d.json",
     "build": "zx build.js",
-    "docs": "typedoc"
+    "docs": "npm run types && node make-docs.js"
   },
   "author": "Topten Software",
   "contributors": [

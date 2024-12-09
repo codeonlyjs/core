@@ -11,16 +11,6 @@ import "./ForEachBlock.js";
 import "./IfBlock.js";
 
 /**
- * @typedef {object} CLObject
- * @property {Node[]} rootNodes The root nodes of this object
- * @property {() => void} update Update this object
- * @property {() => void} destroy Destroy this object
- * @property {(boolean) => void} setMounted Notifies this object it's been mounted or unmounted
- * @property {boolean} [isSingleRoot] If true, indicates this object will only ever have a single root node
- * @property {Node} rootNode The root node if isSingleRoot is true
- */
-
-/**
  * @typedef {object} DomTreeContext
  * @property {object} model The model to be used by the domTree
  */
