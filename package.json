@@ -36,6 +36,7 @@
     "@codeonlyjs/dts-tool": "github:codeonlyjs/dts-tool",
     "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
+    "@toptensoftware/jsdoc": "github:toptensoftware/jsdoc",
     "rollup": "^4.24.3",
     "rollup-plugin-bundle-size": "^1.0.3",
     "typedoc": "^0.27.3",

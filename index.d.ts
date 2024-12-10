@@ -270,7 +270,7 @@ declare module "@codeonlyjs/core" {
         setMounted(mounted: any): void;
         /** Mounts this component against an element in the document.
          *
-         * @param {Element | string} el The element or an element selected that specifies where to mount the component
+         * @param {Element | string} el The element or an element selector that specifies where to mount the component
          * @returns {void}
          */
         mount(el: Element | string): void;
@@ -715,6 +715,7 @@ declare module "@codeonlyjs/core" {
         readonly isSingleRoot?: boolean;
         readonly rootNode?: Node;
     }
+
 }
 
 //# sourceMappingURL=index.d.ts.map

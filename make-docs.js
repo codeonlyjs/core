@@ -11,7 +11,7 @@ writer.write("title: API Reference\n")
 writer.write("---\n\n");
 
 
-for (let d of defs)
+for (let d of defs.members)
 {
     render(writer, 1, d);
 }
@@ -19,6 +19,48 @@ for (let d of defs)
 fs.writeFileSync("index.d.md", str, "utf8");
 
 console.log("OK");
+
+function stripModuleFromNamepath(np)
+{
+    if (np.startsWith("module:@codeonlyjs/core."))
+        np = np.substring("module:@codeonlyjs/core.".length);
+    return np;
+}
+
+function namePathToId(namepath)
+{
+    let np = stripModuleFromNamepath(namepath);
+    return np;
+}
+
+function expandInline(links, text)
+{
+    if (!links || !links.length)
+        return text;
+
+    return text.replace(/\{@link (\d+)\}/g, (text, id) => {
+        let link = links[parseInt(id)];
+        if (!link)
+            return text;
+
+        // Work out title
+        let title = link.title;
+        if (!title)
+            title = link.url;
+
+        // Work out url
+        let url = link.url;
+        if (!url)
+        {
+            let id = namePathToId(link.namepath);
+            url = `#${id}`;
+            if (!title)
+                title = stripModuleFromNamepath(link.namepath);
+        }
+
+        return `[${title}](${url})`;
+    });
+}
 
 function getDescription(el)
 {
@@ -32,7 +74,7 @@ function getDescription(el)
     if (!descblock)
         return null;
 
-    return descblock.text;
+    return expandInline(el.links, descblock.text);
 }
 
 function render(w, depth, el)
@@ -42,7 +84,12 @@ function render(w, depth, el)
         let title = el.name;
         if (el.static)
             title += " (static)";
-        w.write(`${heading.substring(0, depth)} ${title}\n\n`);
+        let id = "";
+        if (el.namepath)
+        {
+            id = ` \{#${namePathToId(el.namepath)}\}`
+        }
+        w.write(`${heading.substring(0, depth)} ${title}${id}\n\n`);
     }
 
     if (el.getAccessor)
@@ -74,7 +121,7 @@ function render(w, depth, el)
     {
         for (let p of el.jsdoc.filter(x => x.block == "param"))
         {
-            w.write(`* **\`${p.specifier}\`** ${p.text.replace(/^\s*-\s*/, "")}\n`);
+            w.write(`* **\`${p.specifier}\`** ${expandInline(el.links, p.text.replace(/^\s*-\s*/, ""))}\n`);
         }
     }
 
