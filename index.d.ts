@@ -392,6 +392,7 @@ declare module "@codeonlyjs/core" {
          */
         finish: () => void;
     };
+    export let $: any;
     /**
      * Implements a simple notification and broadcast service
      */
@@ -400,6 +401,7 @@ declare module "@codeonlyjs/core" {
         addEventListener: (sourceObject: any, handler: any) => void;
         removeEventListener: (sourceObject: any, handler: any) => void;
     };
+    export let notify: any;
     /** Encodes a string to make it safe for use in HTML
      * @param {string} str The string to encode
      * @returns {string}
@@ -560,6 +562,8 @@ declare module "@codeonlyjs/core" {
          */
         restoreViewState: (route: Route, state: object) => void;
     }
+    /** The default {@link Router} instance */
+    export let router: Router;
     /**
      * Represents a Route instance
      */

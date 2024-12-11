@@ -1408,6 +1408,12 @@
                     ]
                 },
                 {
+                    "kind": "let",
+                    "name": "$",
+                    "namepath": "module:@codeonlyjs/core.$",
+                    "definition": "$: any"
+                },
+                {
                     "kind": "function",
                     "name": "Notify",
                     "namepath": "module:@codeonlyjs/core.Notify",
@@ -1419,6 +1425,18 @@
                         }
                     ],
                     "links": []
+                },
+                {
+                    "kind": "variables",
+                    "declarations": [
+                        {
+                            "kind": "let",
+                            "name": "notify",
+                            "namepath": "module:@codeonlyjs/core.notify",
+                            "definition": "notify: any"
+                        }
+                    ],
+                    "definition": "export let notify: any;"
                 },
                 {
                     "kind": "function",
@@ -2075,6 +2093,32 @@
                                 }
                             ],
                             "links": []
+                        }
+                    ]
+                },
+                {
+                    "kind": "variables",
+                    "declarations": [
+                        {
+                            "kind": "let",
+                            "name": "router",
+                            "namepath": "module:@codeonlyjs/core.router",
+                            "definition": "router: Router"
+                        }
+                    ],
+                    "definition": "export let router: Router;",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "The default {@link 0} instance "
+                        }
+                    ],
+                    "links": [
+                        {
+                            "pos": 21867,
+                            "end": 21881,
+                            "kind": "link",
+                            "namepath": "module:@codeonlyjs/core.Router"
                         }
                     ]
                 },

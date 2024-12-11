@@ -117,6 +117,7 @@ for (let g of groups)
 
 let heading = "######";
 
+let unnamed = defs.members[0].members.filter(x => !x.name);
 defs.members[0].members.sort((a,b) => a.name.localeCompare(b.name));
 for (let n of defs.members[0].members)
 {
