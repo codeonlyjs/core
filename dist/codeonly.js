@@ -69,7 +69,16 @@ class Environment extends EventTarget
     constructor()
     {
         super();
+
+        /**
+         * True when running in browser environment
+         */
         this.browser = false;
+
+        /**
+         * True when running in a rendering environment
+         */
+        this.ssr = false;
     }
 
     #loading = 0;
@@ -164,6 +173,14 @@ class HtmlString
      */
     html;
     
+    /** 
+     * Compares two values and returns true if they
+     * are both HtmlString instances and both have the
+     * same inner `html` value.
+     * @param {any} a The first value to compare
+     * @param {any} b The second value to compare
+     * @returns {boolean}
+     */
     static areEqual(a, b)
     {
         return (
@@ -509,11 +526,8 @@ function htmlEncode(str)
     });
 }
 
-/** 
- * @typedef {object} InputHandler
- */
-
 /**
+ * Options for controlling input bindings
  * @typedef {object} InputOptions
  * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding
  * @property {string} [prop] The name of the property on the target object
@@ -527,7 +541,7 @@ function htmlEncode(str)
 
 /** Declares additional settings for input bindings
  * @param {InputOptions} options Additional input options
- * @returns {InputHandler}
+ * @returns {object}
  */
 
 function input(options)
@@ -1277,6 +1291,7 @@ class TemplateNode
 
 }
 
+/** @internal */
 let TransitionNone = 
 {
     enterNodes: function() {},
@@ -2721,33 +2736,6 @@ class IfBlock
 
 Plugins.register(IfBlock);
 
-/**
- * @typedef {object} CLObject
- * @property {Node[]} rootNodes The root nodes of this object
- * @property {() => void} update Update this object
- * @property {() => void} destroy Destroy this object
- * @property {(boolean) => void} setMounted Notifies this object it's been mounted or unmounted
- * @property {boolean} [isSingleRoot] If true, indicates this object will only ever have a single root node
- * @property {Node} rootNode The root node if isSingleRoot is true
- */
-
-/**
- * @typedef {object} DomTreeContext
- * @property {object} model The model to be used by the domTree
- */
-
-/**
- * @typedef {object} _DomTreeExtend
- * @property {() => void} rebind Rebinds the DomTree to a new model object
- * @typedef {CLObject & _DomTreeExtend} DomTree
- */
-
-/** 
- * @typedef {(DomTreeContext) => DomTree} DomTreeConstructor 
- */
-
-
-
 function compileTemplateCode(rootTemplate, compilerOptions)
 {
     // Every node in the template will get an id, starting at 1.
@@ -3498,10 +3486,11 @@ let _nextInstanceId = 1;
  * @param {object} rootTemplate The template to be compiled
  * @returns {DomTreeConstructor}
  */
-function compileTemplate(rootTemplate, compilerOptions)
+function compileTemplate(rootTemplate)
 {
-    compilerOptions = compilerOptions ?? {};
-    compilerOptions.compileTemplate = compileTemplate;
+    let compilerOptions = {
+        compileTemplate: compileTemplate
+    };
 
     // Compile code
     let code = compileTemplateCode(rootTemplate, compilerOptions);
@@ -3526,15 +3515,18 @@ function compileTemplate(rootTemplate, compilerOptions)
     return compiledTemplate;
 }
 
-/** Components are the primary building block for constructing CodeOnly
-applications. They encapsulate program logic, a DOM (aka HTML) template 
-and an optional a set of CSS styles.
+/** @import { DomTree, DomTreeConstructor } from "../types.d.ts" */
 
-Components can be used either in the templates of other components
-or mounted onto the document DOM to appear in a web page.
-
-@extends EventTarget
-*/
+/** 
+ * Components are the primary building block for constructing CodeOnly
+ * applications. They encapsulate program logic, a DOM (aka HTML) template 
+ * and an optional a set of CSS styles.
+ *
+ * Components can be used either in the templates of other components
+ * or mounted onto the document DOM to appear in a web page.
+ *
+ * @extends EventTarget
+ */
 class Component extends EventTarget
 {
     /** Constructs a new component instance */
@@ -3557,7 +3549,7 @@ class Component extends EventTarget
      * The first time this property is accessed, it calls the 
      * static `onProvideDomTreeConstructor` method to actually provide the
      * instance.
-     * @type {import("./TemplateCompiler").DomTreeConstructor}
+     * @type {DomTreeConstructor}
     */
     static get domTreeConstructor()
     {
@@ -3618,9 +3610,10 @@ class Component extends EventTarget
         return this.#domTree != null;
     }
 
-    /** Gets the `domTree` for this component, creating it if necessary 
+    /** 
+     * Gets the `domTree` for this component, creating it if necessary 
      * 
-     * @type {import("./TemplateCompiler").DomTree}
+     * @type {DomTree}
     */
     get domTree()
     {
@@ -3662,6 +3655,7 @@ class Component extends EventTarget
         return this.domTree.rootNodes; 
     }
 
+    /** @internal */
     static nextFrameOrder = -100;
 
     #invalid = false;
@@ -3762,7 +3756,7 @@ class Component extends EventTarget
     }
 
     
-    /** Gets the error object (if any) that was thrown during the last async data {@link load} operation.
+    /** Gets the error object (if any) that was thrown during the last async data {@link Component#load} operation.
      * 
      * @type {Error}
     */
@@ -3771,7 +3765,9 @@ class Component extends EventTarget
        return this.#loadError;
     }
     
-    /** Sets the error object associated with the current async data {@link load} operation.
+    /** 
+     * Sets the error object associated with the current async data {@link Component#load} operation.
+     * @param {Error | null} value The new error object
      */
     set loadError(value)
     {
@@ -3782,7 +3778,7 @@ class Component extends EventTarget
         
     #loading = 0;
 
-    /** Indicates if the component is currently in an async data {@link load} operation
+    /** Indicates if the component is currently in an async data {@link Component#load} operation
      * 
      * @type {boolean}
      */
@@ -3799,9 +3795,9 @@ class Component extends EventTarget
     /** Performs an async data load operation.
      * 
      * The callback function is typically an async function that performs
-     * a data request.  While in the callback, the {@link loading} property
+     * a data request.  While in the callback, the {@link Component#loading} property
      * will return `true`.  If the callback throws an error, it will be captured
-     * to the {@link loadError} property.
+     * to the {@link Component#loadError} property.
      * 
      * Before calling and after returning from the callback, the component is
      * invalidated so visual elements (eg: spinners) can be updated.
@@ -3855,7 +3851,7 @@ class Component extends EventTarget
      * the constructed but not created state.
      * 
      * A destroyed component can be recreated by remounting it
-     * or by calling its {@link create} method.
+     * or by calling its {@link Component#create} method.
      * 
      * @returns {void}
      */
@@ -3901,7 +3897,7 @@ class Component extends EventTarget
      * 
      * @param {EventTarget} target The object dispatching the events
      * @param {string} event The event to listen for
-     * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link invalidate} method is used.
+     * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     listen(target, event, handler)
@@ -3919,12 +3915,12 @@ class Component extends EventTarget
             target.addEventListener(event, handler);
     }
 
-    /** Removes an event listener previously registered with {@link listen}
+    /** Removes an event listener previously registered with {@link Component#listen}
      * 
      * @param {EventTarget} target The object dispatching the events
      * @param {string} event The event to listen for
      * @param {Function} [handler] The event listener to add/remove.  If not 
-     * provided, the component's {@link invalidate} method is used.
+     * provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     unlisten(target, event, handler)
@@ -3956,6 +3952,10 @@ class Component extends EventTarget
     #mounted = false;
 
     
+    /**
+     * Notifies the object is has been mounted or unmounted
+     * @param {boolean} mounted True when the object has been mounted, false when unmounted
+     */
     setMounted(mounted)
     {
         // Depth first
@@ -3989,7 +3989,7 @@ class Component extends EventTarget
 
     /** Mounts this component against an element in the document.
      * 
-     * @param {Element | string} el The element or an element selected that specifies where to mount the component
+     * @param {Element | string} el The element or an element selector that specifies where to mount the component
      * @returns {void}
      */
     mount(el)
@@ -4009,6 +4009,16 @@ class Component extends EventTarget
     /** The template to be used by this component class */
     static template = {};
 }
+
+const defaultClassNames = {
+    "entering": "*-entering;*-active",
+    "enter-start": "*-enter-start;*-out",
+    "enter-end": "*-enter-end;*-in",
+    "leaving": "*-leaving;*-active",
+    "leave-start": "*-leave-start;*-in",
+    "leave-end": "*-leave-end;*-out",
+};
+
 
 /** @internal */
 function TransitionCss(options, ctx) 
@@ -4061,7 +4071,7 @@ function TransitionCss(options, ctx)
         for (let s of states)
         {
             // Look in options.classNames the in default names
-            let cls_names = classNames?.[s] ?? TransitionCss.defaultClassNames[s];
+            let cls_names = classNames?.[s] ?? defaultClassNames[s];
 
             // Split on semicolon
             cls_names = (cls_names ?? "").split(";");
@@ -4269,32 +4279,27 @@ function TransitionCss(options, ctx)
     }
 }
 
-TransitionCss.defaultClassNames = {
-    "entering": "*-entering;*-active",
-    "enter-start": "*-enter-start;*-out",
-    "enter-end": "*-enter-end;*-in",
-    "leaving": "*-leaving;*-active",
-    "leave-start": "*-leave-start;*-in",
-    "leave-end": "*-leave-end;*-out",
-};
+/**
+ * Transition Options
+ * @typedef TransitionOptions
+ * @property {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
+ * @property {string} [options.mode] Transition order - concurrent, enter-leave or leave-enter
+ * @property {name} [options.name] Transition name - used as prefix to CSS class names, default = "tx"
+ * @property {object} [options.classNames] A map of class name mappings
+ * @property {number} [options.duration] The duration of the animation in milliseconds
+ * @property {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations
+ */
 
 /** Declares addition settings transition directives
- * @param {object} #options
- * @param {(model:object, context:object) => any} #options.value The value callback that triggers the animation when it changes
- * @param {string} [#options.mode] Transition order - concurrent, enter-leave or leave-enter
- * @param {name} [#options.name] Transition name - used as prefix to CSS class names, default = "tx"
- * @param {object} [#options.classNames] A map of class name mappings
- * @param {number} [#options.duration] The duration of the animation in milliseconds
- * @param {boolean} [#options.subtree] Whether to monitor the element's sub-trees for animations
- * @returns {TransitionHandler}
+ * @param {{TransitionOptions | string | Function}[]} options
  */
-function transition(options)
+function transition(...options)
 {
     // Merge all args
     let optionsFinal = {};
-    for (let i=0; i<arguments.length; i++)
+    for (let i=0; i<options; i++)
     {
-        let a = arguments[i];
+        let a = options[i];
         if (a instanceof Function)
             optionsFinal.value = a;
         else if (typeof(a) === 'string')
@@ -4329,6 +4334,7 @@ function transition(options)
 
 
 /** 
+ * Implemented by objects that handle transitions
  * @typedef {object} TransitionHandler
  * @property {(nodes: Node[]) => void} enterNodes Registers the nodes that will be transitioned in
  * @property {(nodes: Node[]) => void} leaveNodes Registers the nodes that will be transitioned out
@@ -4443,6 +4449,9 @@ constructTemplateBuilder.encode = htmlEncode;
 // Export the proxied template builder
 let $ = new Proxy(constructTemplateBuilder,  RootProxy);
 
+/**
+ * Implements a simple notification and broadcast service
+ */
 function Notify()
 {
     let objectListenerMap = new WeakMap();
@@ -4455,7 +4464,9 @@ function Notify()
     }
 
 
-    // Add a listener for a source object
+    /**
+     * Adds a listener for a source object
+     */
     function addListener(sourceObject, handler)
     {
         if (!sourceObject)
@@ -4787,8 +4798,8 @@ function urlPattern(pattern)
 class PageCache
 {
     /** Constructs a new page cache
-     * @param {object} #options Options controlling the cache
-     * @param {number} #options.max The maximum number of cache entries to keep
+     * @param {object} options Options controlling the cache
+     * @param {number} options.max The maximum number of cache entries to keep
      */
     constructor(options)
     {
@@ -5117,6 +5128,7 @@ class WebHistoryRouterDriver
 }
 
 /**
+ * Represents a Route instance
  * @typedef {object} Route
  * @property {URL} url The route's URL
  * @property {Object} state State associated with the route
@@ -5128,63 +5140,28 @@ class WebHistoryRouterDriver
  */
 
 /**
+ * RouteHandlers handle mapping URLs to Route instances
  * @typedef {object} RouteHandler
  * @property {string | RegExp} [pattern] A string pattern or regular expression to match URL pathnames to this route handler
- * @property {MatchCallback} [match] A callback to confirm the URL match
- * @property {RouterEventAsync} [mayEnter] Notifies that a route for this handler may be entered
- * @property {RouterEventAsync} [mayLeave] Notifies that a route for this handler may be left
- * @property {RouterEventSync} [didEnter] Notifies that a route for this handler has been entered
- * @property {RouterEventSync} [didLeave] Notifies that a route for this handler has been left
- * @property {RouterEventSync} [cancelEnter] Notifies that a route that could have been entered was cancelled
- * @property {RouterEventSync} [cancelLeave] Notifies that a route that could have been left was cancelled
+ * @property {(route: Route) => Promise<boolean>} [match] A callback to confirm the URL match
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayEnter] Notifies that a route for this handler may be entered
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayLeave] Notifies that a route for this handler may be left
+ * @property {(from: Route, to: Route) => boolean} [didEnter] Notifies that a route for this handler has been entered
+ * @property {(from: Route, to: Route) => boolean} [didLeave] Notifies that a route for this handler has been left
+ * @property {(from: Route, to: Route) => boolean} [cancelEnter] Notifies that a route that could have been entered was cancelled
+ * @property {(from: Route, to: Route) => boolean} [cancelLeave] Notifies that a route that could have been left was cancelled
  * @property {Number} [order] Order of this route handler when compared to all others (default = 0, lowest first)
- * @property {CaptureViewStateCallback} [captureViewState] A callback to capture the view state for this route handler's routes
- * @property {RestoreViewStateCallback} [restoreViewState] A callback to restore the view state for this route handler's routes
- */
-
-/**
- * @callback MatchCallback
- * @param {Route} route The route to match to
- * @returns {Promise<boolean>}
- */
-
-/**
- * @callback RouterEventAsync
- * @param {Route} from The route being left
- * @param {Route} to The route being entered
- * @returns {Promise<boolean>}
- */
-
-/**
- * @callback RouterEventSync
- * @param {Route} from The route being left
- * @param {Route} to The route being entered
- * @returns {void}
- */
-
-/**
- * @callback RevokeRouteHandlerPredicate
- * @param {RouteHandler} handler The handler being queried
- * @returns {boolean} Return true from the handler
- */
-
-/**
- * @callback CaptureViewStateCallback
- * @param {Route} route The route whose view state is being captured
- * @returns {Object} The captured view state
- */
-
-/**
- * @callback RestoreViewStateCallback
- * @param {Route} route The route whose view state is being restored
- * @param {Object} viewState The previously captured view state to be restored
+ * @property {(route: Route) => object} [captureViewState] A callback to capture the view state for this route handler's routes
+ * @property {(route: Route, state: object) => void} [restoreViewState] A callback to restore the view state for this route handler's routes
  */
 
 
-/** The Router class - handles URL load requests, creating
- route objects using route handlers and firing associated
- events
-*/
+
+/** 
+ * The Router class - handles URL load requests, creating
+ * route objects using route handlers and firing associated
+ * events
+ */
 class Router
 {   
     /** Constructs a new Router instance 
@@ -5212,12 +5189,36 @@ class Router
         this.#driver = driver;
         if (driver)
         {
+            /** 
+             * Navigates to a new URL
+             * @param {URL | string} url The external URL to navigate to
+             * @returns {Promise<Route>}
+             */
             this.navigate = driver.navigate.bind(driver);
+
+            /**
+             * Replaces the current URL, without performing a navigation
+             * @param {URL | string} url The new URL to display
+             * @returns {void}
+             */
             this.replace = driver.replace.bind(driver);
+
+            /**
+             * Navigates back one step in the history, or if there is 
+             * no previous history navigates to the root URL
+             * @returns {void}
+             */
             this.back = driver.back.bind(driver);
         }
         return this.#driver.start(this);
     }
+
+    /**
+     * An option URL mapper to be used for URL internalization and
+     * externalization.
+     * @type {UrlMapper}
+     */
+    urlMapper;
 
     #driver;
 
@@ -5562,7 +5563,7 @@ class Router
     }
 
     /** Revoke previously used handlers by matching to a predicate
-     * @param {RevokeRouteHandlerPredicate} predicate Callback passed each route handler, return true to remove
+     * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return true to remove
      */
     revoke(predicate)
     {
@@ -5570,12 +5571,12 @@ class Router
     }
 
     /** a callback to capture the view state for this route handler's routes 
-     * @type {CaptureViewStateCallback}
+     * @type {(route: Route) => object}
      */
     captureViewState;
 
     /** a callback to restore the view state for this route handler's routes
-     * @type {RestoreViewStateCallback}
+     * @type {(route: Route, state: object) => void}
      */
     restoreViewState;
 }
@@ -5588,20 +5589,22 @@ let router = new Router();
 class UrlMapper
 {
     /** Constructs a new Url Mapper
-     * @param {object} #options Options for how to map URLs
-     * @param {string} #options.base The base URL of the external URL
-     * @param {boolean} #options.hash True to use hashed URLs
+     * @param {object} options Options for how to map URLs
+     * @param {string} options.base The base URL of the external URL
+     * @param {boolean} options.hash True to use hashed URLs
      */
     constructor(options)
     {
-        this.options = options;
-        if (this.options.base && 
-            (!this.options.base.startsWith("/") ||
-             !this.options.base.endsWith("/")))
+        this.#options = options;
+        if (this.#options.base && 
+            (!this.#options.base.startsWith("/") ||
+             !this.#options.base.endsWith("/")))
         {
-            throw new Error(`UrlMapper base '${this.options.base}' must start and end with '/'`);
+            throw new Error(`UrlMapper base '${this.#options.base}' must start and end with '/'`);
         }
     }
+
+    #options;
 
     /** Internalizes a URL
      *
@@ -5610,16 +5613,16 @@ class UrlMapper
      */
     internalize(url)
     {
-        if (this.options.base)
+        if (this.#options.base)
         {
-            if (!url.pathname.startsWith(this.options.base))
+            if (!url.pathname.startsWith(this.#options.base))
                 throw new Error(`Can't internalize url '${url}'`);
             
             url = new URL(url);
-            url.pathname = url.pathname.substring(this.options.base.length-1);
+            url.pathname = url.pathname.substring(this.#options.base.length-1);
         }
 
-        if (this.options.hash)
+        if (this.#options.hash)
         {
             if (url.pathname != "/")
                 throw new Error(`can't internalize url "${url.href}"`);
@@ -5640,15 +5643,15 @@ class UrlMapper
      */
     externalize(url, asset)
     {
-        if (!asset && this.options.hash)
+        if (!asset && this.#options.hash)
         {
             url = new URL(`${url.origin}/#${url.pathname}${url.search}${url.hash}`);
         }
 
-        if (this.options.base)
+        if (this.#options.base)
         {
             url = new URL(url);
-            url.pathname = this.options.base.slice(0, -1) + url.pathname;
+            url.pathname = this.#options.base.slice(0, -1) + url.pathname;
         }
         return url;
     }
@@ -5698,4 +5701,4 @@ async function fetchJsonAsset(path)
     return JSON.parse(await fetchTextAsset(path));
 }
 
-export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, Environment, HtmlString, Notify, PageCache, Router, Style, TransitionCss, TransitionNone, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, anyPendingFrames, cloak, compileTemplate, css, fetchJsonAsset, fetchTextAsset, html, htmlEncode, input, nextFrame, notify, postNextFrame, router, setEnvProvider, transition, urlPattern };
+export { $, BrowserEnvironment, CloakedValue, Component, DocumentScrollPosition, Environment, HtmlString, Notify, PageCache, Router, Style, TransitionCss, UrlMapper, ViewStateRestoration, WebHistoryRouterDriver, anyPendingFrames, cloak, compileTemplate, css, fetchJsonAsset, fetchTextAsset, html, htmlEncode, input, nextFrame, notify, postNextFrame, router, setEnvProvider, transition, urlPattern };
