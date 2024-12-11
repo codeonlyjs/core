@@ -1,23 +1,27 @@
 import { TransitionCss } from "./TransitionCss.js";    
 
 
-/** Declares addition settings transition directives
- * @param {object} options
- * @param {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
- * @param {string} [options.mode] Transition order - concurrent, enter-leave or leave-enter
- * @param {name} [options.name] Transition name - used as prefix to CSS class names, default = "tx"
- * @param {object} [options.classNames] A map of class name mappings
- * @param {number} [options.duration] The duration of the animation in milliseconds
- * @param {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations
- * @returns {TransitionHandler}
+/**
+ * Transition Options
+ * @typedef TransitionOptions
+ * @property {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
+ * @property {string} [options.mode] Transition order - concurrent, enter-leave or leave-enter
+ * @property {name} [options.name] Transition name - used as prefix to CSS class names, default = "tx"
+ * @property {object} [options.classNames] A map of class name mappings
+ * @property {number} [options.duration] The duration of the animation in milliseconds
+ * @property {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations
  */
-export function transition(options)
+
+/** Declares addition settings transition directives
+ * @param {{TransitionOptions | string | Function}[]} options
+ */
+export function transition(...options)
 {
     // Merge all args
     let optionsFinal = {};
-    for (let i=0; i<arguments.length; i++)
+    for (let i=0; i<options; i++)
     {
-        let a = arguments[i];
+        let a = options[i];
         if (a instanceof Function)
             optionsFinal.value = a;
         else if (typeof(a) === 'string')
@@ -52,6 +56,7 @@ export function transition(options)
 
 
 /** 
+ * Implemented by objects that handle transitions
  * @typedef {object} TransitionHandler
  * @property {(nodes: Node[]) => void} enterNodes Registers the nodes that will be transitioned in
  * @property {(nodes: Node[]) => void} leaveNodes Registers the nodes that will be transitioned out

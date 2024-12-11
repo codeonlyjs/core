@@ -1,3 +1,13 @@
+const defaultClassNames = {
+    "entering": "*-entering;*-active",
+    "enter-start": "*-enter-start;*-out",
+    "enter-end": "*-enter-end;*-in",
+    "leaving": "*-leaving;*-active",
+    "leave-start": "*-leave-start;*-in",
+    "leave-end": "*-leave-end;*-out",
+}
+
+
 /** @internal */
 export function TransitionCss(options, ctx) 
 {
@@ -49,7 +59,7 @@ export function TransitionCss(options, ctx)
         for (let s of states)
         {
             // Look in options.classNames the in default names
-            let cls_names = classNames?.[s] ?? TransitionCss.defaultClassNames[s];
+            let cls_names = classNames?.[s] ?? defaultClassNames[s];
 
             // Split on semicolon
             cls_names = (cls_names ?? "").split(";");
@@ -255,14 +265,5 @@ export function TransitionCss(options, ctx)
         start,
         finish,
     }
-}
-
-TransitionCss.defaultClassNames = {
-    "entering": "*-entering;*-active",
-    "enter-start": "*-enter-start;*-out",
-    "enter-end": "*-enter-end;*-in",
-    "leaving": "*-leaving;*-active",
-    "leave-start": "*-leave-start;*-in",
-    "leave-end": "*-leave-end;*-out",
 }
 

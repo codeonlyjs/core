@@ -15,6 +15,14 @@ export class HtmlString
      */
     html;
     
+    /** 
+     * Compares two values and returns true if they
+     * are both HtmlString instances and both have the
+     * same inner `html` value.
+     * @param {any} a The first value to compare
+     * @param {any} b The second value to compare
+     * @returns {boolean}
+     */
     static areEqual(a, b)
     {
         return (

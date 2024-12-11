@@ -8,7 +8,14 @@ declare module "@codeonlyjs/core" {
      * @extends {EventTarget}
      */
     export class Environment extends EventTarget {
+        /**
+         * True when running in browser environment
+         */
         browser: boolean;
+        /**
+         * True when running in a rendering environment
+         */
+        ssr: boolean;
         /** Notifies the environment that an async load operation is starting
          * @returns {void}
          */
@@ -43,6 +50,14 @@ declare module "@codeonlyjs/core" {
     /** Contains a HTML string
      */
     export class HtmlString {
+        /**
+         * Compares two values and returns true if they
+         * are both HtmlString instances and both have the
+         * same inner `html` value.
+         * @param {any} a The first value to compare
+         * @param {any} b The second value to compare
+         * @returns {boolean}
+         */
         static areEqual(a: any, b: any): boolean;
         /** Constructs a new HtmlString object
          * @param {string} html The HTML string
@@ -70,15 +85,16 @@ declare module "@codeonlyjs/core" {
          */
         static declare(css: string): void;
     }
-    /** Components are the primary building block for constructing CodeOnly
-    applications. They encapsulate program logic, a DOM (aka HTML) template
-    and an optional a set of CSS styles.
-    
-    Components can be used either in the templates of other components
-    or mounted onto the document DOM to appear in a web page.
-    
-    @extends EventTarget
-    */
+    /**
+     * Components are the primary building block for constructing CodeOnly
+     * applications. They encapsulate program logic, a DOM (aka HTML) template
+     * and an optional a set of CSS styles.
+     *
+     * Components can be used either in the templates of other components
+     * or mounted onto the document DOM to appear in a web page.
+     *
+     * @extends EventTarget
+     */
     export class Component extends EventTarget {
         /** Gets the `domTreeConstructor` for this component class.
          *
@@ -88,7 +104,7 @@ declare module "@codeonlyjs/core" {
          * The first time this property is accessed, it calls the
          * static `onProvideDomTreeConstructor` method to actually provide the
          * instance.
-         * @type {import("./TemplateCompiler").DomTreeConstructor}
+         * @type {DomTreeConstructor}
         */
         static get domTreeConstructor(): DomTreeConstructor;
         /** Provides the `domTreeConstructor` to be used by this component class.
@@ -97,7 +113,7 @@ declare module "@codeonlyjs/core" {
          * a constructor function that can create `domTree` instances.
          * @returns {import("./TemplateCompiler").DomTreeConstructor}
          */
-        static onProvideDomTreeConstructor(): DomTreeConstructor;
+        static onProvideDomTreeConstructor(): import("core/TemplateCompiler").DomTreeConstructor;
         /** Provides the template to be used by this component class.
          *
          * This method is only called once per component class and should provide
@@ -110,7 +126,6 @@ declare module "@codeonlyjs/core" {
          * @type {boolean}
          */
         static get isSingleRoot(): boolean;
-        static nextFrameOrder: number;
         /** The template to be used by this component class */
         static template: {};
         /** Immediately updates this component's DOM elements - even if
@@ -150,9 +165,10 @@ declare module "@codeonlyjs/core" {
          * @type {boolean}
          */
         get created(): boolean;
-        /** Gets the `domTree` for this component, creating it if necessary
+        /**
+         * Gets the `domTree` for this component, creating it if necessary
          *
-         * @type {import("./TemplateCompiler").DomTree}
+         * @type {DomTree}
         */
         get domTree(): DomTree;
         /** Returns true if this component instance has, and will only ever
@@ -181,15 +197,17 @@ declare module "@codeonlyjs/core" {
          * @returns {void}
          */
         validate(): void;
-        /** Sets the error object associated with the current async data {@link load} operation.
+        /**
+         * Sets the error object associated with the current async data {@link Component#load} operation.
+         * @param {Error | null} value The new error object
          */
-        set loadError(value: Error);
-        /** Gets the error object (if any) that was thrown during the last async data {@link load} operation.
+        set loadError(value: Error | null);
+        /** Gets the error object (if any) that was thrown during the last async data {@link Component#load} operation.
          *
          * @type {Error}
         */
         get loadError(): Error;
-        /** Indicates if the component is currently in an async data {@link load} operation
+        /** Indicates if the component is currently in an async data {@link Component#load} operation
          *
          * @type {boolean}
          */
@@ -201,9 +219,9 @@ declare module "@codeonlyjs/core" {
         /** Performs an async data load operation.
          *
          * The callback function is typically an async function that performs
-         * a data request.  While in the callback, the {@link loading} property
+         * a data request.  While in the callback, the {@link Component#loading} property
          * will return `true`.  If the callback throws an error, it will be captured
-         * to the {@link loadError} property.
+         * to the {@link Component#loadError} property.
          *
          * Before calling and after returning from the callback, the component is
          * invalidated so visual elements (eg: spinners) can be updated.
@@ -220,7 +238,7 @@ declare module "@codeonlyjs/core" {
          * the constructed but not created state.
          *
          * A destroyed component can be recreated by remounting it
-         * or by calling its {@link create} method.
+         * or by calling its {@link Component#create} method.
          *
          * @returns {void}
          */
@@ -249,16 +267,16 @@ declare module "@codeonlyjs/core" {
          *
          * @param {EventTarget} target The object dispatching the events
          * @param {string} event The event to listen for
-         * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link invalidate} method is used.
+         * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link Component#invalidate} method is used.
          * @returns {void}
          */
         listen(target: EventTarget, event: string, handler?: Function): void;
-        /** Removes an event listener previously registered with {@link listen}
+        /** Removes an event listener previously registered with {@link Component#listen}
          *
          * @param {EventTarget} target The object dispatching the events
          * @param {string} event The event to listen for
          * @param {Function} [handler] The event listener to add/remove.  If not
-         * provided, the component's {@link invalidate} method is used.
+         * provided, the component's {@link Component#invalidate} method is used.
          * @returns {void}
          */
         unlisten(target: EventTarget, event: string, handler?: Function): void;
@@ -267,7 +285,11 @@ declare module "@codeonlyjs/core" {
          * @type {boolean}
          */
         get mounted(): boolean;
-        setMounted(mounted: any): void;
+        /**
+         * Notifies the object is has been mounted or unmounted
+         * @param {boolean} mounted True when the object has been mounted, false when unmounted
+         */
+        setMounted(mounted: boolean): void;
         /** Mounts this component against an element in the document.
          *
          * @param {Element | string} el The element or an element selector that specifies where to mount the component
@@ -284,21 +306,7 @@ declare module "@codeonlyjs/core" {
      * @param {object} rootTemplate The template to be compiled
      * @returns {DomTreeConstructor}
      */
-    export function compileTemplate(rootTemplate: object, compilerOptions: any): DomTreeConstructor;
-    export type DomTreeContext = {
-        /**
-         * The model to be used by the domTree
-         */
-        model: object;
-    };
-    export type _DomTreeExtend = {
-        /**
-         * Rebinds the DomTree to a new model object
-         */
-        rebind: () => void;
-    };
-    export type DomTree = CLObject & _DomTreeExtend;
-    export type DomTreeConstructor = (DomTreeContext: any) => DomTree;
+    export function compileTemplate(rootTemplate: object): DomTreeConstructor;
     /**
      * Invokes a callback on the next update cycle
      *
@@ -319,34 +327,45 @@ declare module "@codeonlyjs/core" {
      * @returns {boolean}
      */
     export function anyPendingFrames(): boolean;
-    export namespace TransitionCss {
-        let defaultClassNames: {
-            entering: string;
-            "enter-start": string;
-            "enter-end": string;
-            leaving: string;
-            "leave-start": string;
-            "leave-end": string;
-        };
-    }
     /** Declares addition settings transition directives
-     * @param {object} options
-     * @param {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
-     * @param {string} [options.mode] Transition order - concurrent, enter-leave or leave-enter
-     * @param {name} [options.name] Transition name - used as prefix to CSS class names, default = "tx"
-     * @param {object} [options.classNames] A map of class name mappings
-     * @param {number} [options.duration] The duration of the animation in milliseconds
-     * @param {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations
-     * @returns {TransitionHandler}
+     * @param {{TransitionOptions | string | Function}[]} options
      */
-    export function transition(options: {
+    export function transition(...options: any[]): {
+        (...args: any[]): any;
+        withTransition(context: any): any;
+    };
+    /**
+     * Transition Options
+     */
+    export type TransitionOptions = {
+        /**
+         * The value callback that triggers the animation when it changes
+         */
         value: (model: object, context: object) => any;
+        /**
+         * Transition order - concurrent, enter-leave or leave-enter
+         */
         mode?: string;
+        /**
+         * Transition name - used as prefix to CSS class names, default = "tx"
+         */
         name?: void;
+        /**
+         * A map of class name mappings
+         */
         classNames?: object;
+        /**
+         * The duration of the animation in milliseconds
+         */
         duration?: number;
+        /**
+         * Whether to monitor the element's sub-trees for animations
+         */
         subtree?: boolean;
-    }, ...args: any[]): TransitionHandler;
+    };
+    /**
+     * Implemented by objects that handle transitions
+     */
     export type TransitionHandler = {
         /**
          * Registers the nodes that will be transitioned in
@@ -373,14 +392,9 @@ declare module "@codeonlyjs/core" {
          */
         finish: () => void;
     };
-    export namespace TransitionNone {
-        function enterNodes(): void;
-        function leaveNodes(): void;
-        function onWillEnter(cb: any): void;
-        function onDidLeave(cb: any): void;
-        function start(): void;
-        function finish(): void;
-    }
+    /**
+     * Implements a simple notification and broadcast service
+     */
     export function Notify(): {
         (sourceObject: any, ...args: any[]): void;
         addEventListener: (sourceObject: any, handler: any) => void;
@@ -393,10 +407,12 @@ declare module "@codeonlyjs/core" {
     export function htmlEncode(str: string): string;
     /** Declares additional settings for input bindings
      * @param {InputOptions} options Additional input options
-     * @returns {InputHandler}
+     * @returns {object}
      */
-    export function input(options: InputOptions): InputHandler;
-    export type InputHandler = object;
+    export function input(options: InputOptions): object;
+    /**
+     * Options for controlling input bindings
+     */
     export type InputOptions = {
         /**
          * The name of the event (usually "change" or "input") to trigger the input binding
@@ -453,10 +469,11 @@ declare module "@codeonlyjs/core" {
          */
         get(key: any, factory: (key: any) => any): any;
     }
-    /** The Router class - handles URL load requests, creating
-     route objects using route handlers and firing associated
-     events
-    */
+    /**
+     * The Router class - handles URL load requests, creating
+     * route objects using route handlers and firing associated
+     * events
+     */
     export class Router {
         /** Constructs a new Router instance
          * @param {RouteHandler[]} handlers An array of router handlers to initially register
@@ -467,10 +484,30 @@ declare module "@codeonlyjs/core" {
          * @returns {any} The result returned from the driver's start method
          */
         start(driver: object): any;
+        /**
+         * Navigates to a new URL
+         * @param {URL | string} url The external URL to navigate to
+         * @returns {Promise<Route>}
+         */
         navigate: any;
+        /**
+         * Replaces the current URL, without performing a navigation
+         * @param {URL | string} url The new URL to display
+         * @returns {void}
+         */
         replace: any;
+        /**
+         * Navigates back one step in the history, or if there is
+         * no previous history navigates to the root URL
+         * @returns {void}
+         */
         back: any;
-        urlMapper: any;
+        /**
+         * An option URL mapper to be used for URL internalization and
+         * externalization.
+         * @type {UrlMapper}
+         */
+        urlMapper: UrlMapper;
         /** Internalizes a URL
          * @param {URL | string} url The URL to internalize
          * @returns { URL | string}
@@ -511,18 +548,21 @@ declare module "@codeonlyjs/core" {
          */
         register(handlers: RouteHandler | RouteHandler[]): void;
         /** Revoke previously used handlers by matching to a predicate
-         * @param {RevokeRouteHandlerPredicate} predicate Callback passed each route handler, return true to remove
+         * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return true to remove
          */
-        revoke(predicate: RevokeRouteHandlerPredicate): void;
+        revoke(predicate: (handler: RouteHandler) => boolean): void;
         /** a callback to capture the view state for this route handler's routes
-         * @type {CaptureViewStateCallback}
+         * @type {(route: Route) => object}
          */
-        captureViewState: CaptureViewStateCallback;
+        captureViewState: (route: Route) => object;
         /** a callback to restore the view state for this route handler's routes
-         * @type {RestoreViewStateCallback}
+         * @type {(route: Route, state: object) => void}
          */
-        restoreViewState: RestoreViewStateCallback;
+        restoreViewState: (route: Route, state: object) => void;
     }
+    /**
+     * Represents a Route instance
+     */
     export type Route = {
         /**
          * The route's URL
@@ -553,6 +593,9 @@ declare module "@codeonlyjs/core" {
          */
         title?: string;
     };
+    /**
+     * RouteHandlers handle mapping URLs to Route instances
+     */
     export type RouteHandler = {
         /**
          * A string pattern or regular expression to match URL pathnames to this route handler
@@ -561,31 +604,31 @@ declare module "@codeonlyjs/core" {
         /**
          * A callback to confirm the URL match
          */
-        match?: MatchCallback;
+        match?: (route: Route) => Promise<boolean>;
         /**
          * Notifies that a route for this handler may be entered
          */
-        mayEnter?: RouterEventAsync;
+        mayEnter?: (from: Route, to: Route) => Promise<boolean>;
         /**
          * Notifies that a route for this handler may be left
          */
-        mayLeave?: RouterEventAsync;
+        mayLeave?: (from: Route, to: Route) => Promise<boolean>;
         /**
          * Notifies that a route for this handler has been entered
          */
-        didEnter?: RouterEventSync;
+        didEnter?: (from: Route, to: Route) => boolean;
         /**
          * Notifies that a route for this handler has been left
          */
-        didLeave?: RouterEventSync;
+        didLeave?: (from: Route, to: Route) => boolean;
         /**
          * Notifies that a route that could have been entered was cancelled
          */
-        cancelEnter?: RouterEventSync;
+        cancelEnter?: (from: Route, to: Route) => boolean;
         /**
          * Notifies that a route that could have been left was cancelled
          */
-        cancelLeave?: RouterEventSync;
+        cancelLeave?: (from: Route, to: Route) => boolean;
         /**
          * Order of this route handler when compared to all others (default = 0, lowest first)
          */
@@ -593,18 +636,12 @@ declare module "@codeonlyjs/core" {
         /**
          * A callback to capture the view state for this route handler's routes
          */
-        captureViewState?: CaptureViewStateCallback;
+        captureViewState?: (route: Route) => object;
         /**
          * A callback to restore the view state for this route handler's routes
          */
-        restoreViewState?: RestoreViewStateCallback;
+        restoreViewState?: (route: Route, state: object) => void;
     };
-    export type MatchCallback = (route: Route) => Promise<boolean>;
-    export type RouterEventAsync = (from: Route, to: Route) => Promise<boolean>;
-    export type RouterEventSync = (from: Route, to: Route) => void;
-    export type RevokeRouteHandlerPredicate = (handler: RouteHandler) => boolean;
-    export type CaptureViewStateCallback = (route: Route) => any;
-    export type RestoreViewStateCallback = (route: Route, viewState: any) => any;
     /** Provides URL internalization and externalization */
     export class UrlMapper {
         /** Constructs a new Url Mapper
@@ -616,10 +653,6 @@ declare module "@codeonlyjs/core" {
             base: string;
             hash: boolean;
         });
-        options: {
-            base: string;
-            hash: boolean;
-        };
         /** Internalizes a URL
          *
          * @param {URL} url The URL to internalize
@@ -658,63 +691,214 @@ declare module "@codeonlyjs/core" {
      * @returns {Promise<object>}
      */
     export function fetchJsonAsset(path: string): Promise<object>;
+    /**
+     * Implements page rendering for SSG and/or SSR
+     */
     export class SSRWorker {
-        init(options: any): Promise<void>;
+        /**
+         * Initializes the SSR worker
+         * @param {object} options Options
+         * @param {string} options.entryFile The main entry .js file
+         * @param {string} options.entryMain The name of the main function in the entry file
+         * @param {string} options.entryHtml An HTML string into which mounted components will be written
+         * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
+         * @returns {Promise<void>}
+         */
+        init(options: {
+            entryFile: string;
+            entryMain: string;
+            entryHtml: string;
+            cssUrl?: string;
+        }): Promise<void>;
+        /**
+         * Stops the worker.
+         */
         stop(): Promise<void>;
-        getStyles(): Promise<any>;
-        render(url: any, options: any): Promise<any>;
+        /**
+         * Gets the declared CSS styles
+         * @returns {Promise<string>}
+         */
+        getStyles(): Promise<string>;
+        /**
+         * Renders a page
+         * @param {string} url URL of the page to render
+         * @param {any} options Additional options to be made available via `coenv`
+         * @returns {SSRResult} The results of the render
+         */
+        render(url: string, options: any): SSRResult;
     }
+    /**
+     * The results of an SSRWorker/SSRWorkerThread render operation.
+     *
+     * In addition to the `content` property, this object includes
+     * any properties from the `ssr` property of the route object to
+     * which the URL was matched.  This can be used to return additional
+     * information such as HTTP status codes from the rendering process.
+     */
+    export type SSRResult = {
+        /**
+         * The rendered HTML
+         */
+        content: string;
+    };
+    /**
+     * Runs an SSRWorker in a Node worker thread for
+     * application isolation
+     */
     export class SSRWorkerThread {
-        init(options: any): Promise<any>;
-        render(url: any): Promise<any>;
-        getStyles(): Promise<any>;
+        /**
+         * Initializes the SSR worker
+         * @param {object} options Options
+         * @param {string} options.entryFile The main entry .js file
+         * @param {string} options.entryMain The name of the main function in the entry file
+         * @param {string} options.entryHtml An HTML string into which mounted components will be written
+         * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
+         * @returns {Promise<void>}
+         */
+        init(options: {
+            entryFile: string;
+            entryMain: string;
+            entryHtml: string;
+            cssUrl?: string;
+        }): Promise<void>;
+        /**
+         * Renders a page
+         * @param {string} url URL of the page to render
+         * @returns {SSRResult} The results of the render
+         */
+        render(url: string): SSRResult;
+        /**
+         * Gets the declared CSS styles
+         * @returns {Promise<string>}
+         */
+        getStyles(): Promise<string>;
+        /**
+         * Stops the worker.
+         */
         stop(): Promise<any>;
-        invoke(method: any, ...args: any[]): Promise<any>;
     }
     /** Generates a static generated site (SSG)
      *
-     * @param {object} options - site generation options
-     * @param {string[]} [options.entryFile] The entry .js file (as an array, first found used)
-     * @param {string[]} [options.entryMain] The name of the entry point function in the entryFile (as an array, first found used)
-     * @param {string[]} [options.entryHtml] The HTML file to use as template for generated files (as an array, first found used)
-     * @param {string[]} [options.entryUrls] The URL's to render (will also recursively render all linked URLs)
-     * @param {string} [options.ext] The extension to append to all generated files (including the period)
-     * @param {boolean} [options.pretty] Prettify the generated HTML
-     * @param {string} [options.outDir] The output directory to write generated files
-     * @param {string} [options.baseUrl] The base URL used to qualify in-page URLs to an external full URL
-     * @param {boolean} [options.verbose] Verbose output
-     * @param {string} [options.cssUrl] Name of the CSS styles file
+     * @param {GenerateStaticOptions} options - site generation options
      */
-    export function generateStatic(options: {
-        entryFile?: string[];
-        entryMain?: string[];
-        entryHtml?: string[];
-        entryUrls?: string[];
-        ext?: string;
-        pretty?: boolean;
-        outDir?: string;
-        baseUrl?: string;
-        verbose?: boolean;
-        cssUrl?: string;
-    }): Promise<{
+    export function generateStatic(options: GenerateStaticOptions): Promise<{
         files: any[];
         elapsed: number;
     }>;
-    export function viteGenerateStatic(options: any): {
+    /**
+     * Options for generating static sites
+     */
+    export type GenerateStaticOptions = {
+        /**
+         * The entry .js file (as an array, first found used)
+         */
+        entryFile?: string[];
+        /**
+         * The name of the entry point function in the entryFile (as an array, first found used)
+         */
+        entryMain?: string[];
+        /**
+         * The HTML file to use as template for generated files (as an array, first found used)
+         */
+        entryHtml?: string[];
+        /**
+         * The URL's to render (will also recursively render all linked URLs)
+         */
+        entryUrls?: string[];
+        /**
+         * The extension to append to all generated files (including the period)
+         */
+        ext?: string;
+        /**
+         * Prettify the generated HTML
+         */
+        pretty?: boolean;
+        /**
+         * The output directory to write generated files
+         */
+        outDir?: string;
+        /**
+         * The base URL used to qualify in-page URLs to an external full URL
+         */
+        baseUrl?: string;
+        /**
+         * Verbose output
+         */
+        verbose?: boolean;
+        /**
+         * Name of the CSS styles file
+         */
+        cssUrl?: string;
+    };
+    /**
+     * Vite Plugin to generate static sites.
+     * @param {GenerateStaticOptions} options - options used for static page generation
+     */
+    export function viteGenerateStatic(options: GenerateStaticOptions): {
         name: string;
         configResolved: (config: any) => void;
         buildStart: () => Promise<void>;
         closeBundle: () => Promise<void>;
     };
+    /**
+     * Component Like Object.  Minimumm requirement for any
+     * object to be hosted by a template
+     */
     export interface CLObject 
     {
+        /**
+         * Gets the root nodes of this object
+         */
         get rootNodes(): Node[];
+        /**
+         * Instructs the object to update its DOM
+         */
         update(): void;
+        /**
+         * Notifies the object it can release held resources
+         */
         destroy(): void;
+        /**
+         * Notifies the object is has been mounted or unmounted
+         * @param {boolean} mounted True when the object has been mounted, false when unmounted
+         */
         setMounted(mounted: boolean): void;
+        /**
+         * If present and if true, indicates this object will
+         * only ever have a single root node
+         */
         readonly isSingleRoot?: boolean;
+        /**
+         * Returns the root node (if isSingleRoot is true)
+         */
         readonly rootNode?: Node;
     }
+    /**
+     * Implemented by all objects that manage a DOM tree.
+     */
+    export interface DomTree extends CLObject
+    {
+        /**
+         * Instructs the DomTree that the model property of
+         * the DomTree's context object has changed and that
+         * it should rebind to the new instance
+         */
+        rebind(): void;
+    }
+    /**
+     * Context object for DomTrees.
+     */
+    export interface DomTreeContext
+    {
+        /**
+         * The context's model object
+         */
+        get model(): object;
+    }
+    /**
+     * A function that creates a DomTree
+     */
+    export type DomTreeConstructor = (DomTreeContext: any) => DomTree;
 
 }
 

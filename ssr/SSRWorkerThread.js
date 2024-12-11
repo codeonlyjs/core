@@ -2,8 +2,15 @@ import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { SSRWorker } from './SSRWorker.js';
 
 
+/**
+ * Runs an SSRWorker in a Node worker thread for
+ * application isolation
+ */
 export class SSRWorkerThread
 {
+    /**
+     * Constructs a new SSRWorkerThread
+     */
     constructor()
     {
         // Create worker
@@ -22,21 +29,42 @@ export class SSRWorkerThread
 
     #worker;
 
+    /**
+     * Initializes the SSR worker
+     * @param {object} options Options
+     * @param {string} options.entryFile The main entry .js file
+     * @param {string} options.entryMain The name of the main function in the entry file
+     * @param {string} options.entryHtml An HTML string into which mounted components will be written
+     * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
+     * @returns {Promise<void>}
+     */
     init(options)
     {
         return this.invoke("init", options);
     }
 
+    /**
+     * Renders a page
+     * @param {string} url URL of the page to render
+     * @returns {SSRResult} The results of the render
+     */
     render(url)
     {
         return this.invoke("render", url);
     }
 
+    /**
+     * Gets the declared CSS styles
+     * @returns {Promise<string>}
+     */
     getStyles()
     {
         return this.invoke("getStyles");
     }
 
+    /**
+     * Stops the worker.
+     */
     stop()
     {
         return this.invoke("stop");
@@ -45,6 +73,7 @@ export class SSRWorkerThread
     #nextId = 1;
     #pending = new Map();
 
+    /** @internal */
     async invoke(method, ...args)
     {
         let id = this.#nextId++;

@@ -7,12 +7,39 @@ import { SSREnvironment } from './SSREnvironment.js';
 import { SSRRouterDriver } from "./SSRRouterDriver.js";
 import { HtmlInjector } from "./HtmlInjector.js";
 
+/**
+ * The results of an SSRWorker/SSRWorkerThread render operation.
+ * 
+ * In addition to the `content` property, this object includes
+ * any properties from the `ssr` property of the route object to
+ * which the URL was matched.  This can be used to return additional
+ * information such as HTTP status codes from the rendering process.
+ *
+ * @typedef {object} SSRResult
+ * @property {string} content The rendered HTML
+ */
+
+/**
+ * Implements page rendering for SSG and/or SSR
+ */
 export class SSRWorker
 {
+    /**
+     * Constructs a new instance
+     */
     constructor()
     {
     }
 
+    /**
+     * Initializes the SSR worker
+     * @param {object} options Options
+     * @param {string} options.entryFile The main entry .js file
+     * @param {string} options.entryMain The name of the main function in the entry file
+     * @param {string} options.entryHtml An HTML string into which mounted components will be written
+     * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
+     * @returns {Promise<void>}
+     */
     async init(options)
     {
         // Load entry module
@@ -74,7 +101,9 @@ export class SSRWorker
     #entryMain;
     #css;
     
-
+    /**
+     * Stops the worker.
+     */
     async stop()
     {
         // nop
@@ -90,11 +119,21 @@ export class SSRWorker
         return env;
     }
 
+    /**
+     * Gets the declared CSS styles
+     * @returns {Promise<string>}
+     */
     async getStyles()
     {
         return this.#css;
     }
 
+    /**
+     * Renders a page
+     * @param {string} url URL of the page to render
+     * @param {any} options Additional options to be made available via `coenv`
+     * @returns {SSRResult} The results of the render
+     */
     async render(url, options)
     {
         let mergedOptions = Object.assign({}, this.options, options);

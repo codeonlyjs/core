@@ -1,3 +1,4 @@
+/** @internal */
 export let TransitionNone = 
 {
     enterNodes: function() {},

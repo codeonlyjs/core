@@ -1,3 +1,6 @@
+/**
+ * Implements a simple notification and broadcast service
+ */
 export function Notify()
 {
     let objectListenerMap = new WeakMap();
@@ -10,7 +13,9 @@ export function Notify()
     }
 
 
-    // Add a listener for a source object
+    /**
+     * Adds a listener for a source object
+     */
     function addListener(sourceObject, handler)
     {
         if (!sourceObject)

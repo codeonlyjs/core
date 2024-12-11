@@ -5,20 +5,24 @@ import { Document } from "../minidom/Document.js";
 import { prettyHtml } from "../minidom/prettyHtml.js";
 //import { register } from 'node:module';
 
+/**
+ * Options for generating static sites
+ * @typedef {object} GenerateStaticOptions
+ * @property {string[]} [entryFile] The entry .js file (as an array, first found used)
+ * @property {string[]} [entryMain] The name of the entry point function in the entryFile (as an array, first found used)
+ * @property {string[]} [entryHtml] The HTML file to use as template for generated files (as an array, first found used)
+ * @property {string[]} [entryUrls] The URL's to render (will also recursively render all linked URLs)
+ * @property {string} [ext] The extension to append to all generated files (including the period)
+ * @property {boolean} [pretty] Prettify the generated HTML
+ * @property {string} [outDir] The output directory to write generated files
+ * @property {string} [baseUrl] The base URL used to qualify in-page URLs to an external full URL
+ * @property {boolean} [verbose] Verbose output
+ * @property {string} [cssUrl] Name of the CSS styles file
+ */
 
 /** Generates a static generated site (SSG)
  * 
- * @param {object} options - site generation options
- * @param {string[]} [options.entryFile] The entry .js file (as an array, first found used)
- * @param {string[]} [options.entryMain] The name of the entry point function in the entryFile (as an array, first found used)
- * @param {string[]} [options.entryHtml] The HTML file to use as template for generated files (as an array, first found used)
- * @param {string[]} [options.entryUrls] The URL's to render (will also recursively render all linked URLs)
- * @param {string} [options.ext] The extension to append to all generated files (including the period)
- * @param {boolean} [options.pretty] Prettify the generated HTML
- * @param {string} [options.outDir] The output directory to write generated files
- * @param {string} [options.baseUrl] The base URL used to qualify in-page URLs to an external full URL
- * @param {boolean} [options.verbose] Verbose output
- * @param {string} [options.cssUrl] Name of the CSS styles file
+ * @param {GenerateStaticOptions} options - site generation options
  */
 export async function generateStatic(options)
 {

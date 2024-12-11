@@ -3,6 +3,7 @@ import { WebHistoryRouterDriver } from "./WebHistoryRouterDriver.js";
 
 
 /**
+ * Represents a Route instance
  * @typedef {object} Route
  * @property {URL} url The route's URL
  * @property {Object} state State associated with the route
@@ -14,63 +15,28 @@ import { WebHistoryRouterDriver } from "./WebHistoryRouterDriver.js";
  */
 
 /**
+ * RouteHandlers handle mapping URLs to Route instances
  * @typedef {object} RouteHandler
  * @property {string | RegExp} [pattern] A string pattern or regular expression to match URL pathnames to this route handler
- * @property {MatchCallback} [match] A callback to confirm the URL match
- * @property {RouterEventAsync} [mayEnter] Notifies that a route for this handler may be entered
- * @property {RouterEventAsync} [mayLeave] Notifies that a route for this handler may be left
- * @property {RouterEventSync} [didEnter] Notifies that a route for this handler has been entered
- * @property {RouterEventSync} [didLeave] Notifies that a route for this handler has been left
- * @property {RouterEventSync} [cancelEnter] Notifies that a route that could have been entered was cancelled
- * @property {RouterEventSync} [cancelLeave] Notifies that a route that could have been left was cancelled
+ * @property {(route: Route) => Promise<boolean>} [match] A callback to confirm the URL match
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayEnter] Notifies that a route for this handler may be entered
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayLeave] Notifies that a route for this handler may be left
+ * @property {(from: Route, to: Route) => boolean} [didEnter] Notifies that a route for this handler has been entered
+ * @property {(from: Route, to: Route) => boolean} [didLeave] Notifies that a route for this handler has been left
+ * @property {(from: Route, to: Route) => boolean} [cancelEnter] Notifies that a route that could have been entered was cancelled
+ * @property {(from: Route, to: Route) => boolean} [cancelLeave] Notifies that a route that could have been left was cancelled
  * @property {Number} [order] Order of this route handler when compared to all others (default = 0, lowest first)
- * @property {CaptureViewStateCallback} [captureViewState] A callback to capture the view state for this route handler's routes
- * @property {RestoreViewStateCallback} [restoreViewState] A callback to restore the view state for this route handler's routes
- */
-
-/**
- * @callback MatchCallback
- * @param {Route} route The route to match to
- * @returns {Promise<boolean>}
- */
-
-/**
- * @callback RouterEventAsync
- * @param {Route} from The route being left
- * @param {Route} to The route being entered
- * @returns {Promise<boolean>}
- */
-
-/**
- * @callback RouterEventSync
- * @param {Route} from The route being left
- * @param {Route} to The route being entered
- * @returns {void}
- */
-
-/**
- * @callback RevokeRouteHandlerPredicate
- * @param {RouteHandler} handler The handler being queried
- * @returns {boolean} Return true from the handler
- */
-
-/**
- * @callback CaptureViewStateCallback
- * @param {Route} route The route whose view state is being captured
- * @returns {Object} The captured view state
- */
-
-/**
- * @callback RestoreViewStateCallback
- * @param {Route} route The route whose view state is being restored
- * @param {Object} viewState The previously captured view state to be restored
+ * @property {(route: Route) => object} [captureViewState] A callback to capture the view state for this route handler's routes
+ * @property {(route: Route, state: object) => void} [restoreViewState] A callback to restore the view state for this route handler's routes
  */
 
 
-/** The Router class - handles URL load requests, creating
- route objects using route handlers and firing associated
- events
-*/
+
+/** 
+ * The Router class - handles URL load requests, creating
+ * route objects using route handlers and firing associated
+ * events
+ */
 export class Router
 {   
     /** Constructs a new Router instance 
@@ -98,12 +64,36 @@ export class Router
         this.#driver = driver;
         if (driver)
         {
+            /** 
+             * Navigates to a new URL
+             * @param {URL | string} url The external URL to navigate to
+             * @returns {Promise<Route>}
+             */
             this.navigate = driver.navigate.bind(driver);
+
+            /**
+             * Replaces the current URL, without performing a navigation
+             * @param {URL | string} url The new URL to display
+             * @returns {void}
+             */
             this.replace = driver.replace.bind(driver);
+
+            /**
+             * Navigates back one step in the history, or if there is 
+             * no previous history navigates to the root URL
+             * @returns {void}
+             */
             this.back = driver.back.bind(driver);
         }
         return this.#driver.start(this);
     }
+
+    /**
+     * An option URL mapper to be used for URL internalization and
+     * externalization.
+     * @type {UrlMapper}
+     */
+    urlMapper;
 
     #driver;
 
@@ -448,7 +438,7 @@ export class Router
     }
 
     /** Revoke previously used handlers by matching to a predicate
-     * @param {RevokeRouteHandlerPredicate} predicate Callback passed each route handler, return true to remove
+     * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return true to remove
      */
     revoke(predicate)
     {
@@ -456,12 +446,12 @@ export class Router
     }
 
     /** a callback to capture the view state for this route handler's routes 
-     * @type {CaptureViewStateCallback}
+     * @type {(route: Route) => object}
      */
     captureViewState;
 
     /** a callback to restore the view state for this route handler's routes
-     * @type {RestoreViewStateCallback}
+     * @type {(route: Route, state: object) => void}
      */
     restoreViewState;
 }

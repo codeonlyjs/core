@@ -1,22 +1,133 @@
 import fs from 'node:fs';
 
-let defs = JSON.parse(fs.readFileSync("index.d.json", "utf8"));
+let groups = [
+    {
+        name: "Utilities",
+        title: "Utilities",
+        names: [ 
+            "nextFrame", 
+            "postNextFrame", 
+            "anyPendingFrames", 
+            "htmlEncode",
+            "urlPattern",
+            "Notify",
+            "css",
+            /^fetch/,
+        ]
+    },
+    {
+        name: "Components",
+        title: "Components API",
+        names: [ 
+            "Component" 
+        ],
+    },
+    {
+        name: "Environment",
+        title: "Environment API",
+        names: [ 
+            "coenv", 
+            "Environment", 
+            "setEnvProvider" 
+        ],
+    },
+    {
+        name: "Templates",
+        title: "Templates API",
+        names: [ 
+            "compileTemplate", 
+            "html", 
+            "input", 
+            "transition",
+            "InputOptions", 
+        ],
+    },
+    {
+        name: "Router",
+        title: "Router API",
+        names: [ 
+            /^Route/,
+            /ViewStateCallback$/,
+            "PageCache",
+            "UrlMapper",
+        ]
+    },
+    {
+        name: "Rendering",
+        title: "Rendering API",
+        names: [ 
+            /^SSR/,
+            /generateStatic/i,
+        ]
+    },
+    {
+        name: "LowLevel",
+        title: "Low-level APIs",
+        names: [ 
+            "CLObject", 
+            "DomTree", 
+            "DomTreeConstructor", 
+            "DomTreeContext",
+            "HtmlString", 
+            "Style",
+            /^Transition/,
+            "InputHandler",
+        ]
+    },
+]
 
-let str = "";
-let writer = { write: x => str += x };
-let heading = "######";
-
-writer.write("---\n");
-writer.write("title: API Reference\n")
-writer.write("---\n\n");
-
-
-for (let d of defs.members)
+function groupForName(name)
 {
-    render(writer, 1, d);
+    for (let g of groups)
+    {
+        for (let n of g.names)
+        {
+            if (n instanceof RegExp)
+            {
+                if (name.match(n))
+                    return g;
+            }
+            else
+            {
+                if (name == n)
+                    return g;
+            }
+        }
+    }
+
+    console.error(`warning: no group for ${name}`);
+    return groups[0];
 }
 
-fs.writeFileSync("index.d.md", str, "utf8");
+
+let defs = JSON.parse(fs.readFileSync("index.d.json", "utf8"));
+
+// create group writers
+for (let g of groups)
+{
+    g.filename = `api${g.name}`;
+    g.output = "";
+    g.writer = { write: x => g.output += x };
+    g.writer.write(`---\n`);
+    g.writer.write(`title: ${g.title}\n`);
+    g.writer.write(`description: CodeOnly ${g.title} Reference\n`);
+    g.writer.write(`---\n\n`);
+    g.writer.write(`# ${g.title}\n\n`);
+}
+
+let heading = "######";
+
+defs.members[0].members.sort((a,b) => a.name.localeCompare(b.name));
+for (let n of defs.members[0].members)
+{
+    let g = groupForName(n.name);
+    render(g.writer, 2, n);
+}
+
+for (let g of groups)
+{
+    fs.writeFileSync(`../website/content/guide/${g.filename}.md`, g.output, "utf8");
+}
 
 console.log("OK");
 
@@ -79,11 +190,22 @@ function getDescription(el)
 
 function render(w, depth, el)
 {
-    if (depth !== undefined)
+    if (el.kind != "get" && el.kind != "set")
     {
         let title = el.name;
+
+        switch (el.kind)
+        {
+            case "class": title += " Class"; break;
+            case "class": title += " Interface"; break;
+            case "constructor": title += "()"; break;
+            case "function": title += "()"; break;
+            case "method": title += "()"; break;
+        }
+
         if (el.static)
             title += " (static)";
+
         let id = "";
         if (el.namepath)
         {
@@ -91,13 +213,14 @@ function render(w, depth, el)
         }
         w.write(`${heading.substring(0, depth)} ${title}${id}\n\n`);
     }
+    
+    let desc = getDescription(el);
+    if (desc)
+    {
+        w.write(desc);
+        w.write("\n\n");
+    }
 
-    if (el.getAccessor)
-        render(w, undefined, el.getAccessor);
-    if (el.setAccessor)
-        render(w, undefined, el.setAccessor);
-    
-    
     if (el.definition)
     {
         // Strip "export" from the definition
@@ -108,13 +231,6 @@ function render(w, depth, el)
         w.write("```ts\n");
         w.write(def);
         w.write("\n```\n\n");
-    }
-
-    let desc = getDescription(el);
-    if (desc)
-    {
-        w.write(desc);
-        w.write("\n\n");
     }
 
     if (el.jsdoc)

@@ -1,6 +1,10 @@
 import path from "node:path";
 import { generateStatic } from "./generateStatic.js";
 
+/**
+ * Vite Plugin to generate static sites.
+ * @param {GenerateStaticOptions} options - options used for static page generation
+ */
 export function viteGenerateStatic(options)
 {
     return {

@@ -1,6 +1,7 @@
 {
     "include": [
         "index-server.js",
+        "types.d.ts",
     ],
 	"compilerOptions": {
 		"allowJs": true,
@@ -12,5 +13,6 @@
         "esModuleInterop": true,
         "outFile": "index.raw.d.ts",
         "declarationMap": true,
+        "target": "ES2015",
 	}
 }

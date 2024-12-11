@@ -7,7 +7,6 @@ export * from "./TemplateCompiler.js";
 export * from "./nextFrame.js";
 export * from "./TransitionCss.js";
 export * from "./transition.js";
-export * from "./TransitionNone.js";
 export * from "./Fluent.js";
 export * from "./Notify.js";
 export * from "./htmlEncode.js";

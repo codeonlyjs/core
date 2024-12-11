@@ -10,22 +10,6 @@ import "./EmbedSlot.js";
 import "./ForEachBlock.js";
 import "./IfBlock.js";
 
-/**
- * @typedef {object} DomTreeContext
- * @property {object} model The model to be used by the domTree
- */
-
-/**
- * @typedef {object} _DomTreeExtend
- * @property {() => void} rebind Rebinds the DomTree to a new model object
- * @typedef {CLObject & _DomTreeExtend} DomTree
- */
-
-/** 
- * @typedef {(DomTreeContext) => DomTree} DomTreeConstructor 
- */
-
-
 
 function compileTemplateCode(rootTemplate, compilerOptions)
 {
@@ -777,10 +761,11 @@ let _nextInstanceId = 1;
  * @param {object} rootTemplate The template to be compiled
  * @returns {DomTreeConstructor}
  */
-export function compileTemplate(rootTemplate, compilerOptions)
+export function compileTemplate(rootTemplate)
 {
-    compilerOptions = compilerOptions ?? {};
-    compilerOptions.compileTemplate = compileTemplate;
+    let compilerOptions = {
+        compileTemplate: compileTemplate
+    };
 
     // Compile code
     let code = compileTemplateCode(rootTemplate, compilerOptions);

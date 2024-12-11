@@ -9,7 +9,16 @@ export class Environment extends EventTarget
     constructor()
     {
         super();
+
+        /**
+         * True when running in browser environment
+         */
         this.browser = false;
+
+        /**
+         * True when running in a rendering environment
+         */
+        this.ssr = false;
     }
 
     #loading = 0;

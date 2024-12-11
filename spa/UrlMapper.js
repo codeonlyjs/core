@@ -8,14 +8,16 @@ export class UrlMapper
      */
     constructor(options)
     {
-        this.options = options;
-        if (this.options.base && 
-            (!this.options.base.startsWith("/") ||
-             !this.options.base.endsWith("/")))
+        this.#options = options;
+        if (this.#options.base && 
+            (!this.#options.base.startsWith("/") ||
+             !this.#options.base.endsWith("/")))
         {
-            throw new Error(`UrlMapper base '${this.options.base}' must start and end with '/'`);
+            throw new Error(`UrlMapper base '${this.#options.base}' must start and end with '/'`);
         }
     }
+
+    #options;
 
     /** Internalizes a URL
      *
@@ -24,16 +26,16 @@ export class UrlMapper
      */
     internalize(url)
     {
-        if (this.options.base)
+        if (this.#options.base)
         {
-            if (!url.pathname.startsWith(this.options.base))
+            if (!url.pathname.startsWith(this.#options.base))
                 throw new Error(`Can't internalize url '${url}'`);
             
             url = new URL(url);
-            url.pathname = url.pathname.substring(this.options.base.length-1);
+            url.pathname = url.pathname.substring(this.#options.base.length-1);
         }
 
-        if (this.options.hash)
+        if (this.#options.hash)
         {
             if (url.pathname != "/")
                 throw new Error(`can't internalize url "${url.href}"`);
@@ -54,15 +56,15 @@ export class UrlMapper
      */
     externalize(url, asset)
     {
-        if (!asset && this.options.hash)
+        if (!asset && this.#options.hash)
         {
             url = new URL(`${url.origin}/#${url.pathname}${url.search}${url.hash}`);
         }
 
-        if (this.options.base)
+        if (this.#options.base)
         {
             url = new URL(url);
-            url.pathname = this.options.base.slice(0, -1) + url.pathname;
+            url.pathname = this.#options.base.slice(0, -1) + url.pathname;
         }
         return url;
     }

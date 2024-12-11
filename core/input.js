@@ -1,8 +1,5 @@
-/** 
- * @typedef {object} InputHandler
- */
-
 /**
+ * Options for controlling input bindings
  * @typedef {object} InputOptions
  * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding
  * @property {string} [prop] The name of the property on the target object
@@ -16,7 +13,7 @@
 
 /** Declares additional settings for input bindings
  * @param {InputOptions} options Additional input options
- * @returns {InputHandler}
+ * @returns {object}
  */
 
 export function input(options)

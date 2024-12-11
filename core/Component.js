@@ -1,15 +1,18 @@
 import { nextFrame } from "./nextFrame.js";
 import { compileTemplate } from "./TemplateCompiler.js";
 
-/** Components are the primary building block for constructing CodeOnly
-applications. They encapsulate program logic, a DOM (aka HTML) template 
-and an optional a set of CSS styles.
+/** @import { DomTree, DomTreeConstructor } from "../types.d.ts" */
 
-Components can be used either in the templates of other components
-or mounted onto the document DOM to appear in a web page.
-
-@extends EventTarget
-*/
+/** 
+ * Components are the primary building block for constructing CodeOnly
+ * applications. They encapsulate program logic, a DOM (aka HTML) template 
+ * and an optional a set of CSS styles.
+ *
+ * Components can be used either in the templates of other components
+ * or mounted onto the document DOM to appear in a web page.
+ *
+ * @extends EventTarget
+ */
 export class Component extends EventTarget
 {
     /** Constructs a new component instance */
@@ -32,7 +35,7 @@ export class Component extends EventTarget
      * The first time this property is accessed, it calls the 
      * static `onProvideDomTreeConstructor` method to actually provide the
      * instance.
-     * @type {import("./TemplateCompiler").DomTreeConstructor}
+     * @type {DomTreeConstructor}
     */
     static get domTreeConstructor()
     {
@@ -93,9 +96,10 @@ export class Component extends EventTarget
         return this.#domTree != null;
     }
 
-    /** Gets the `domTree` for this component, creating it if necessary 
+    /** 
+     * Gets the `domTree` for this component, creating it if necessary 
      * 
-     * @type {import("./TemplateCompiler").DomTree}
+     * @type {DomTree}
     */
     get domTree()
     {
@@ -137,6 +141,7 @@ export class Component extends EventTarget
         return this.domTree.rootNodes; 
     }
 
+    /** @internal */
     static nextFrameOrder = -100;
 
     #invalid = false;
@@ -237,7 +242,7 @@ export class Component extends EventTarget
     }
 
     
-    /** Gets the error object (if any) that was thrown during the last async data {@link load} operation.
+    /** Gets the error object (if any) that was thrown during the last async data {@link Component#load} operation.
      * 
      * @type {Error}
     */
@@ -246,7 +251,9 @@ export class Component extends EventTarget
        return this.#loadError;
     }
     
-    /** Sets the error object associated with the current async data {@link load} operation.
+    /** 
+     * Sets the error object associated with the current async data {@link Component#load} operation.
+     * @param {Error | null} value The new error object
      */
     set loadError(value)
     {
@@ -257,7 +264,7 @@ export class Component extends EventTarget
         
     #loading = 0;
 
-    /** Indicates if the component is currently in an async data {@link load} operation
+    /** Indicates if the component is currently in an async data {@link Component#load} operation
      * 
      * @type {boolean}
      */
@@ -274,9 +281,9 @@ export class Component extends EventTarget
     /** Performs an async data load operation.
      * 
      * The callback function is typically an async function that performs
-     * a data request.  While in the callback, the {@link loading} property
+     * a data request.  While in the callback, the {@link Component#loading} property
      * will return `true`.  If the callback throws an error, it will be captured
-     * to the {@link loadError} property.
+     * to the {@link Component#loadError} property.
      * 
      * Before calling and after returning from the callback, the component is
      * invalidated so visual elements (eg: spinners) can be updated.
@@ -330,7 +337,7 @@ export class Component extends EventTarget
      * the constructed but not created state.
      * 
      * A destroyed component can be recreated by remounting it
-     * or by calling its {@link create} method.
+     * or by calling its {@link Component#create} method.
      * 
      * @returns {void}
      */
@@ -376,7 +383,7 @@ export class Component extends EventTarget
      * 
      * @param {EventTarget} target The object dispatching the events
      * @param {string} event The event to listen for
-     * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link invalidate} method is used.
+     * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     listen(target, event, handler)
@@ -394,12 +401,12 @@ export class Component extends EventTarget
             target.addEventListener(event, handler);
     }
 
-    /** Removes an event listener previously registered with {@link listen}
+    /** Removes an event listener previously registered with {@link Component#listen}
      * 
      * @param {EventTarget} target The object dispatching the events
      * @param {string} event The event to listen for
      * @param {Function} [handler] The event listener to add/remove.  If not 
-     * provided, the component's {@link invalidate} method is used.
+     * provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     unlisten(target, event, handler)
@@ -431,6 +438,10 @@ export class Component extends EventTarget
     #mounted = false;
 
     
+    /**
+     * Notifies the object is has been mounted or unmounted
+     * @param {boolean} mounted True when the object has been mounted, false when unmounted
+     */
     setMounted(mounted)
     {
         // Depth first

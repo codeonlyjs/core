@@ -4279,13 +4279,13 @@ TransitionCss.defaultClassNames = {
 };
 
 /** Declares addition settings transition directives
- * @param {object} options
- * @param {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
- * @param {string} [options.mode] Transition order - concurrent, enter-leave or leave-enter
- * @param {name} [options.name] Transition name - used as prefix to CSS class names, default = "tx"
- * @param {object} [options.classNames] A map of class name mappings
- * @param {number} [options.duration] The duration of the animation in milliseconds
- * @param {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations
+ * @param {object} #options
+ * @param {(model:object, context:object) => any} #options.value The value callback that triggers the animation when it changes
+ * @param {string} [#options.mode] Transition order - concurrent, enter-leave or leave-enter
+ * @param {name} [#options.name] Transition name - used as prefix to CSS class names, default = "tx"
+ * @param {object} [#options.classNames] A map of class name mappings
+ * @param {number} [#options.duration] The duration of the animation in milliseconds
+ * @param {boolean} [#options.subtree] Whether to monitor the element's sub-trees for animations
  * @returns {TransitionHandler}
  */
 function transition(options)
@@ -4787,8 +4787,8 @@ function urlPattern(pattern)
 class PageCache
 {
     /** Constructs a new page cache
-     * @param {object} options Options controlling the cache
-     * @param {number} options.max The maximum number of cache entries to keep
+     * @param {object} #options Options controlling the cache
+     * @param {number} #options.max The maximum number of cache entries to keep
      */
     constructor(options)
     {
@@ -5588,9 +5588,9 @@ let router = new Router();
 class UrlMapper
 {
     /** Constructs a new Url Mapper
-     * @param {object} options Options for how to map URLs
-     * @param {string} options.base The base URL of the external URL
-     * @param {boolean} options.hash True to use hashed URLs
+     * @param {object} #options Options for how to map URLs
+     * @param {string} #options.base The base URL of the external URL
+     * @param {boolean} #options.hash True to use hashed URLs
      */
     constructor(options)
     {

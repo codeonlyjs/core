@@ -36,7 +36,7 @@
                     "kind": "class",
                     "name": "Environment",
                     "namepath": "module:@codeonlyjs/core.Environment",
-                    "definition": "export class Environment extends EventTarget {\n    browser: boolean;\n    enterLoading(): void;\n    leaveLoading(): void;\n    get loading(): boolean;\n    load(callback: () => Promise<any>): Promise<any>;\n    untilLoaded(): Promise<void>;\n}",
+                    "definition": "export class Environment extends EventTarget {\n    browser: boolean;\n    ssr: boolean;\n    enterLoading(): void;\n    leaveLoading(): void;\n    get loading(): boolean;\n    load(callback: () => Promise<any>): Promise<any>;\n    untilLoaded(): Promise<void>;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -53,7 +53,27 @@
                             "kind": "property",
                             "name": "browser",
                             "namepath": "module:@codeonlyjs/core.Environment#browser",
-                            "definition": "browser: boolean;"
+                            "definition": "browser: boolean;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nTrue when running in browser environment\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "ssr",
+                            "namepath": "module:@codeonlyjs/core.Environment#ssr",
+                            "definition": "ssr: boolean;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nTrue when running in a rendering environment\n"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
@@ -205,7 +225,35 @@
                             "static": true,
                             "name": "areEqual",
                             "namepath": "module:@codeonlyjs/core.HtmlString.areEqual",
-                            "definition": "static areEqual(a: any, b: any): boolean;"
+                            "definition": "static areEqual(a: any, b: any): boolean;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nCompares two values and returns true if they\nare both HtmlString instances and both have the\nsame inner `html` value.\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The first value to compare\n",
+                                    "type": "any",
+                                    "optional": false,
+                                    "name": "a",
+                                    "specifier": "a"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The second value to compare\n",
+                                    "type": "any",
+                                    "optional": false,
+                                    "name": "b",
+                                    "specifier": "b"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "boolean"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "constructor",
@@ -327,11 +375,11 @@
                     "kind": "class",
                     "name": "Component",
                     "namepath": "module:@codeonlyjs/core.Component",
-                    "definition": "export class Component extends EventTarget {\n    static get domTreeConstructor(): DomTreeConstructor;\n    static onProvideDomTreeConstructor(): DomTreeConstructor;\n    static onProvideTemplate(): {};\n    static get isSingleRoot(): boolean;\n    static nextFrameOrder: number;\n    static template: {};\n    update(): void;\n    invalidate(): void;\n    create(): void;\n    get created(): boolean;\n    get domTree(): DomTree;\n    get isSingleRoot(): boolean;\n    get rootNode(): Node;\n    get rootNodes(): Node[];\n    get invalid(): boolean;\n    validate(): void;\n    set loadError(value: Error);\n    get loadError(): Error;\n    get loading(): boolean;\n    load(callback: () => any, silent?: boolean): any;\n    destroy(): void;\n    onMount(): void;\n    onUnmount(): void;\n    listen(target: EventTarget, event: string, handler?: Function): void;\n    unlisten(target: EventTarget, event: string, handler?: Function): void;\n    get mounted(): boolean;\n    setMounted(mounted: any): void;\n    mount(el: Element | string): void;\n    unmount(): void;\n}",
+                    "definition": "export class Component extends EventTarget {\n    static get domTreeConstructor(): DomTreeConstructor;\n    static onProvideDomTreeConstructor(): import(\"core/TemplateCompiler\").DomTreeConstructor;\n    static onProvideTemplate(): {};\n    static get isSingleRoot(): boolean;\n    static template: {};\n    update(): void;\n    invalidate(): void;\n    create(): void;\n    get created(): boolean;\n    get domTree(): DomTree;\n    get isSingleRoot(): boolean;\n    get rootNode(): Node;\n    get rootNodes(): Node[];\n    get invalid(): boolean;\n    validate(): void;\n    set loadError(value: Error | null);\n    get loadError(): Error;\n    get loading(): boolean;\n    load(callback: () => any, silent?: boolean): any;\n    destroy(): void;\n    onMount(): void;\n    onUnmount(): void;\n    listen(target: EventTarget, event: string, handler?: Function): void;\n    unlisten(target: EventTarget, event: string, handler?: Function): void;\n    get mounted(): boolean;\n    setMounted(mounted: boolean): void;\n    mount(el: Element | string): void;\n    unmount(): void;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Components are the primary building block for constructing CodeOnly\napplications. They encapsulate program logic, a DOM (aka HTML) template\nand an optional a set of CSS styles.\n\nComponents can be used either in the templates of other components\nor mounted onto the document DOM to appear in a web page.\n"
+                            "text": "\nComponents are the primary building block for constructing CodeOnly\napplications. They encapsulate program logic, a DOM (aka HTML) template\nand an optional a set of CSS styles.\n\nComponents can be used either in the templates of other components\nor mounted onto the document DOM to appear in a web page.\n\n"
                         },
                         {
                             "block": "extends",
@@ -358,7 +406,7 @@
                                         },
                                         {
                                             "block": "type",
-                                            "text": "{import(\"./TemplateCompiler\").DomTreeConstructor}\n"
+                                            "text": "{DomTreeConstructor}\n"
                                         }
                                     ],
                                     "links": []
@@ -371,7 +419,7 @@
                             "static": true,
                             "name": "onProvideDomTreeConstructor",
                             "namepath": "module:@codeonlyjs/core.Component.onProvideDomTreeConstructor",
-                            "definition": "static onProvideDomTreeConstructor(): DomTreeConstructor;",
+                            "definition": "static onProvideDomTreeConstructor(): import(\"core/TemplateCompiler\").DomTreeConstructor;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -424,13 +472,6 @@
                                 }
                             ],
                             "namepath": "module:@codeonlyjs/core.Component.isSingleRoot"
-                        },
-                        {
-                            "kind": "property",
-                            "static": true,
-                            "name": "nextFrameOrder",
-                            "namepath": "module:@codeonlyjs/core.Component.nextFrameOrder",
-                            "definition": "static nextFrameOrder: number;"
                         },
                         {
                             "kind": "property",
@@ -536,11 +577,11 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Gets the `domTree` for this component, creating it if necessary\n\n"
+                                            "text": "\nGets the `domTree` for this component, creating it if necessary\n\n"
                                         },
                                         {
                                             "block": "type",
-                                            "text": "{import(\"./TemplateCompiler\").DomTree}\n"
+                                            "text": "{DomTree}\n"
                                         }
                                     ],
                                     "links": []
@@ -683,10 +724,10 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7345,
-                                            "end": 7357,
+                                            "pos": 7896,
+                                            "end": 7918,
                                             "kind": "link",
-                                            "namepath": "module:@codeonlyjs/core.load"
+                                            "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
                                     ]
                                 },
@@ -694,19 +735,27 @@
                                     "kind": "set",
                                     "name": "loadError",
                                     "namepath": "module:@codeonlyjs/core.Component#loadError.set",
-                                    "definition": "set loadError(value: Error);",
+                                    "definition": "set loadError(value: Error | null);",
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Sets the error object associated with the current async data {@link 0} operation.\n"
+                                            "text": "\nSets the error object associated with the current async data {@link 0} operation.\n"
+                                        },
+                                        {
+                                            "block": "param",
+                                            "text": "The new error object\n",
+                                            "type": "Error | null",
+                                            "optional": false,
+                                            "name": "value",
+                                            "specifier": "value"
                                         }
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7186,
-                                            "end": 7198,
+                                            "pos": 7660,
+                                            "end": 7682,
                                             "kind": "link",
-                                            "namepath": "module:@codeonlyjs/core.load"
+                                            "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
                                     ]
                                 }
@@ -734,10 +783,10 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7517,
-                                            "end": 7529,
+                                            "pos": 8078,
+                                            "end": 8100,
                                             "kind": "link",
-                                            "namepath": "module:@codeonlyjs/core.load"
+                                            "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
                                     ]
                                 }
@@ -778,16 +827,16 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 7901,
-                                    "end": 7916,
+                                    "pos": 8472,
+                                    "end": 8497,
                                     "kind": "link",
-                                    "namepath": "module:@codeonlyjs/core.loading"
+                                    "namepath": "module:@codeonlyjs/core.Component#loading"
                                 },
                                 {
-                                    "pos": 8029,
-                                    "end": 8046,
+                                    "pos": 8610,
+                                    "end": 8637,
                                     "kind": "link",
-                                    "namepath": "module:@codeonlyjs/core.loadError"
+                                    "namepath": "module:@codeonlyjs/core.Component#loadError"
                                 }
                             ]
                         },
@@ -809,10 +858,10 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 8907,
-                                    "end": 8921,
+                                    "pos": 9498,
+                                    "end": 9522,
                                     "kind": "link",
-                                    "namepath": "module:@codeonlyjs/core.create"
+                                    "namepath": "module:@codeonlyjs/core.Component#create"
                                 }
                             ]
                         },
@@ -894,10 +943,10 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 10117,
-                                    "end": 10135,
+                                    "pos": 10718,
+                                    "end": 10746,
                                     "kind": "link",
-                                    "namepath": "module:@codeonlyjs/core.invalidate"
+                                    "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
                             ]
                         },
@@ -943,16 +992,16 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 10334,
-                                    "end": 10348,
+                                    "pos": 10945,
+                                    "end": 10969,
                                     "kind": "link",
-                                    "namepath": "module:@codeonlyjs/core.listen"
+                                    "namepath": "module:@codeonlyjs/core.Component#listen"
                                 },
                                 {
-                                    "pos": 10608,
-                                    "end": 10626,
+                                    "pos": 11229,
+                                    "end": 11257,
                                     "kind": "link",
-                                    "namepath": "module:@codeonlyjs/core.invalidate"
+                                    "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
                             ]
                         },
@@ -984,7 +1033,22 @@
                             "kind": "method",
                             "name": "setMounted",
                             "namepath": "module:@codeonlyjs/core.Component#setMounted",
-                            "definition": "setMounted(mounted: any): void;"
+                            "definition": "setMounted(mounted: boolean): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nNotifies the object is has been mounted or unmounted\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "True when the object has been mounted, false when unmounted\n",
+                                    "type": "boolean",
+                                    "optional": false,
+                                    "name": "mounted",
+                                    "specifier": "mounted"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
@@ -1036,7 +1100,7 @@
                     "kind": "function",
                     "name": "compileTemplate",
                     "namepath": "module:@codeonlyjs/core.compileTemplate",
-                    "definition": "export function compileTemplate(rootTemplate: object, compilerOptions: any): DomTreeConstructor;",
+                    "definition": "export function compileTemplate(rootTemplate: object): DomTreeConstructor;",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -1057,60 +1121,6 @@
                         }
                     ],
                     "links": []
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "DomTreeContext",
-                    "namepath": "module:@codeonlyjs/core.DomTreeContext",
-                    "definition": "export type DomTreeContext = {\n    model: object;\n};",
-                    "members": [
-                        {
-                            "kind": "property",
-                            "name": "model",
-                            "namepath": "module:@codeonlyjs/core.DomTreeContext#model",
-                            "definition": "model: object;",
-                            "jsdoc": [
-                                {
-                                    "kind": null,
-                                    "text": "\nThe model to be used by the domTree\n"
-                                }
-                            ],
-                            "links": []
-                        }
-                    ]
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "_DomTreeExtend",
-                    "namepath": "module:@codeonlyjs/core._DomTreeExtend",
-                    "definition": "export type _DomTreeExtend = {\n    rebind: () => void;\n};",
-                    "members": [
-                        {
-                            "kind": "property",
-                            "name": "rebind",
-                            "namepath": "module:@codeonlyjs/core._DomTreeExtend#rebind",
-                            "definition": "rebind: () => void;",
-                            "jsdoc": [
-                                {
-                                    "kind": null,
-                                    "text": "\nRebinds the DomTree to a new model object\n"
-                                }
-                            ],
-                            "links": []
-                        }
-                    ]
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "DomTree",
-                    "namepath": "module:@codeonlyjs/core.DomTree",
-                    "definition": "export type DomTree = CLObject & _DomTreeExtend;"
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "DomTreeConstructor",
-                    "namepath": "module:@codeonlyjs/core.DomTreeConstructor",
-                    "definition": "export type DomTreeConstructor = (DomTreeContext: any) => DomTree;"
                 },
                 {
                     "kind": "function",
@@ -1191,23 +1201,10 @@
                     "links": []
                 },
                 {
-                    "kind": "namespace",
-                    "name": "TransitionCss",
-                    "namepath": "module:TransitionCss",
-                    "members": [
-                        {
-                            "kind": "let",
-                            "name": "defaultClassNames",
-                            "namepath": "module:TransitionCss.defaultClassNames",
-                            "definition": "defaultClassNames: {\n           entering: string;\n           \"enter-start\": string;\n           \"enter-end\": string;\n           leaving: string;\n           \"leave-start\": string;\n           \"leave-end\": string;\n       }"
-                        }
-                    ]
-                },
-                {
                     "kind": "function",
                     "name": "transition",
                     "namepath": "module:@codeonlyjs/core.transition",
-                    "definition": "export function transition(options: {\n    value: (model: object, context: object) => any;\n    mode?: string;\n    name?: void;\n    classNames?: object;\n    duration?: number;\n    subtree?: boolean;\n}, ...args: any[]): TransitionHandler;",
+                    "definition": "export function transition(...options: any[]): {\n    (...args: any[]): any;\n    withTransition(context: any): any;\n};",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -1215,65 +1212,120 @@
                         },
                         {
                             "block": "param",
-                            "text": "* @param {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes\n",
-                            "type": "object",
+                            "text": "",
+                            "type": "{TransitionOptions | string | Function}[]",
                             "optional": false,
                             "name": "options",
                             "specifier": "options"
-                        },
-                        {
-                            "block": "param",
-                            "text": "Transition order - concurrent, enter-leave or leave-enter\n",
-                            "type": "string",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.mode"
-                        },
-                        {
-                            "block": "param",
-                            "text": "Transition name - used as prefix to CSS class names, default = \"tx\"\n",
-                            "type": "name",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.name"
-                        },
-                        {
-                            "block": "param",
-                            "text": "A map of class name mappings\n",
-                            "type": "object",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.classNames"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The duration of the animation in milliseconds\n",
-                            "type": "number",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.duration"
-                        },
-                        {
-                            "block": "param",
-                            "text": "Whether to monitor the element's sub-trees for animations\n",
-                            "type": "boolean",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.subtree"
-                        },
-                        {
-                            "block": "returns",
-                            "text": "",
-                            "type": "TransitionHandler"
                         }
                     ],
                     "links": []
                 },
                 {
                     "kind": "type-alias",
+                    "name": "TransitionOptions",
+                    "namepath": "module:@codeonlyjs/core.TransitionOptions",
+                    "definition": "export type TransitionOptions = {\n    value: (model: object, context: object) => any;\n    mode?: string;\n    name?: void;\n    classNames?: object;\n    duration?: number;\n    subtree?: boolean;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nTransition Options\n"
+                        }
+                    ],
+                    "links": [],
+                    "members": [
+                        {
+                            "kind": "property",
+                            "name": "value",
+                            "namepath": "module:@codeonlyjs/core.TransitionOptions#value",
+                            "definition": "value: (model: object, context: object) => any;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe value callback that triggers the animation when it changes\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "mode",
+                            "namepath": "module:@codeonlyjs/core.TransitionOptions#mode",
+                            "definition": "mode?: string;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nTransition order - concurrent, enter-leave or leave-enter\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "name",
+                            "namepath": "module:@codeonlyjs/core.TransitionOptions#name",
+                            "definition": "name?: void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nTransition name - used as prefix to CSS class names, default = \"tx\"\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "classNames",
+                            "namepath": "module:@codeonlyjs/core.TransitionOptions#classNames",
+                            "definition": "classNames?: object;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nA map of class name mappings\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "duration",
+                            "namepath": "module:@codeonlyjs/core.TransitionOptions#duration",
+                            "definition": "duration?: number;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe duration of the animation in milliseconds\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "subtree",
+                            "namepath": "module:@codeonlyjs/core.TransitionOptions#subtree",
+                            "definition": "subtree?: boolean;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nWhether to monitor the element's sub-trees for animations\n"
+                                }
+                            ],
+                            "links": []
+                        }
+                    ]
+                },
+                {
+                    "kind": "type-alias",
                     "name": "TransitionHandler",
                     "namepath": "module:@codeonlyjs/core.TransitionHandler",
                     "definition": "export type TransitionHandler = {\n    enterNodes: (nodes: Node[]) => void;\n    leaveNodes: (nodes: Node[]) => void;\n    onWillEnter: () => void;\n    onDidLeave: () => void;\n    start: () => void;\n    finish: () => void;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nImplemented by objects that handle transitions\n"
+                        }
+                    ],
+                    "links": [],
                     "members": [
                         {
                             "kind": "property",
@@ -1356,53 +1408,17 @@
                     ]
                 },
                 {
-                    "kind": "namespace",
-                    "name": "TransitionNone",
-                    "namepath": "module:TransitionNone",
-                    "members": [
-                        {
-                            "kind": "function",
-                            "name": "enterNodes",
-                            "namepath": "module:TransitionNone.enterNodes",
-                            "definition": "function enterNodes(): void;"
-                        },
-                        {
-                            "kind": "function",
-                            "name": "leaveNodes",
-                            "namepath": "module:TransitionNone.leaveNodes",
-                            "definition": "function leaveNodes(): void;"
-                        },
-                        {
-                            "kind": "function",
-                            "name": "onWillEnter",
-                            "namepath": "module:TransitionNone.onWillEnter",
-                            "definition": "function onWillEnter(cb: any): void;"
-                        },
-                        {
-                            "kind": "function",
-                            "name": "onDidLeave",
-                            "namepath": "module:TransitionNone.onDidLeave",
-                            "definition": "function onDidLeave(cb: any): void;"
-                        },
-                        {
-                            "kind": "function",
-                            "name": "start",
-                            "namepath": "module:TransitionNone.start",
-                            "definition": "function start(): void;"
-                        },
-                        {
-                            "kind": "function",
-                            "name": "finish",
-                            "namepath": "module:TransitionNone.finish",
-                            "definition": "function finish(): void;"
-                        }
-                    ]
-                },
-                {
                     "kind": "function",
                     "name": "Notify",
                     "namepath": "module:@codeonlyjs/core.Notify",
-                    "definition": "export function Notify(): {\n    (sourceObject: any, ...args: any[]): void;\n    addEventListener: (sourceObject: any, handler: any) => void;\n    removeEventListener: (sourceObject: any, handler: any) => void;\n};"
+                    "definition": "export function Notify(): {\n    (sourceObject: any, ...args: any[]): void;\n    addEventListener: (sourceObject: any, handler: any) => void;\n    removeEventListener: (sourceObject: any, handler: any) => void;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nImplements a simple notification and broadcast service\n"
+                        }
+                    ],
+                    "links": []
                 },
                 {
                     "kind": "function",
@@ -1434,7 +1450,7 @@
                     "kind": "function",
                     "name": "input",
                     "namepath": "module:@codeonlyjs/core.input",
-                    "definition": "export function input(options: InputOptions): InputHandler;",
+                    "definition": "export function input(options: InputOptions): object;",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -1451,22 +1467,23 @@
                         {
                             "block": "returns",
                             "text": "",
-                            "type": "InputHandler"
+                            "type": "object"
                         }
                     ],
                     "links": []
                 },
                 {
                     "kind": "type-alias",
-                    "name": "InputHandler",
-                    "namepath": "module:@codeonlyjs/core.InputHandler",
-                    "definition": "export type InputHandler = object;"
-                },
-                {
-                    "kind": "type-alias",
                     "name": "InputOptions",
                     "namepath": "module:@codeonlyjs/core.InputOptions",
                     "definition": "export type InputOptions = {\n    event: string;\n    prop?: string;\n    target?: string | ((model: object) => string);\n    format?: (value: any) => string;\n    parse?: (value: string) => any;\n    get?: (model: any, context: any) => any;\n    set?: (model: any, value: any, context: any) => void;\n    on_change?: (model: any, event: Event) => any;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nOptions for controlling input bindings\n"
+                        }
+                    ],
+                    "links": [],
                     "members": [
                         {
                             "kind": "property",
@@ -1682,11 +1699,11 @@
                     "kind": "class",
                     "name": "Router",
                     "namepath": "module:@codeonlyjs/core.Router",
-                    "definition": "export class Router {\n    constructor(handlers: RouteHandler[]);\n    start(driver: object): any;\n    navigate: any;\n    replace: any;\n    back: any;\n    urlMapper: any;\n    internalize(url: URL | string): URL | string;\n    externalize(url: URL | string): URL | string;\n    get current(): Route;\n    get pending(): Route;\n    addEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    removeEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    register(handlers: RouteHandler | RouteHandler[]): void;\n    revoke(predicate: RevokeRouteHandlerPredicate): void;\n    captureViewState: CaptureViewStateCallback;\n    restoreViewState: RestoreViewStateCallback;\n}",
+                    "definition": "export class Router {\n    constructor(handlers: RouteHandler[]);\n    start(driver: object): any;\n    navigate: any;\n    replace: any;\n    back: any;\n    urlMapper: UrlMapper;\n    internalize(url: URL | string): URL | string;\n    externalize(url: URL | string): URL | string;\n    get current(): Route;\n    get pending(): Route;\n    addEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    removeEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    register(handlers: RouteHandler | RouteHandler[]): void;\n    revoke(predicate: (handler: RouteHandler) => boolean): void;\n    captureViewState: (route: Route) => object;\n    restoreViewState: (route: Route, state: object) => void;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "The Router class - handles URL load requests, creating\n route objects using route handlers and firing associated\n events\n"
+                            "text": "\nThe Router class - handles URL load requests, creating\nroute objects using route handlers and firing associated\nevents\n"
                         }
                     ],
                     "links": [],
@@ -1742,25 +1759,88 @@
                             "kind": "property",
                             "name": "navigate",
                             "namepath": "module:@codeonlyjs/core.Router#navigate",
-                            "definition": "navigate: any;"
+                            "definition": "navigate: any;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nNavigates to a new URL\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The external URL to navigate to\n",
+                                    "type": "URL | string",
+                                    "optional": false,
+                                    "name": "url",
+                                    "specifier": "url"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "Promise<Route>"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "property",
                             "name": "replace",
                             "namepath": "module:@codeonlyjs/core.Router#replace",
-                            "definition": "replace: any;"
+                            "definition": "replace: any;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nReplaces the current URL, without performing a navigation\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The new URL to display\n",
+                                    "type": "URL | string",
+                                    "optional": false,
+                                    "name": "url",
+                                    "specifier": "url"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "void"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "property",
                             "name": "back",
                             "namepath": "module:@codeonlyjs/core.Router#back",
-                            "definition": "back: any;"
+                            "definition": "back: any;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nNavigates back one step in the history, or if there is\nno previous history navigates to the root URL\n"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "void"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "property",
                             "name": "urlMapper",
                             "namepath": "module:@codeonlyjs/core.Router#urlMapper",
-                            "definition": "urlMapper: any;"
+                            "definition": "urlMapper: UrlMapper;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nAn option URL mapper to be used for URL internalization and\nexternalization.\n"
+                                },
+                                {
+                                    "block": "type",
+                                    "text": "{UrlMapper}\n"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
@@ -1945,7 +2025,7 @@
                             "kind": "method",
                             "name": "revoke",
                             "namepath": "module:@codeonlyjs/core.Router#revoke",
-                            "definition": "revoke(predicate: RevokeRouteHandlerPredicate): void;",
+                            "definition": "revoke(predicate: (handler: RouteHandler) => boolean): void;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -1954,7 +2034,7 @@
                                 {
                                     "block": "param",
                                     "text": "Callback passed each route handler, return true to remove\n",
-                                    "type": "RevokeRouteHandlerPredicate",
+                                    "type": "(handler: RouteHandler) => boolean",
                                     "optional": false,
                                     "name": "predicate",
                                     "specifier": "predicate"
@@ -1966,7 +2046,7 @@
                             "kind": "property",
                             "name": "captureViewState",
                             "namepath": "module:@codeonlyjs/core.Router#captureViewState",
-                            "definition": "captureViewState: CaptureViewStateCallback;",
+                            "definition": "captureViewState: (route: Route) => object;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -1974,7 +2054,7 @@
                                 },
                                 {
                                     "block": "type",
-                                    "text": "{CaptureViewStateCallback}\n"
+                                    "text": "{(route: Route) => object}\n"
                                 }
                             ],
                             "links": []
@@ -1983,7 +2063,7 @@
                             "kind": "property",
                             "name": "restoreViewState",
                             "namepath": "module:@codeonlyjs/core.Router#restoreViewState",
-                            "definition": "restoreViewState: RestoreViewStateCallback;",
+                            "definition": "restoreViewState: (route: Route, state: object) => void;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -1991,7 +2071,7 @@
                                 },
                                 {
                                     "block": "type",
-                                    "text": "{RestoreViewStateCallback}\n"
+                                    "text": "{(route: Route, state: object) => void}\n"
                                 }
                             ],
                             "links": []
@@ -2003,6 +2083,13 @@
                     "name": "Route",
                     "namepath": "module:@codeonlyjs/core.Route",
                     "definition": "export type Route = {\n    url: URL;\n    state: any;\n    current: boolean;\n    handler: RouteHandler;\n    viewState?: any;\n    page?: any;\n    title?: string;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nRepresents a Route instance\n"
+                        }
+                    ],
+                    "links": [],
                     "members": [
                         {
                             "kind": "property",
@@ -2101,7 +2188,14 @@
                     "kind": "type-alias",
                     "name": "RouteHandler",
                     "namepath": "module:@codeonlyjs/core.RouteHandler",
-                    "definition": "export type RouteHandler = {\n    pattern?: string | RegExp;\n    match?: MatchCallback;\n    mayEnter?: RouterEventAsync;\n    mayLeave?: RouterEventAsync;\n    didEnter?: RouterEventSync;\n    didLeave?: RouterEventSync;\n    cancelEnter?: RouterEventSync;\n    cancelLeave?: RouterEventSync;\n    order?: number;\n    captureViewState?: CaptureViewStateCallback;\n    restoreViewState?: RestoreViewStateCallback;\n};",
+                    "definition": "export type RouteHandler = {\n    pattern?: string | RegExp;\n    match?: (route: Route) => Promise<boolean>;\n    mayEnter?: (from: Route, to: Route) => Promise<boolean>;\n    mayLeave?: (from: Route, to: Route) => Promise<boolean>;\n    didEnter?: (from: Route, to: Route) => boolean;\n    didLeave?: (from: Route, to: Route) => boolean;\n    cancelEnter?: (from: Route, to: Route) => boolean;\n    cancelLeave?: (from: Route, to: Route) => boolean;\n    order?: number;\n    captureViewState?: (route: Route) => object;\n    restoreViewState?: (route: Route, state: object) => void;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nRouteHandlers handle mapping URLs to Route instances\n"
+                        }
+                    ],
+                    "links": [],
                     "members": [
                         {
                             "kind": "property",
@@ -2120,7 +2214,7 @@
                             "kind": "property",
                             "name": "match",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#match",
-                            "definition": "match?: MatchCallback;",
+                            "definition": "match?: (route: Route) => Promise<boolean>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2133,7 +2227,7 @@
                             "kind": "property",
                             "name": "mayEnter",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#mayEnter",
-                            "definition": "mayEnter?: RouterEventAsync;",
+                            "definition": "mayEnter?: (from: Route, to: Route) => Promise<boolean>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2146,7 +2240,7 @@
                             "kind": "property",
                             "name": "mayLeave",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#mayLeave",
-                            "definition": "mayLeave?: RouterEventAsync;",
+                            "definition": "mayLeave?: (from: Route, to: Route) => Promise<boolean>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2159,7 +2253,7 @@
                             "kind": "property",
                             "name": "didEnter",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#didEnter",
-                            "definition": "didEnter?: RouterEventSync;",
+                            "definition": "didEnter?: (from: Route, to: Route) => boolean;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2172,7 +2266,7 @@
                             "kind": "property",
                             "name": "didLeave",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#didLeave",
-                            "definition": "didLeave?: RouterEventSync;",
+                            "definition": "didLeave?: (from: Route, to: Route) => boolean;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2185,7 +2279,7 @@
                             "kind": "property",
                             "name": "cancelEnter",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#cancelEnter",
-                            "definition": "cancelEnter?: RouterEventSync;",
+                            "definition": "cancelEnter?: (from: Route, to: Route) => boolean;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2198,7 +2292,7 @@
                             "kind": "property",
                             "name": "cancelLeave",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#cancelLeave",
-                            "definition": "cancelLeave?: RouterEventSync;",
+                            "definition": "cancelLeave?: (from: Route, to: Route) => boolean;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2224,7 +2318,7 @@
                             "kind": "property",
                             "name": "captureViewState",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#captureViewState",
-                            "definition": "captureViewState?: CaptureViewStateCallback;",
+                            "definition": "captureViewState?: (route: Route) => object;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2237,7 +2331,7 @@
                             "kind": "property",
                             "name": "restoreViewState",
                             "namepath": "module:@codeonlyjs/core.RouteHandler#restoreViewState",
-                            "definition": "restoreViewState?: RestoreViewStateCallback;",
+                            "definition": "restoreViewState?: (route: Route, state: object) => void;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2249,46 +2343,10 @@
                     ]
                 },
                 {
-                    "kind": "type-alias",
-                    "name": "MatchCallback",
-                    "namepath": "module:@codeonlyjs/core.MatchCallback",
-                    "definition": "export type MatchCallback = (route: Route) => Promise<boolean>;"
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "RouterEventAsync",
-                    "namepath": "module:@codeonlyjs/core.RouterEventAsync",
-                    "definition": "export type RouterEventAsync = (from: Route, to: Route) => Promise<boolean>;"
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "RouterEventSync",
-                    "namepath": "module:@codeonlyjs/core.RouterEventSync",
-                    "definition": "export type RouterEventSync = (from: Route, to: Route) => void;"
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "RevokeRouteHandlerPredicate",
-                    "namepath": "module:@codeonlyjs/core.RevokeRouteHandlerPredicate",
-                    "definition": "export type RevokeRouteHandlerPredicate = (handler: RouteHandler) => boolean;"
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "CaptureViewStateCallback",
-                    "namepath": "module:@codeonlyjs/core.CaptureViewStateCallback",
-                    "definition": "export type CaptureViewStateCallback = (route: Route) => any;"
-                },
-                {
-                    "kind": "type-alias",
-                    "name": "RestoreViewStateCallback",
-                    "namepath": "module:@codeonlyjs/core.RestoreViewStateCallback",
-                    "definition": "export type RestoreViewStateCallback = (route: Route, viewState: any) => any;"
-                },
-                {
                     "kind": "class",
                     "name": "UrlMapper",
                     "namepath": "module:@codeonlyjs/core.UrlMapper",
-                    "definition": "export class UrlMapper {\n    constructor(options: {\n        base: string;\n        hash: boolean;\n    });\n    options: {\n        base: string;\n        hash: boolean;\n    };\n    internalize(url: URL): URL;\n    externalize(url: URL, asset?: boolean): URL;\n}",
+                    "definition": "export class UrlMapper {\n    constructor(options: {\n        base: string;\n        hash: boolean;\n    });\n    internalize(url: URL): URL;\n    externalize(url: URL, asset?: boolean): URL;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -2333,12 +2391,6 @@
                                 }
                             ],
                             "links": []
-                        },
-                        {
-                            "kind": "property",
-                            "name": "options",
-                            "namepath": "module:@codeonlyjs/core.UrlMapper#options",
-                            "definition": "options: {\n    base: string;\n    hash: boolean;\n};"
                         },
                         {
                             "kind": "method",
@@ -2458,31 +2510,165 @@
                     "kind": "class",
                     "name": "SSRWorker",
                     "namepath": "module:@codeonlyjs/core.SSRWorker",
-                    "definition": "export class SSRWorker {\n    init(options: any): Promise<void>;\n    stop(): Promise<void>;\n    getStyles(): Promise<any>;\n    render(url: any, options: any): Promise<any>;\n}",
+                    "definition": "export class SSRWorker {\n    init(options: {\n        entryFile: string;\n        entryMain: string;\n        entryHtml: string;\n        cssUrl?: string;\n    }): Promise<void>;\n    stop(): Promise<void>;\n    getStyles(): Promise<string>;\n    render(url: string, options: any): SSRResult;\n}",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nImplements page rendering for SSG and/or SSR\n"
+                        }
+                    ],
+                    "links": [],
                     "members": [
                         {
                             "kind": "method",
                             "name": "init",
                             "namepath": "module:@codeonlyjs/core.SSRWorker#init",
-                            "definition": "init(options: any): Promise<void>;"
+                            "definition": "init(options: {\n    entryFile: string;\n    entryMain: string;\n    entryHtml: string;\n    cssUrl?: string;\n}): Promise<void>;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nInitializes the SSR worker\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "Options\n",
+                                    "type": "object",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The main entry .js file\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryFile"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The name of the main function in the entry file\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryMain"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "An HTML string into which mounted components will be written\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryHtml"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "A URL to use in-place of directly inserting CSS declarations\n",
+                                    "type": "string",
+                                    "optional": true,
+                                    "name": "options",
+                                    "specifier": "options.cssUrl"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "Promise<void>"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "stop",
                             "namepath": "module:@codeonlyjs/core.SSRWorker#stop",
-                            "definition": "stop(): Promise<void>;"
+                            "definition": "stop(): Promise<void>;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nStops the worker.\n"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "getStyles",
                             "namepath": "module:@codeonlyjs/core.SSRWorker#getStyles",
-                            "definition": "getStyles(): Promise<any>;"
+                            "definition": "getStyles(): Promise<string>;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nGets the declared CSS styles\n"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "Promise<string>"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "render",
                             "namepath": "module:@codeonlyjs/core.SSRWorker#render",
-                            "definition": "render(url: any, options: any): Promise<any>;"
+                            "definition": "render(url: string, options: any): SSRResult;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nRenders a page\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "URL of the page to render\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "url",
+                                    "specifier": "url"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "Additional options to be made available via `coenv`\n",
+                                    "type": "any",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "The results of the render\n",
+                                    "type": "SSRResult"
+                                }
+                            ],
+                            "links": []
+                        }
+                    ]
+                },
+                {
+                    "kind": "type-alias",
+                    "name": "SSRResult",
+                    "namepath": "module:@codeonlyjs/core.SSRResult",
+                    "definition": "export type SSRResult = {\n    content: string;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nThe results of an SSRWorker/SSRWorkerThread render operation.\n\nIn addition to the `content` property, this object includes\nany properties from the `ssr` property of the route object to\nwhich the URL was matched.  This can be used to return additional\ninformation such as HTTP status codes from the rendering process.\n"
+                        }
+                    ],
+                    "links": [],
+                    "members": [
+                        {
+                            "kind": "property",
+                            "name": "content",
+                            "namepath": "module:@codeonlyjs/core.SSRResult#content",
+                            "definition": "content: string;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe rendered HTML\n"
+                                }
+                            ],
+                            "links": []
                         }
                     ]
                 },
@@ -2490,37 +2676,129 @@
                     "kind": "class",
                     "name": "SSRWorkerThread",
                     "namepath": "module:@codeonlyjs/core.SSRWorkerThread",
-                    "definition": "export class SSRWorkerThread {\n    init(options: any): Promise<any>;\n    render(url: any): Promise<any>;\n    getStyles(): Promise<any>;\n    stop(): Promise<any>;\n    invoke(method: any, ...args: any[]): Promise<any>;\n}",
+                    "definition": "export class SSRWorkerThread {\n    init(options: {\n        entryFile: string;\n        entryMain: string;\n        entryHtml: string;\n        cssUrl?: string;\n    }): Promise<void>;\n    render(url: string): SSRResult;\n    getStyles(): Promise<string>;\n    stop(): Promise<any>;\n}",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nRuns an SSRWorker in a Node worker thread for\napplication isolation\n"
+                        }
+                    ],
+                    "links": [],
                     "members": [
                         {
                             "kind": "method",
                             "name": "init",
                             "namepath": "module:@codeonlyjs/core.SSRWorkerThread#init",
-                            "definition": "init(options: any): Promise<any>;"
+                            "definition": "init(options: {\n    entryFile: string;\n    entryMain: string;\n    entryHtml: string;\n    cssUrl?: string;\n}): Promise<void>;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nInitializes the SSR worker\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "Options\n",
+                                    "type": "object",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The main entry .js file\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryFile"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The name of the main function in the entry file\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryMain"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "An HTML string into which mounted components will be written\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryHtml"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "A URL to use in-place of directly inserting CSS declarations\n",
+                                    "type": "string",
+                                    "optional": true,
+                                    "name": "options",
+                                    "specifier": "options.cssUrl"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "Promise<void>"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "render",
                             "namepath": "module:@codeonlyjs/core.SSRWorkerThread#render",
-                            "definition": "render(url: any): Promise<any>;"
+                            "definition": "render(url: string): SSRResult;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nRenders a page\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "URL of the page to render\n",
+                                    "type": "string",
+                                    "optional": false,
+                                    "name": "url",
+                                    "specifier": "url"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "The results of the render\n",
+                                    "type": "SSRResult"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "getStyles",
                             "namepath": "module:@codeonlyjs/core.SSRWorkerThread#getStyles",
-                            "definition": "getStyles(): Promise<any>;"
+                            "definition": "getStyles(): Promise<string>;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nGets the declared CSS styles\n"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "Promise<string>"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "stop",
                             "namepath": "module:@codeonlyjs/core.SSRWorkerThread#stop",
-                            "definition": "stop(): Promise<any>;"
-                        },
-                        {
-                            "kind": "method",
-                            "name": "invoke",
-                            "namepath": "module:@codeonlyjs/core.SSRWorkerThread#invoke",
-                            "definition": "invoke(method: any, ...args: any[]): Promise<any>;"
+                            "definition": "stop(): Promise<any>;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nStops the worker.\n"
+                                }
+                            ],
+                            "links": []
                         }
                     ]
                 },
@@ -2528,7 +2806,7 @@
                     "kind": "function",
                     "name": "generateStatic",
                     "namepath": "module:@codeonlyjs/core.generateStatic",
-                    "definition": "export function generateStatic(options: {\n    entryFile?: string[];\n    entryMain?: string[];\n    entryHtml?: string[];\n    entryUrls?: string[];\n    ext?: string;\n    pretty?: boolean;\n    outDir?: string;\n    baseUrl?: string;\n    verbose?: boolean;\n    cssUrl?: string;\n}): Promise<{\n    files: any[];\n    elapsed: number;\n}>;",
+                    "definition": "export function generateStatic(options: GenerateStaticOptions): Promise<{\n    files: any[];\n    elapsed: number;\n}>;",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -2537,105 +2815,192 @@
                         {
                             "block": "param",
                             "text": "- site generation options\n",
-                            "type": "object",
+                            "type": "GenerateStaticOptions",
                             "optional": false,
                             "name": "options",
                             "specifier": "options"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The entry .js file (as an array, first found used)\n",
-                            "type": "string[]",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.entryFile"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The name of the entry point function in the entryFile (as an array, first found used)\n",
-                            "type": "string[]",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.entryMain"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The HTML file to use as template for generated files (as an array, first found used)\n",
-                            "type": "string[]",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.entryHtml"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The URL's to render (will also recursively render all linked URLs)\n",
-                            "type": "string[]",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.entryUrls"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The extension to append to all generated files (including the period)\n",
-                            "type": "string",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.ext"
-                        },
-                        {
-                            "block": "param",
-                            "text": "Prettify the generated HTML\n",
-                            "type": "boolean",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.pretty"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The output directory to write generated files\n",
-                            "type": "string",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.outDir"
-                        },
-                        {
-                            "block": "param",
-                            "text": "The base URL used to qualify in-page URLs to an external full URL\n",
-                            "type": "string",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.baseUrl"
-                        },
-                        {
-                            "block": "param",
-                            "text": "Verbose output\n",
-                            "type": "boolean",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.verbose"
-                        },
-                        {
-                            "block": "param",
-                            "text": "Name of the CSS styles file\n",
-                            "type": "string",
-                            "optional": true,
-                            "name": "options",
-                            "specifier": "options.cssUrl"
                         }
                     ],
                     "links": []
                 },
                 {
+                    "kind": "type-alias",
+                    "name": "GenerateStaticOptions",
+                    "namepath": "module:@codeonlyjs/core.GenerateStaticOptions",
+                    "definition": "export type GenerateStaticOptions = {\n    entryFile?: string[];\n    entryMain?: string[];\n    entryHtml?: string[];\n    entryUrls?: string[];\n    ext?: string;\n    pretty?: boolean;\n    outDir?: string;\n    baseUrl?: string;\n    verbose?: boolean;\n    cssUrl?: string;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nOptions for generating static sites\n"
+                        }
+                    ],
+                    "links": [],
+                    "members": [
+                        {
+                            "kind": "property",
+                            "name": "entryFile",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryFile",
+                            "definition": "entryFile?: string[];",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe entry .js file (as an array, first found used)\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "entryMain",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryMain",
+                            "definition": "entryMain?: string[];",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe name of the entry point function in the entryFile (as an array, first found used)\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "entryHtml",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryHtml",
+                            "definition": "entryHtml?: string[];",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe HTML file to use as template for generated files (as an array, first found used)\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "entryUrls",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryUrls",
+                            "definition": "entryUrls?: string[];",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe URL's to render (will also recursively render all linked URLs)\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "ext",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#ext",
+                            "definition": "ext?: string;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe extension to append to all generated files (including the period)\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "pretty",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#pretty",
+                            "definition": "pretty?: boolean;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nPrettify the generated HTML\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "outDir",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#outDir",
+                            "definition": "outDir?: string;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe output directory to write generated files\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "baseUrl",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#baseUrl",
+                            "definition": "baseUrl?: string;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe base URL used to qualify in-page URLs to an external full URL\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "verbose",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#verbose",
+                            "definition": "verbose?: boolean;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nVerbose output\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "cssUrl",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#cssUrl",
+                            "definition": "cssUrl?: string;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nName of the CSS styles file\n"
+                                }
+                            ],
+                            "links": []
+                        }
+                    ]
+                },
+                {
                     "kind": "function",
                     "name": "viteGenerateStatic",
                     "namepath": "module:@codeonlyjs/core.viteGenerateStatic",
-                    "definition": "export function viteGenerateStatic(options: any): {\n    name: string;\n    configResolved: (config: any) => void;\n    buildStart: () => Promise<void>;\n    closeBundle: () => Promise<void>;\n};"
+                    "definition": "export function viteGenerateStatic(options: GenerateStaticOptions): {\n    name: string;\n    configResolved: (config: any) => void;\n    buildStart: () => Promise<void>;\n    closeBundle: () => Promise<void>;\n};",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nVite Plugin to generate static sites.\n"
+                        },
+                        {
+                            "block": "param",
+                            "text": "- options used for static page generation\n",
+                            "type": "GenerateStaticOptions",
+                            "optional": false,
+                            "name": "options",
+                            "specifier": "options"
+                        }
+                    ],
+                    "links": []
                 },
                 {
                     "kind": "interface",
                     "name": "CLObject",
                     "namepath": "module:@codeonlyjs/core.CLObject",
                     "definition": "export interface CLObject \n{\n    get rootNodes(): Node[];\n    update(): void;\n    destroy(): void;\n    setMounted(mounted: boolean): void;\n    readonly isSingleRoot?: boolean;\n    readonly rootNode?: Node;\n}",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nComponent Like Object.  Minimumm requirement for any\nobject to be hosted by a template\n"
+                        }
+                    ],
+                    "links": [],
                     "members": [
                         {
                             "kind": "property",
@@ -2645,7 +3010,14 @@
                                     "kind": "get",
                                     "name": "rootNodes",
                                     "namepath": "module:@codeonlyjs/core.CLObject#rootNodes.get",
-                                    "definition": "get rootNodes(): Node[];"
+                                    "definition": "get rootNodes(): Node[];",
+                                    "jsdoc": [
+                                        {
+                                            "kind": null,
+                                            "text": "\nGets the root nodes of this object\n"
+                                        }
+                                    ],
+                                    "links": []
                                 }
                             ],
                             "namepath": "module:@codeonlyjs/core.CLObject#rootNodes"
@@ -2654,33 +3026,152 @@
                             "kind": "method",
                             "name": "update",
                             "namepath": "module:@codeonlyjs/core.CLObject#update",
-                            "definition": "update(): void;"
+                            "definition": "update(): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nInstructs the object to update its DOM\n"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "destroy",
                             "namepath": "module:@codeonlyjs/core.CLObject#destroy",
-                            "definition": "destroy(): void;"
+                            "definition": "destroy(): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nNotifies the object it can release held resources\n"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "method",
                             "name": "setMounted",
                             "namepath": "module:@codeonlyjs/core.CLObject#setMounted",
-                            "definition": "setMounted(mounted: boolean): void;"
+                            "definition": "setMounted(mounted: boolean): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nNotifies the object is has been mounted or unmounted\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "True when the object has been mounted, false when unmounted\n",
+                                    "type": "boolean",
+                                    "optional": false,
+                                    "name": "mounted",
+                                    "specifier": "mounted"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "property",
                             "name": "isSingleRoot",
                             "namepath": "module:@codeonlyjs/core.CLObject#isSingleRoot",
-                            "definition": "readonly isSingleRoot?: boolean;"
+                            "definition": "readonly isSingleRoot?: boolean;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nIf present and if true, indicates this object will\nonly ever have a single root node\n"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "property",
                             "name": "rootNode",
                             "namepath": "module:@codeonlyjs/core.CLObject#rootNode",
-                            "definition": "readonly rootNode?: Node;"
+                            "definition": "readonly rootNode?: Node;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nReturns the root node (if isSingleRoot is true)\n"
+                                }
+                            ],
+                            "links": []
                         }
                     ]
+                },
+                {
+                    "kind": "interface",
+                    "name": "DomTree",
+                    "namepath": "module:@codeonlyjs/core.DomTree",
+                    "definition": "export interface DomTree extends CLObject\n{\n    rebind(): void;\n}",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nImplemented by all objects that manage a DOM tree.\n"
+                        }
+                    ],
+                    "links": [],
+                    "members": [
+                        {
+                            "kind": "method",
+                            "name": "rebind",
+                            "namepath": "module:@codeonlyjs/core.DomTree#rebind",
+                            "definition": "rebind(): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nInstructs the DomTree that the model property of\nthe DomTree's context object has changed and that\nit should rebind to the new instance\n"
+                                }
+                            ],
+                            "links": []
+                        }
+                    ]
+                },
+                {
+                    "kind": "interface",
+                    "name": "DomTreeContext",
+                    "namepath": "module:@codeonlyjs/core.DomTreeContext",
+                    "definition": "export interface DomTreeContext\n{\n    get model(): object;\n}",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nContext object for DomTrees.\n"
+                        }
+                    ],
+                    "links": [],
+                    "members": [
+                        {
+                            "kind": "property",
+                            "name": "model",
+                            "members": [
+                                {
+                                    "kind": "get",
+                                    "name": "model",
+                                    "namepath": "module:@codeonlyjs/core.DomTreeContext#model.get",
+                                    "definition": "get model(): object;",
+                                    "jsdoc": [
+                                        {
+                                            "kind": null,
+                                            "text": "\nThe context's model object\n"
+                                        }
+                                    ],
+                                    "links": []
+                                }
+                            ],
+                            "namepath": "module:@codeonlyjs/core.DomTreeContext#model"
+                        }
+                    ]
+                },
+                {
+                    "kind": "type-alias",
+                    "name": "DomTreeConstructor",
+                    "namepath": "module:@codeonlyjs/core.DomTreeConstructor",
+                    "definition": "export type DomTreeConstructor = (DomTreeContext: any) => DomTree;",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nA function that creates a DomTree\n"
+                        }
+                    ],
+                    "links": []
                 }
             ]
         }
