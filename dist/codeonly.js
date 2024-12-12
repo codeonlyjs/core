@@ -60,7 +60,20 @@ function untilLoaded(target)
     return new Promise((res) => whenLoaded(target, res));
 }
 
-/** The base class for all environment types 
+/** 
+ * The base class for all environment types 
+ * 
+ * The environment object is available via the globally declared `coenv`
+ * variable.
+ * 
+ * * In the browser, there is a single environment object that 
+ *   represents the browser.
+ * * When rendering, there are multiple environment objects, one per render
+ *   request.
+ * 
+ * Never modify, nor cache the environment object as it can (and will) change
+ * from request to request in a server environment.
+ * 
  * @extends {EventTarget}
  */
 class Environment extends EventTarget
@@ -71,19 +84,25 @@ class Environment extends EventTarget
         super();
 
         /**
-         * True when running in browser environment
+         * True when running in browser environment.
          */
         this.browser = false;
 
         /**
-         * True when running in a rendering environment
+         * True when running in a rendering environment.
          */
         this.ssr = false;
     }
 
     #loading = 0;
 
-    /** Notifies the environment that an async load operation is starting
+    /** 
+     * Notifies the environment that an async load operation is starting.
+     * 
+     * Environment level loading notifications are used when rendering to 
+     * determine when the initial page load has completed and rendering
+     * can commence.
+     * 
      * @returns {void}
      */
     enterLoading()
@@ -93,7 +112,9 @@ class Environment extends EventTarget
             this.dispatchEvent(new Event("loading"));
     }
 
-    /** Notifies the environment that an async load operation has finished
+    /** 
+     * Notifies the environment that an async load operation has finished.
+     * 
      * @returns {void}
      */
     leaveLoading()
@@ -103,7 +124,9 @@ class Environment extends EventTarget
             this.dispatchEvent(new Event("loaded"));
     }
 
-    /** Indicates if there are async data load operations in progress
+    /** 
+     * Returns `true` if there are in progress async load operations.
+     * 
      * @type {boolean}
      */
     get loading()
@@ -111,7 +134,9 @@ class Environment extends EventTarget
         return this.#loading != 0;
     }
 
-    /** Runs an async data load operation
+    /** 
+     * Runs an async data load operation.
+     * 
      * @param {() => Promise<any>} callback A callback that performs the data load
      * @returns {Promise<any>}
      */
@@ -128,7 +153,8 @@ class Environment extends EventTarget
         }
     }
 
-    /** Returns a promise that resolves when any pending load operation has finished
+    /** 
+     * Returns a promise that resolves when any pending load operations have finished.
      * @returns {Promise<void>}
      */
     untilLoaded()
@@ -146,8 +172,9 @@ Object.defineProperty(globalThis, "coenv", {
     }
 });
 
-
-/** Sets an environment provider
+/** 
+ * Sets an environment provider.
+ * 
  * @param {() => Environment} value A callback to provide the current environment object
  * @returns {void}
  */
@@ -191,10 +218,14 @@ class HtmlString
     }
 }
 
-/** Marks a string as being HTML instead of plain text
+/** 
+ * Marks a string as being raw HTML instead of plain text
  * 
  * Normally strings passed to templates are treated as plain text.  Wrapping
- * a value in html() indicates the string should be treated as HTML instead.
+ * a value by calling this function indicates the string should be treated as 
+ * raw HTML instead.
+ * 
+ * See [Text and HTML](templateText) for more information.
  * 
  * @param {string | (...args: any[]) => string} html The HTML value to be wrapped, or a function that returns a string
  * @returns {HtmlString}
@@ -265,10 +296,10 @@ let frameCallbacks = [];
 let needSort = false;
 
 /**
- * Invokes a callback on the next update cycle
+ * Invokes a callback on the next update cycle.
  * 
- * @param {() => void} callback The callback to be invoked
- * @param {Number} [order] The priority of the callback in related to others (lowest first, default 0)
+ * @param {() => void} callback The callback to be invoked.
+ * @param {Number} [order] The priority of the callback in related to others (lowest first, default 0).
  * @returns {void}
  */
 function nextFrame(callback, order)
@@ -506,7 +537,9 @@ class ClosureBuilder
     }
 }
 
-/** Encodes a string to make it safe for use in HTML
+/** 
+ * Encodes a string to make it safe for use in HTML.
+ * 
  * @param {string} str The string to encode
  * @returns {string}
  */
@@ -527,19 +560,30 @@ function htmlEncode(str)
 }
 
 /**
- * Options for controlling input bindings
+ * Options for controlling input bindings.
+ * 
+ * If the {@linkcode InputOptions#get} and {@linkcode InputOptions#set} handlers are specified 
+ * they override both {@linkcode InputOptions#target} and {@linkcode InputOptions#prop} which are no 
+ * longer used.
+ * 
  * @typedef {object} InputOptions
- * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding
- * @property {string} [prop] The name of the property on the target object
- * @property {string | (model: object) => string} [target] The target object providing the binding property
- * @property {(value:any) => string} [format] Format the property value into a string for display
- * @property {(value:string) => any} [parse] Parse a display string into a property value
- * @property {(model:any, context:any) => any} [get] Get the value of the property
- * @property {(model:any, value: any, context:any) => void} [set] Set the value of the property
- * @property {(model:any, event: Event) => any} [on_change] A callback to be invoked when the property value is changed by the user
+ * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding.  If not specified, "input" is used.
+ * @property {string} [prop] The name of the property on the target object.
+ * @property {string | (model: object) => string} [target] The target object providing the binding property.  If not specified, the template's {@linkcode DomTreeContext#model} object is used.
+ * @property {(value:any) => string} [format] Format the property value into a string for display.
+ * @property {(value:string) => any} [parse] Parse a display string into a property value.
+ * @property {(model:any, context:any) => any} [get] Get the value of the property.
+ * @property {(model:any, value: any, context:any) => void} [set] Set the value of the property.
+ * @property {(model:any, event: Event) => any} [on_change] A callback to be invoked when the property value is changed by the user.
  */
 
-/** Declares additional settings for input bindings
+/** 
+ * Declares additional settings for bi-direction input field binding.
+ * 
+ * See {@linkcode InputOptions} for available options.
+ * 
+ * See [Input Bindings](templateInput) for more information.
+ * 
  * @param {InputOptions} options Additional input options
  * @returns {object}
  */
@@ -3482,7 +3526,13 @@ function compileTemplateCode(rootTemplate, compilerOptions)
 
 let _nextInstanceId = 1;
 
-/** Compiles a template into a domTreeConstructor function
+/** 
+ * Compiles a template into a {@link DomTreeConstructor} function.
+ * 
+ * Usually templates are automatically compiled by Components and this
+ * function isn't used directly.   For more information, see 
+ * [Template Internals](templateInternals).
+ * 
  * @param {object} rootTemplate The template to be compiled
  * @returns {DomTreeConstructor}
  */
@@ -3519,17 +3569,21 @@ function compileTemplate(rootTemplate)
 
 /** 
  * Components are the primary building block for constructing CodeOnly
- * applications. They encapsulate program logic, a DOM (aka HTML) template 
+ * applications. They encapsulate program logic, a DOM template 
  * and an optional a set of CSS styles.
  *
  * Components can be used either in the templates of other components
  * or mounted onto the document DOM to appear in a web page.
+ * 
+ * See also [Component Basics](components).
  *
  * @extends EventTarget
  */
 class Component extends EventTarget
 {
-    /** Constructs a new component instance */
+    /** 
+     * Constructs a new component instance 
+     */
     constructor()
     {
         super();
@@ -3541,16 +3595,18 @@ class Component extends EventTarget
 
     static _domTreeConstructor;
 
-    /** Gets the `domTreeConstructor` for this component class.
+    /** 
+     * Gets the {@linkcode DomTreeConstructor} for this component class.
      * 
-     * A `domTreeConstructor` is the constructor function used to 
-     * create `domTree` instances for this component class.
+     * The DomTreeConstructor is the constructor function used to 
+     * create {@linkcode DomTree} instances for this component class.
      * 
      * The first time this property is accessed, it calls the 
-     * static `onProvideDomTreeConstructor` method to actually provide the
-     * instance.
+     * static {@linkcode Component.onProvideDomTreeConstructor} method to 
+     * provide the instance.
+     * 
      * @type {DomTreeConstructor}
-    */
+     */
     static get domTreeConstructor()
     {
         if (!this._domTreeConstructor)
@@ -3558,29 +3614,33 @@ class Component extends EventTarget
         return this._domTreeConstructor
     }
 
-    /** Provides the `domTreeConstructor` to be used by this component class.
+    /** 
+     * Provides the {@linkcode DomTreeConstructor} to be used by this 
+     * component class.
      * 
-     * This method is only called once per component class and should provide
-     * a constructor function that can create `domTree` instances.
-     * @returns {import("./TemplateCompiler").DomTreeConstructor}
+     * This method is called once per component class and should provide
+     * a constructor function that can create DomTree instances.
+     * @returns {DomTreeConstructor}
      */
     static onProvideDomTreeConstructor()
     {
         return compileTemplate(this.onProvideTemplate());
     }
 
-    /** Provides the template to be used by this component class.
+    /** 
+     * Provides the template to be used by this component class.
      * 
-     * This method is only called once per component class and should provide
-     * the template to be compiled for this component class
+     * This method is called once per component class and should provide
+     * the template to be compiled for this component class.
      */
     static onProvideTemplate()
     {
         return this.template;
     }
 
-    /** Indicates if instances of this component class will be guaranteed
-     * to only ever have a single root node
+    /** 
+     * Returns `true` if every instance of this component class will only
+     * ever have a single root node.
      * 
      * @type {boolean}
      */
@@ -3589,9 +3649,10 @@ class Component extends EventTarget
         return this.domTreeConstructor.isSingleRoot;
     }
 
-    /** Ensures the DOM elements of this component are created.
+    /** 
+     * Ensures this component's {@link DomTree} has been created.
      * 
-     * Calling this method does nothing if the component is already created.
+     * Calling this method does nothing if the DomTree is already created.
      * 
      * @returns {void}
      */
@@ -3601,7 +3662,8 @@ class Component extends EventTarget
             this.#domTree = new this.constructor.domTreeConstructor({ model: this });
     }
 
-    /** Returns true if this component's DOM elements have been created 
+    /** 
+     * Returns true if this component's {@link DomTree} has been created.
      * 
      * @type {boolean}
      */
@@ -3611,7 +3673,7 @@ class Component extends EventTarget
     }
 
     /** 
-     * Gets the `domTree` for this component, creating it if necessary 
+     * Gets the {@linkcode DomTree} for this component, creating it if necessary.
      * 
      * @type {DomTree}
     */
@@ -3623,8 +3685,9 @@ class Component extends EventTarget
     }
     #domTree;
     
-    /** Returns true if this component instance has, and will only ever 
-     * have a single root node
+    /** 
+     * Returns true if this component instance is guaranteed to always only
+     * have a single root node.
      * 
      * @type {boolean}
      */
@@ -3633,8 +3696,9 @@ class Component extends EventTarget
         return this.domTree.isSingleRoot; 
     }
 
-    /** Returns the single root node of this component (if it is a single 
-     * root node component)
+    /** 
+     * Returns the single root node of this component (if it is a single 
+     * root node component).
      * 
      * @type {Node}
      */
@@ -3646,7 +3710,8 @@ class Component extends EventTarget
         return this.domTree.rootNode;
     }
 
-    /** Returns the root nodes of this element 
+    /** 
+     * Returns an array of root DOM nodes for this element, creating them if necessary.
      * 
      * @type {Node[]}
     */
@@ -3660,7 +3725,13 @@ class Component extends EventTarget
 
     #invalid = false;
 
-    /** Indicates if this component is currently marked as invalid
+    /** 
+     * Indicates if this component in invalid.
+     * 
+     * A component is invalid if it has been invalidated by 
+     * a previous call to {@linkcode Component#invalidate} and 
+     * hasn't yet be updated.
+     * 
      * @type {boolean}
      */
     get invalid()
@@ -3669,12 +3740,13 @@ class Component extends EventTarget
     }
 
 
-    /** Marks this component as requiring a DOM update.
+    /** 
+     * Invalidates this component, marking it as requiring a DOM update.
      * 
      * Does nothing if the component hasn't yet been created.
      * 
-     * This method is implicitly bound to the component instance
-     * and can be used as an event listener to invalidate the
+     * This method is bound to the component instance and can be used 
+     * directly as the handler for an event listener to invalidate the
      * component when an event is triggered.
      * 
      * @returns {void}
@@ -3696,7 +3768,9 @@ class Component extends EventTarget
         Component.invalidateWorker(this);
     }
 
-    /** Updates this component if it's marked as invalid
+    /** 
+     * Updates this component if it has been marked as invalid
+     * by a previous call to {@linkcode Component#invalidate}.
      * 
      * @returns {void}
      */
@@ -3733,15 +3807,16 @@ class Component extends EventTarget
     }
 
 
-    /** Immediately updates this component's DOM elements - even if
+    /** 
+     * Immediately updates this component's DOM elements - even if
      * the component is not marked as invalid.
      * 
      * Does nothing if the component's DOM elements haven't been created.
      * 
-     * If the component is marked as invalid, returns it to the valid state.
+     * If the component has been invalidated, returns it to the valid state.
      * 
-     * This method is implicitly bound to the component instance
-     * and can be used as an event listener to update the
+     * This method is bound to the component instance and can be used 
+     * directly as the handler for an event listener to update the
      * component when an event is triggered.
      *
      * @returns {void}
@@ -3756,9 +3831,10 @@ class Component extends EventTarget
     }
 
     
-    /** Gets the error object (if any) that was thrown during the last async data {@link Component#load} operation.
+    /** 
+     * Gets the error object thrown during the last call to {@linkcode Component#load}.
      * 
-     * @type {Error}
+     * @type {Error | null}
     */
    get loadError()
    {
@@ -3766,7 +3842,8 @@ class Component extends EventTarget
     }
     
     /** 
-     * Sets the error object associated with the current async data {@link Component#load} operation.
+     * Sets the error object associated with the current call to {@linkcode Component#load}.
+     * 
      * @param {Error | null} value The new error object
      */
     set loadError(value)
@@ -3778,7 +3855,8 @@ class Component extends EventTarget
         
     #loading = 0;
 
-    /** Indicates if the component is currently in an async data {@link Component#load} operation
+    /** 
+     * Indicates if the component is currently in an {@linkcode Component#load} operation.
      * 
      * @type {boolean}
      */
@@ -3787,27 +3865,24 @@ class Component extends EventTarget
         return this.#loading != 0;
     }
 
-    /**
-     * @callback LoadCallback
-     * @returns {any}
-     */
-
-    /** Performs an async data load operation.
+    /** 
+     * Performs an async data load operation.
      * 
-     * The callback function is typically an async function that performs
-     * a data request.  While in the callback, the {@link Component#loading} property
-     * will return `true`.  If the callback throws an error, it will be captured
-     * to the {@link Component#loadError} property.
+     * The callback function is an async function that performs an async data load.
+     * While in the callback, the {@link Component#loading} property returns `true`.  
+     * 
+     * If the callback throws an error, it will be captured to the {@link Component#loadError} 
+     * property.
      * 
      * Before calling and after returning from the callback, the component is
      * invalidated so visual elements (eg: spinners) can be updated.
      * 
-     * If the silent parameter is `true` the `loading` property isn't set and
+     * If the silent parameter is `true` the {@link Component#loading} property isn't set and
      * the component is only invalidated after returning from the callback.
      * 
-     * @param {LoadCallback} callback The callback to perform the load operation
+     * @param {() => Promise<any>} callback The callback to perform the load operation
      * @param {Boolean} [silent] Whether to perform a silent update
-     * @returns {any} The result of the callback
+     * @returns {Promise<any>} The result of the callback
      */
     async load(callback, silent)
     {
@@ -3847,10 +3922,11 @@ class Component extends EventTarget
     }
 
 
-    /** Destroys this components `domTree` returning it to 
-     * the constructed but not created state.
+    /** 
+     * Destroys this component's {@linkcode DomTree} returning it to 
+     * the constructed, but non-created state.
      * 
-     * A destroyed component can be recreated by remounting it
+     * A destroyed component can be re-created by remounting it
      * or by calling its {@link Component#create} method.
      * 
      * @returns {void}
@@ -3864,11 +3940,12 @@ class Component extends EventTarget
         }
     }
 
-    /** Notifies a component that is has been mounted
+    /** 
+     * Notifies a component that is has been mounted.
      * 
      * Override this method to receive the notification.  External
-     * resources (eg: adding event listeners to external objects) should be 
-     * acquired when the component is mounted.
+     * resources should be acquired when the component is mounted.
+     * (eg: adding event listeners to external objects)
      * 
      * @returns {void}
      */
@@ -3876,11 +3953,12 @@ class Component extends EventTarget
     {
     }
 
-    /** Notifies a component that is has been mounted
+    /** 
+     * Notifies a component that is has been unmounted.
      * 
      * Override this method to receive the notification.  External
-     * resources (eg: removing event listeners from external objects) should be 
-     * released when the component is unmounted.
+     * resources should be released when the component is unmounted.
+     * (eg: removing event listeners from external objects) 
      * 
      * @returns {void}
      */
@@ -3891,13 +3969,13 @@ class Component extends EventTarget
     #listeners;
 
 
-    /** Registers an event listener to be added to an object when
-     * automatically when the component is mounted, and removed when
-     * unmounted
+    /** 
+     * Registers an event listener to be automatically added to an object when
+     * when the component is mounted, and removed when unmounted.
      * 
-     * @param {EventTarget} target The object dispatching the events
-     * @param {string} event The event to listen for
-     * @param {Function} [handler] The event listener to add/remove.  If not provided, the component's {@link Component#invalidate} method is used.
+     * @param {object} target Any object that supports addEventListener and removeEventListener
+     * @param {string} event The event to listen to
+     * @param {Function} [handler] The event handler to add.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     listen(target, event, handler)
@@ -3915,12 +3993,12 @@ class Component extends EventTarget
             target.addEventListener(event, handler);
     }
 
-    /** Removes an event listener previously registered with {@link Component#listen}
+    /** 
+     * Removes an event listener previously registered with {@link Component#listen}
      * 
-     * @param {EventTarget} target The object dispatching the events
-     * @param {string} event The event to listen for
-     * @param {Function} [handler] The event listener to add/remove.  If not 
-     * provided, the component's {@link Component#invalidate} method is used.
+     * @param {object} target Any object that supports addEventListener and removeEventListener
+     * @param {string} event The event being listened to
+     * @param {Function} [handler] The event handler to remove.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     unlisten(target, event, handler)
@@ -3940,7 +4018,8 @@ class Component extends EventTarget
         }
     }
 
-    /** Indicates if the component is current mounted.
+    /** 
+     * Returns `true` if the component is currently mounted.
      * 
      * @type {boolean}
      */
@@ -3953,8 +4032,9 @@ class Component extends EventTarget
 
     
     /**
-     * Notifies the object is has been mounted or unmounted
-     * @param {boolean} mounted True when the object has been mounted, false when unmounted
+     * Notifies the object it has been mounted or unmounted
+     * 
+     * @param {boolean} mounted `true` if the object has been mounted, `false` if unmounted
      */
     setMounted(mounted)
     {
@@ -3987,7 +4067,8 @@ class Component extends EventTarget
             this.#listeners.forEach(x => x.target.removeEventListener(x.event, x.handler));
     }
 
-    /** Mounts this component against an element in the document.
+    /** 
+     * Mounts this component against an element in the document.
      * 
      * @param {Element | string} el The element or an element selector that specifies where to mount the component
      * @returns {void}
@@ -3997,7 +4078,8 @@ class Component extends EventTarget
         coenv.mount(this, el);
     }
 
-    /** Unmounts this component
+    /** 
+     * Unmounts this component
      * 
      * @returns {void}
      */
@@ -4006,7 +4088,9 @@ class Component extends EventTarget
         coenv.unmount(this);
     }
 
-    /** The template to be used by this component class */
+    /** 
+     * The template to be used by this component class 
+     */
     static template = {};
 }
 
@@ -4280,14 +4364,17 @@ function TransitionCss(options, ctx)
 }
 
 /**
- * Transition Options
+ * Options for controlling behaviour of transitions.
+ * 
+ * See [Transition Options](templateTransitions#transition-options) for more information.
+ * 
  * @typedef TransitionOptions
  * @property {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
- * @property {string} [options.mode] Transition order - concurrent, enter-leave or leave-enter
+ * @property {string} [options.mode] Transition order - "concurrent", "enter-leave" or "leave-enter"
  * @property {name} [options.name] Transition name - used as prefix to CSS class names, default = "tx"
- * @property {object} [options.classNames] A map of class name mappings
- * @property {number} [options.duration] The duration of the animation in milliseconds
- * @property {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations
+ * @property {object} [options.classNames] A map of class name mappings.
+ * @property {number} [options.duration] The duration of the animation in milliseconds.
+ * @property {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations.
  */
 
 /** Declares addition settings transition directives
@@ -4447,10 +4534,26 @@ constructTemplateBuilder.html = html;
 constructTemplateBuilder.encode = htmlEncode;
 
 // Export the proxied template builder
+
+/**
+ * Entry point into the fluent template builder API
+ * 
+ * The API to the fluent object is dynamic and can't be documented
+ * as a typical API interface.
+ * 
+ * See the (Fluent Templates](templateFluent) for how to use this API.
+ * 
+ * @type {any}
+ */
 let $ = new Proxy(constructTemplateBuilder,  RootProxy);
 
 /**
- * Implements a simple notification and broadcast service
+ * Creates a new notify service instance.
+ * 
+ * Usuauly notify instances don't need to be created and the
+ * default {@link notify} instance can be used directly.
+ * 
+ * @returns {INotify}
  */
 function Notify()
 {
@@ -4518,6 +4621,10 @@ function Notify()
 }
 
 // Default instance of update manager
+/**
+ * Default {@link Notify | Notify} Instance
+ * @type {INotify}
+ */
 let notify = new Notify();
 
 /** @internal */
@@ -4662,7 +4769,8 @@ function removeSsrNodes(el)
     }
 }
 
-/** Converts a URL pattern string to a regular expression string
+/** 
+ * Converts a URL pattern string to a regular expression string.
  * 
  * @param {string} pattern The URL pattern to be converted to a regular expression
  * @returns {string}
@@ -4794,10 +4902,14 @@ function urlPattern(pattern)
     }
 }
 
-/** Implements a simple MRU cache that can be used to cache Page components for route handlers */
+/** 
+ * Implements a simple MRU cache that can be used to cache page components used by route handlers.
+ */
 class PageCache
 {
-    /** Constructs a new page cache
+    /** 
+     * Constructs a new page cache.
+     * 
      * @param {object} options Options controlling the cache
      * @param {number} options.max The maximum number of cache entries to keep
      */
@@ -4811,9 +4923,12 @@ class PageCache
     #cache = [];
     #options;
 
-    /** Get a cached object from the cache, or create a new one
-     * @param {any} key The key for the page
-     * @param {(key: any) => any} factory A callback to create the page item if not in the cache
+    /** 
+     * Get an object from the cache, or if no matches found invoke a callback
+     * to create a new instance.
+     * 
+     * @param {any} key The key for the page.
+     * @param {(key: any) => any} factory A callback to create the item when not found in the cache.
      * @return {any}
      */
     get(key, factory)
@@ -5128,44 +5243,100 @@ class WebHistoryRouterDriver
 }
 
 /**
- * Represents a Route instance
+ * Route objects store information about the current navigation, including the 
+ * URL, the matched handler and anything else the handler wants to associate with 
+ * the route.
+
  * @typedef {object} Route
- * @property {URL} url The route's URL
- * @property {Object} state State associated with the route
- * @property {boolean} current True when this is the current route
- * @property {RouteHandler} handler The handler associated with this route
- * @property {Object} [viewState] The route's view state
- * @property {Object} [page] The page component for this route
+ * @property {URL} url 
+ * 
+ * The route's internalized URL.
+ * 
+ * @property {Object} state 
+ * 
+ * State associated with the route.
+ * 
+ * The router stores important information in the state object so the clients
+ * should never edit settings in the state object.  An application can however
+ * store additional information in the state object, by setting properties on
+ * it and then calling the {@linkcode Router#replace} method.
+ * 
+ * 
+ * @property {boolean} current 
+ * 
+ * `true` when this is the current route.
+ * 
+ * There will only ever be one current route.
+ * 
+ * @property {RouteHandler} handler 
+ * 
+ * The {@linkcode RouteHandler} associated with this route.
+ * 
+ * @property {Object} [viewState] 
+ * 
+ * The route's view state.
+ * 
+ * This information will be available on the Route object once
+ * the `mayEnter` event has been fired by the Router.
+ * 
+ * By default the web history router driver will save and restore the current document
+ * scroll position but applications can save and restore additional custom information
+ * as necessary. For more information see [View State Restoration](routerDetails#view-state-restoration).
+ * 
+ * @property {Object} [page] 
+ * 
+ * The page component for this route.  
+ * 
+ * CodeOnly nevers sets or uses this property, but it is included here because
+ * by convention, most applications will set a `page` property.
+ * 
  * @property {string} [title] The route's page title
+ * 
+ * CodeOnly nevers sets or uses this property, but it is included here because
+ * by convention, most applications will set a `title` property.
+ * 
  */
 
 /**
- * RouteHandlers handle mapping URLs to Route instances
+ * A route handler is an object that handles the navigation to and from a particular URL.
+ * 
+ * Route handlers are registered with the router during app startup and are called by the 
+ * router when a URL is loaded and needs to be matched to a particular handler.
+ * 
+ * When a route handler matches a URL it will usually store additional information on the 
+ * {@linkcode Route} object that describes the component or page to be displayed for that 
+ * URL along with any other information the handler or the application might find useful.
+ * 
+ * See [Route Handlers](routerDetails#route-handlers) for more information.
  * @typedef {object} RouteHandler
- * @property {string | RegExp} [pattern] A string pattern or regular expression to match URL pathnames to this route handler
- * @property {(route: Route) => Promise<boolean>} [match] A callback to confirm the URL match
- * @property {(from: Route, to: Route) => Promise<boolean>} [mayEnter] Notifies that a route for this handler may be entered
- * @property {(from: Route, to: Route) => Promise<boolean>} [mayLeave] Notifies that a route for this handler may be left
- * @property {(from: Route, to: Route) => boolean} [didEnter] Notifies that a route for this handler has been entered
- * @property {(from: Route, to: Route) => boolean} [didLeave] Notifies that a route for this handler has been left
- * @property {(from: Route, to: Route) => boolean} [cancelEnter] Notifies that a route that could have been entered was cancelled
- * @property {(from: Route, to: Route) => boolean} [cancelLeave] Notifies that a route that could have been left was cancelled
- * @property {Number} [order] Order of this route handler when compared to all others (default = 0, lowest first)
- * @property {(route: Route) => object} [captureViewState] A callback to capture the view state for this route handler's routes
- * @property {(route: Route, state: object) => void} [restoreViewState] A callback to restore the view state for this route handler's routes
+ * @property {string | RegExp} [pattern] A string pattern (see {@linkcode urlPattern}) or regular expression to match URL pathnames to this route handler. If not specified, all URL's will match.
+ * @property {(route: Route) => Promise<boolean>} [match] A callback to confirm the URL match. If not specified all URL's matching the pattern will be considered matches.
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayEnter] Notifies that a route for this handler may be entered.
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayLeave] Notifies that a route for this handler may be left.
+ * @property {(from: Route, to: Route) => boolean} [didEnter] Notifies that a route for this handler has been entered.
+ * @property {(from: Route, to: Route) => boolean} [didLeave] Notifies that a route for this handler has been left.
+ * @property {(from: Route, to: Route) => boolean} [cancelEnter] Notifies that a route that may have been entered was cancelled.
+ * @property {(from: Route, to: Route) => boolean} [cancelLeave] Notifies that a route that may have been left was cancelled.
+ * @property {Number} [order] Order of this route handler in relation to all others (default = 0, lowest first).
+ * @property {(route: Route) => object} [captureViewState] A callback to capture the view state for this route handler's routes.
+ * @property {(route: Route, state: object) => void} [restoreViewState] A callback to restore the view state for this route handler's routes.
  */
 
 
 
 /** 
- * The Router class - handles URL load requests, creating
- * route objects using route handlers and firing associated
- * events
+ * A Router handles URL load requests, by creating route objects matching them to
+ * route handlers and firing associated events.
  */
 class Router
 {   
-    /** Constructs a new Router instance 
-     * @param {RouteHandler[]} handlers An array of router handlers to initially register
+    /** 
+     * Constructs a new Router instance 
+     * 
+     * @param {RouteHandler[]} handlers 
+     * 
+     * An array of router handlers to initially register, however usually
+     * handlers are registered using the {@link Router#register} method.
      */
     constructor(handlers)
     {
@@ -5173,9 +5344,11 @@ class Router
             this.register(handlers);
     }
 
-    /** Starts the router, using the specified driver
-     * @param {object} driver The router driver to use
-     * @returns {any} The result returned from the driver's start method
+    /** 
+     * Starts the router, using the specified driver
+     * 
+     * @param {object | null} driver The router driver to use, or `null` to use the default Web History router driver.
+     * @returns {Promise<any>} The result returned from the driver's start method (usually the initially navigated {@linkcode Route} object).
      */
     start(driver)
     {
@@ -5190,23 +5363,21 @@ class Router
         if (driver)
         {
             /** 
-             * Navigates to a new URL
-             * @param {URL | string} url The external URL to navigate to
-             * @returns {Promise<Route>}
+             * Navigates to a new URL.
+             * @type {(url: URL | string) => Promise<Route>}
              */
             this.navigate = driver.navigate.bind(driver);
 
             /**
-             * Replaces the current URL, without performing a navigation
-             * @param {URL | string} url The new URL to display
-             * @returns {void}
+             * Replaces the current URL, without performing a navigation.
+             * @type {(url: URL | string) => void} url The new URL to display
              */
             this.replace = driver.replace.bind(driver);
 
             /**
              * Navigates back one step in the history, or if there is 
-             * no previous history navigates to the root URL
-             * @returns {void}
+             * no previous history navigates to the root URL.
+             * @type {() => void}
              */
             this.back = driver.back.bind(driver);
         }
@@ -5214,8 +5385,9 @@ class Router
     }
 
     /**
-     * An option URL mapper to be used for URL internalization and
+     * An optional URL mapper to be used for URL internalization and
      * externalization.
+     * 
      * @type {UrlMapper}
      */
     urlMapper;
@@ -5246,13 +5418,17 @@ class Router
 
     urlMapper;
 
-    /** Internalizes a URL
+    /** 
+     * Internalizes a URL.
+     * 
      * @param {URL | string} url The URL to internalize
      * @returns { URL | string}
      */
     internalize(url) { return this.#mapUrl(url, "internalize"); }
 
-    /** Externalizes a URL
+    /** 
+     * Externalizes a URL.
+     * 
      * @param {URL | string} url The URL to internalize
      * @returns { URL | string}
      */
@@ -5287,7 +5463,8 @@ class Router
         return this.#state.l;
     }
 
-    /** The current route object
+    /** 
+     * The current route object.
      * @type {Route}
      */
     get current()
@@ -5295,7 +5472,8 @@ class Router
         return this.#current;
     }
 
-    /** The route currently being navigated to
+    /** 
+     * The route currently being navigated to, but not yet committed.
      * @type {Route}
      */
     get pending()
@@ -5303,13 +5481,20 @@ class Router
         return this.#pending;
     }
 
-    /** Adds an event listener
+    /** 
+     * Adds an event listener.
      * 
      * Available events are:
-     *   - "mayEnter", "mayLeave" (async, cancellable events)
-     *   - "didEnter" and "didLeave" (sync, non-cancellable events)
-     *   - "cancel" (sync, notification only)
+     *   - `mayEnter`, `mayLeave` async, cancellable
+     *   - `didEnter`, `didLeave` sync, non-cancellable
+     *   - `cancel` - sync, notification only
      *
+     * The async cancellable events should return `Promise<boolean>` where a 
+     * resolved value of `false` cancels the navigation.
+     * 
+     * All event handlers receive two arguments a `from` and `to` route object.  For the
+     * initial page load, the `from` parameter will be `null`.
+     * 
      * @param {string} event The event to listen to
      * @param {RouterEventAsync | RouterEventSync} handler The event handler function
      */
@@ -5318,7 +5503,8 @@ class Router
         this.#listeners.push({ event, handler });
     }
 
-    /** Removes a previously added event handler
+    /** 
+     * Removes a previously registered event handler.
      *
      * @param {string} event The event to remove the listener for
      * @param {RouterEventAsync | RouterEventSync} handler The event handler function to remove
@@ -5540,7 +5726,9 @@ class Router
     #handlers = [];
     #needSort = false;
 
-    /** Registers one or more route handlers with the router
+    /** 
+     * Registers one or more route handlers.
+     * 
      * @param {RouteHandler | RouteHandler[]} handlers The handler or handlers to register
      */
     register(handlers)
@@ -5562,27 +5750,38 @@ class Router
         this.#needSort = true;
     }
 
-    /** Revoke previously used handlers by matching to a predicate
-     * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return true to remove
+    /** 
+     * Revoke previously registered handlers that match a predicate callback.
+     * 
+     * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return `true` to remove
      */
     revoke(predicate)
     {
         this.#handlers = this.#handlers.filter(x => !predicate(x));
     }
 
-    /** a callback to capture the view state for this route handler's routes 
+    /** 
+     * A callback to capture the view state for a route.
+     * 
      * @type {(route: Route) => object}
      */
     captureViewState;
 
-    /** a callback to restore the view state for this route handler's routes
+    /** 
+     * A callback to restore the view state for a route.
+     * 
      * @type {(route: Route, state: object) => void}
      */
     restoreViewState;
 }
 
 
-/** The default {@link Router} instance */
+/**
+ * Default {@link Router} instance.
+ * 
+ * Nearly all applications only ever need a single router
+ * instance and can use this pre-created instance.
+ */
 let router = new Router();
 
 /** Provides URL internalization and externalization */
@@ -5657,13 +5856,14 @@ class UrlMapper
     }
 }
 
-/** Fetches a text asset
+/** 
+ * Fetches a text asset.
  * 
- *  In the browser, issues a fetch request for an asset
- *  On the server, uses fs.readFile to load a local file asset
+ * In the browser, issues a fetch request for an asset
+ * On the server, uses fs.readFile to load a local file asset.
  *
- *  The asset path must be absolute (start with a '/') and is
- *  resolved relative to the project root.
+ * The asset path must be absolute (start with a '/') and is
+ * resolved relative to the project root.
  * 
  * @param {string} path The path of the asset to fetch
  * @returns {Promise<string>}
@@ -5685,13 +5885,14 @@ async function fetchTextAsset(path)
     return coenv.fetchTextAsset(path);
 }
 
-/** Fetches a JSON asset
+/** 
+ * Fetches a JSON asset.
  * 
- *  In the browser, issues a fetch request for an asset
- *  On the server, uses fs.readFile to load a local file asset
+ * In the browser, issues a fetch request for an asset
+ * On the server, uses fs.readFile to load a local file asset.
  *
- *  The asset path must be absolute (start with a '/') and is
- *  resolved relative to the project root.
+ * The asset path must be absolute (start with a '/') and is
+ * resolved relative to the project root.
  * 
  * @param {string} path The path of the asset to fetch
  * @returns {Promise<object>}
