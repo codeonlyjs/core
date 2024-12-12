@@ -16,7 +16,7 @@
   "scripts": {
     "test": "node --test",
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
-    "types": "tsc --project tsconfig.emit.json && dts-tool flatten @codeonlyjs/core index.raw.d.ts types.d.ts --module:index-server --module:types --out:index.d.ts && dts-tool extract index.d.ts --out:index.d.json",
+    "types": "tsc --project tsconfig.emit.json && dts flatten @codeonlyjs/core index.raw.d.ts types.d.ts --module:index-server --module:types --out:index.d.ts && dts extract index.d.ts --out:index.d.json",
     "build": "zx build.js",
     "docs": "npm run types && node make-docs.js"
   },
@@ -33,7 +33,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@codeonlyjs/dts-tool": "github:codeonlyjs/dts-tool",
+    "@codeonlyjs/dts": "github:toptensoftware/dts",
     "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@toptensoftware/jsdoc": "github:toptensoftware/jsdoc",
