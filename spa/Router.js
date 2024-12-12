@@ -3,44 +3,100 @@ import { WebHistoryRouterDriver } from "./WebHistoryRouterDriver.js";
 
 
 /**
- * Represents a Route instance
+ * Route objects store information about the current navigation, including the 
+ * URL, the matched handler and anything else the handler wants to associate with 
+ * the route.
+
  * @typedef {object} Route
- * @property {URL} url The route's URL
- * @property {Object} state State associated with the route
- * @property {boolean} current True when this is the current route
- * @property {RouteHandler} handler The handler associated with this route
- * @property {Object} [viewState] The route's view state
- * @property {Object} [page] The page component for this route
+ * @property {URL} url 
+ * 
+ * The route's internalized URL.
+ * 
+ * @property {Object} state 
+ * 
+ * State associated with the route.
+ * 
+ * The router stores important information in the state object so the clients
+ * should never edit settings in the state object.  An application can however
+ * store additional information in the state object, by setting properties on
+ * it and then calling the {@linkcode Router#replace} method.
+ * 
+ * 
+ * @property {boolean} current 
+ * 
+ * `true` when this is the current route.
+ * 
+ * There will only ever be one current route.
+ * 
+ * @property {RouteHandler} handler 
+ * 
+ * The {@linkcode RouteHandler} associated with this route.
+ * 
+ * @property {Object} [viewState] 
+ * 
+ * The route's view state.
+ * 
+ * This information will be available on the Route object once
+ * the `mayEnter` event has been fired by the Router.
+ * 
+ * By default the web history router driver will save and restore the current document
+ * scroll position but applications can save and restore additional custom information
+ * as necessary. For more information see [View State Restoration](routerDetails#view-state-restoration).
+ * 
+ * @property {Object} [page] 
+ * 
+ * The page component for this route.  
+ * 
+ * CodeOnly nevers sets or uses this property, but it is included here because
+ * by convention, most applications will set a `page` property.
+ * 
  * @property {string} [title] The route's page title
+ * 
+ * CodeOnly nevers sets or uses this property, but it is included here because
+ * by convention, most applications will set a `title` property.
+ * 
  */
 
 /**
- * RouteHandlers handle mapping URLs to Route instances
+ * A route handler is an object that handles the navigation to and from a particular URL.
+ * 
+ * Route handlers are registered with the router during app startup and are called by the 
+ * router when a URL is loaded and needs to be matched to a particular handler.
+ * 
+ * When a route handler matches a URL it will usually store additional information on the 
+ * {@linkcode Route} object that describes the component or page to be displayed for that 
+ * URL along with any other information the handler or the application might find useful.
+ * 
+ * See [Route Handlers](routerDetails#route-handlers) for more information.
  * @typedef {object} RouteHandler
- * @property {string | RegExp} [pattern] A string pattern or regular expression to match URL pathnames to this route handler
- * @property {(route: Route) => Promise<boolean>} [match] A callback to confirm the URL match
- * @property {(from: Route, to: Route) => Promise<boolean>} [mayEnter] Notifies that a route for this handler may be entered
- * @property {(from: Route, to: Route) => Promise<boolean>} [mayLeave] Notifies that a route for this handler may be left
- * @property {(from: Route, to: Route) => boolean} [didEnter] Notifies that a route for this handler has been entered
- * @property {(from: Route, to: Route) => boolean} [didLeave] Notifies that a route for this handler has been left
- * @property {(from: Route, to: Route) => boolean} [cancelEnter] Notifies that a route that could have been entered was cancelled
- * @property {(from: Route, to: Route) => boolean} [cancelLeave] Notifies that a route that could have been left was cancelled
- * @property {Number} [order] Order of this route handler when compared to all others (default = 0, lowest first)
- * @property {(route: Route) => object} [captureViewState] A callback to capture the view state for this route handler's routes
- * @property {(route: Route, state: object) => void} [restoreViewState] A callback to restore the view state for this route handler's routes
+ * @property {string | RegExp} [pattern] A string pattern (see {@linkcode urlPattern}) or regular expression to match URL pathnames to this route handler. If not specified, all URL's will match.
+ * @property {(route: Route) => Promise<boolean>} [match] A callback to confirm the URL match. If not specified all URL's matching the pattern will be considered matches.
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayEnter] Notifies that a route for this handler may be entered.
+ * @property {(from: Route, to: Route) => Promise<boolean>} [mayLeave] Notifies that a route for this handler may be left.
+ * @property {(from: Route, to: Route) => boolean} [didEnter] Notifies that a route for this handler has been entered.
+ * @property {(from: Route, to: Route) => boolean} [didLeave] Notifies that a route for this handler has been left.
+ * @property {(from: Route, to: Route) => boolean} [cancelEnter] Notifies that a route that may have been entered was cancelled.
+ * @property {(from: Route, to: Route) => boolean} [cancelLeave] Notifies that a route that may have been left was cancelled.
+ * @property {Number} [order] Order of this route handler in relation to all others (default = 0, lowest first).
+ * @property {(route: Route) => object} [captureViewState] A callback to capture the view state for this route handler's routes.
+ * @property {(route: Route, state: object) => void} [restoreViewState] A callback to restore the view state for this route handler's routes.
  */
 
 
 
 /** 
- * The Router class - handles URL load requests, creating
- * route objects using route handlers and firing associated
- * events
+ * A Router handles URL load requests, by creating route objects matching them to
+ * route handlers and firing associated events.
  */
 export class Router
 {   
-    /** Constructs a new Router instance 
-     * @param {RouteHandler[]} handlers An array of router handlers to initially register
+    /** 
+     * Constructs a new Router instance 
+     * 
+     * @param {RouteHandler[]} handlers 
+     * 
+     * An array of router handlers to initially register, however usually
+     * handlers are registered using the {@link Router#register} method.
      */
     constructor(handlers)
     {
@@ -48,9 +104,11 @@ export class Router
             this.register(handlers);
     }
 
-    /** Starts the router, using the specified driver
-     * @param {object} driver The router driver to use
-     * @returns {any} The result returned from the driver's start method
+    /** 
+     * Starts the router, using the specified driver
+     * 
+     * @param {object | null} driver The router driver to use, or `null` to use the default Web History router driver.
+     * @returns {Promise<any>} The result returned from the driver's start method (usually the initially navigated {@linkcode Route} object).
      */
     start(driver)
     {
@@ -65,23 +123,21 @@ export class Router
         if (driver)
         {
             /** 
-             * Navigates to a new URL
-             * @param {URL | string} url The external URL to navigate to
-             * @returns {Promise<Route>}
+             * Navigates to a new URL.
+             * @type {(url: URL | string) => Promise<Route>}
              */
             this.navigate = driver.navigate.bind(driver);
 
             /**
-             * Replaces the current URL, without performing a navigation
-             * @param {URL | string} url The new URL to display
-             * @returns {void}
+             * Replaces the current URL, without performing a navigation.
+             * @type {(url: URL | string) => void} url The new URL to display
              */
             this.replace = driver.replace.bind(driver);
 
             /**
              * Navigates back one step in the history, or if there is 
-             * no previous history navigates to the root URL
-             * @returns {void}
+             * no previous history navigates to the root URL.
+             * @type {() => void}
              */
             this.back = driver.back.bind(driver);
         }
@@ -89,8 +145,9 @@ export class Router
     }
 
     /**
-     * An option URL mapper to be used for URL internalization and
+     * An optional URL mapper to be used for URL internalization and
      * externalization.
+     * 
      * @type {UrlMapper}
      */
     urlMapper;
@@ -121,13 +178,17 @@ export class Router
 
     urlMapper;
 
-    /** Internalizes a URL
+    /** 
+     * Internalizes a URL.
+     * 
      * @param {URL | string} url The URL to internalize
      * @returns { URL | string}
      */
     internalize(url) { return this.#mapUrl(url, "internalize"); }
 
-    /** Externalizes a URL
+    /** 
+     * Externalizes a URL.
+     * 
      * @param {URL | string} url The URL to internalize
      * @returns { URL | string}
      */
@@ -162,7 +223,8 @@ export class Router
         return this.#state.l;
     }
 
-    /** The current route object
+    /** 
+     * The current route object.
      * @type {Route}
      */
     get current()
@@ -170,7 +232,8 @@ export class Router
         return this.#current;
     }
 
-    /** The route currently being navigated to
+    /** 
+     * The route currently being navigated to, but not yet committed.
      * @type {Route}
      */
     get pending()
@@ -178,13 +241,20 @@ export class Router
         return this.#pending;
     }
 
-    /** Adds an event listener
+    /** 
+     * Adds an event listener.
      * 
      * Available events are:
-     *   - "mayEnter", "mayLeave" (async, cancellable events)
-     *   - "didEnter" and "didLeave" (sync, non-cancellable events)
-     *   - "cancel" (sync, notification only)
+     *   - `mayEnter`, `mayLeave` async, cancellable
+     *   - `didEnter`, `didLeave` sync, non-cancellable
+     *   - `cancel` - sync, notification only
      *
+     * The async cancellable events should return `Promise<boolean>` where a 
+     * resolved value of `false` cancels the navigation.
+     * 
+     * All event handlers receive two arguments a `from` and `to` route object.  For the
+     * initial page load, the `from` parameter will be `null`.
+     * 
      * @param {string} event The event to listen to
      * @param {RouterEventAsync | RouterEventSync} handler The event handler function
      */
@@ -193,7 +263,8 @@ export class Router
         this.#listeners.push({ event, handler });
     }
 
-    /** Removes a previously added event handler
+    /** 
+     * Removes a previously registered event handler.
      *
      * @param {string} event The event to remove the listener for
      * @param {RouterEventAsync | RouterEventSync} handler The event handler function to remove
@@ -415,7 +486,9 @@ export class Router
     #handlers = [];
     #needSort = false;
 
-    /** Registers one or more route handlers with the router
+    /** 
+     * Registers one or more route handlers.
+     * 
      * @param {RouteHandler | RouteHandler[]} handlers The handler or handlers to register
      */
     register(handlers)
@@ -437,20 +510,26 @@ export class Router
         this.#needSort = true;
     }
 
-    /** Revoke previously used handlers by matching to a predicate
-     * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return true to remove
+    /** 
+     * Revoke previously registered handlers that match a predicate callback.
+     * 
+     * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return `true` to remove
      */
     revoke(predicate)
     {
         this.#handlers = this.#handlers.filter(x => !predicate(x));
     }
 
-    /** a callback to capture the view state for this route handler's routes 
+    /** 
+     * A callback to capture the view state for a route.
+     * 
      * @type {(route: Route) => object}
      */
     captureViewState;
 
-    /** a callback to restore the view state for this route handler's routes
+    /** 
+     * A callback to restore the view state for a route.
+     * 
      * @type {(route: Route, state: object) => void}
      */
     restoreViewState;
@@ -458,6 +537,9 @@ export class Router
 
 
 /**
- * Default {@link Router | Router} Instance
+ * Default {@link Router} instance.
+ * 
+ * Nearly all applications only ever need a single router
+ * instance and can use this pre-created instance.
  */
 export let router = new Router();

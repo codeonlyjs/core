@@ -41,6 +41,7 @@ let groups = [
             "input", 
             "transition",
             "InputOptions", 
+            "TransitionOptions",
             "$",
         ],
     },

@@ -189,7 +189,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Marks a string as being HTML instead of plain text\n\nNormally strings passed to templates are treated as plain text.  Wrapping\na value in html() indicates the string should be treated as HTML instead.\n\n"
+                            "text": "\nMarks a string as being raw HTML instead of plain text\n\nNormally strings passed to templates are treated as plain text.  Wrapping\na value by calling this function indicates the string should be treated as\nraw HTML instead.\n\nSee [Text and HTML](templateText) for more information.\n\n"
                         },
                         {
                             "block": "param",
@@ -379,7 +379,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nComponents are the primary building block for constructing CodeOnly\napplications. They encapsulate program logic, a DOM template\nand an optional a set of CSS styles.\n\nComponents can be used either in the templates of other components\nor mounted onto the document DOM to appear in a web page.\n\n"
+                            "text": "\nComponents are the primary building block for constructing CodeOnly\napplications. They encapsulate program logic, a DOM template\nand an optional a set of CSS styles.\n\nComponents can be used either in the templates of other components\nor mounted onto the document DOM to appear in a web page.\n\nSee also [Component Basics](components).\n\n"
                         },
                         {
                             "block": "extends",
@@ -411,20 +411,20 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 3745,
-                                            "end": 3775,
+                                            "pos": 3907,
+                                            "end": 3937,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                                         },
                                         {
-                                            "pos": 3901,
-                                            "end": 3920,
+                                            "pos": 4063,
+                                            "end": 4082,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         },
                                         {
-                                            "pos": 4052,
-                                            "end": 4101,
+                                            "pos": 4214,
+                                            "end": 4263,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component.onProvideDomTreeConstructor"
                                         }
@@ -452,8 +452,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 4303,
-                                    "end": 4333,
+                                    "pos": 4465,
+                                    "end": 4495,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                                 }
@@ -508,7 +508,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "The template to be used by this component class "
+                                    "text": "\nThe template to be used by this component class\n"
                                 }
                             ],
                             "links": []
@@ -521,7 +521,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nImmediately updates this component's DOM elements - even if\nthe component is not marked as invalid.\n\nDoes nothing if the component's DOM elements haven't been created.\n\nIf the component has been invalidate, returns it to the valid state.\n\nThis method is bound to the component instance\nand can be used as an event listener to update the\ncomponent when an event is triggered.\n\n"
+                                    "text": "\nImmediately updates this component's DOM elements - even if\nthe component is not marked as invalid.\n\nDoes nothing if the component's DOM elements haven't been created.\n\nIf the component has been invalidated, returns it to the valid state.\n\nThis method is bound to the component instance and can be used\ndirectly as the handler for an event listener to update the\ncomponent when an event is triggered.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -539,7 +539,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nMarks this component as requiring a DOM update.\n\nDoes nothing if the component hasn't yet been created.\n\nThis method is bound to the component instance\nand can be used as an event listener to invalidate the\ncomponent when an event is triggered.\n\n"
+                                    "text": "\nInvalidates this component, marking it as requiring a DOM update.\n\nDoes nothing if the component hasn't yet been created.\n\nThis method is bound to the component instance and can be used\ndirectly as the handler for an event listener to invalidate the\ncomponent when an event is triggered.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -557,7 +557,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nEnsures the DOM elements of this component have been created.\n\nCalling this method does nothing if the component is already created.\n\n"
+                                    "text": "\nEnsures this component's {@link 0} has been created.\n\nCalling this method does nothing if the DomTree is already created.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -565,7 +565,14 @@
                                     "type": "void"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 6537,
+                                    "end": 6552,
+                                    "kind": "link",
+                                    "namepath": "module:@codeonlyjs/core.DomTree"
+                                }
+                            ]
                         },
                         {
                             "kind": "property",
@@ -579,14 +586,21 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nReturns true if this component's DOM elements have been created.\n\n"
+                                            "text": "\nReturns true if this component's {@link 0} has been created.\n\n"
                                         },
                                         {
                                             "block": "type",
                                             "text": "{boolean}\n"
                                         }
                                     ],
-                                    "links": []
+                                    "links": [
+                                        {
+                                            "pos": 6791,
+                                            "end": 6806,
+                                            "kind": "link",
+                                            "namepath": "module:@codeonlyjs/core.DomTree"
+                                        }
+                                    ]
                                 }
                             ],
                             "namepath": "module:@codeonlyjs/core.Component#created"
@@ -612,8 +626,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 6691,
-                                            "end": 6710,
+                                            "pos": 6939,
+                                            "end": 6958,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         }
@@ -634,7 +648,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nReturns true if this component instance has, and will only ever\nhave a single root node\n\n"
+                                            "text": "\nReturns true if this component instance is guaranteed to always only\nhave a single root node.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -658,7 +672,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nReturns the single root node of this component if it is a single\nroot node component.\n\n"
+                                            "text": "\nReturns the single root node of this component (if it is a single\nroot node component).\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -682,7 +696,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nReturns the root nodes of this element, creating them if necessary.\n\n"
+                                            "text": "\nReturns an array of root DOM nodes for this element, creating them if necessary.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -706,7 +720,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nIndicates if this component is had pending updates due to\nprevious call to {@link 0}.\n"
+                                            "text": "\nIndicates if this component in invalid.\n\nA component is invalid if it has been invalidated by\na previous call to {@link 0} and\nhasn't yet be updated.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -715,8 +729,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7525,
-                                            "end": 7557,
+                                            "pos": 7853,
+                                            "end": 7885,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                         }
@@ -743,8 +757,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 7742,
-                                    "end": 7774,
+                                    "pos": 8118,
+                                    "end": 8150,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -762,7 +776,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nGets the error object thrown during the last call to (see {@link 0}).\n\n"
+                                            "text": "\nGets the error object thrown during the last call to {@link 0}.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -771,8 +785,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 8158,
-                                            "end": 8184,
+                                            "pos": 8540,
+                                            "end": 8566,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -786,7 +800,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nSets the error object associated with the (see {@link 0}) operation.\n"
+                                            "text": "\nSets the error object associated with the current call to {@link 0}.\n\n"
                                         },
                                         {
                                             "block": "param",
@@ -799,8 +813,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7922,
-                                            "end": 7948,
+                                            "pos": 8309,
+                                            "end": 8335,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -821,7 +835,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Indicates if the component is currently in an {@link 0} operation\n\n"
+                                            "text": "\nIndicates if the component is currently in an {@link 0} operation.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -830,8 +844,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 8338,
-                                            "end": 8364,
+                                            "pos": 8730,
+                                            "end": 8756,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -848,7 +862,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Performs an async data load operation.\n\nThe callback function is typically an async function that performs\na data request.  While in the callback, the {@link 0} property\nwill return `true`.  If the callback throws an error, it will be captured\nto the {@link 1} property.\n\nBefore calling and after returning from the callback, the component is\ninvalidated so visual elements (eg: spinners) can be updated.\n\nIf the silent parameter is `true` the `loading` property isn't set and\nthe component is only invalidated after returning from the callback.\n\n"
+                                    "text": "\nPerforms an async data load operation.\n\nThe callback function is an async function that performs an async data load.\nWhile in the callback, the {@link 0} property returns `true`.\n\nIf the callback throws an error, it will be captured to the {@link 1}\nproperty.\n\nBefore calling and after returning from the callback, the component is\ninvalidated so visual elements (eg: spinners) can be updated.\n\nIf the silent parameter is `true` the {@link 2} property isn't set and\nthe component is only invalidated after returning from the callback.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -874,16 +888,22 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 8652,
-                                    "end": 8677,
+                                    "pos": 9049,
+                                    "end": 9074,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loading"
                                 },
                                 {
-                                    "pos": 8790,
-                                    "end": 8817,
+                                    "pos": 9182,
+                                    "end": 9209,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loadError"
+                                },
+                                {
+                                    "pos": 9457,
+                                    "end": 9482,
+                                    "kind": "link",
+                                    "namepath": "module:@codeonlyjs/core.Component#loading"
                                 }
                             ]
                         },
@@ -895,7 +915,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nDestroys this components {@link 0} returning it to\nthe constructed, but non-created state.\n\nA destroyed component can be re-created by remounting it\nor by calling its {@link 1} method.\n\n"
+                                    "text": "\nDestroys this component's {@link 0} returning it to\nthe constructed, but non-created state.\n\nA destroyed component can be re-created by remounting it\nor by calling its {@link 1} method.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -905,14 +925,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 9539,
-                                    "end": 9558,
+                                    "pos": 9959,
+                                    "end": 9978,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTree"
                                 },
                                 {
-                                    "pos": 9734,
-                                    "end": 9758,
+                                    "pos": 10154,
+                                    "end": 10178,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#create"
                                 }
@@ -926,7 +946,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies a component that is has been mounted.\n\nOverride this method to receive the notification.  External\nresources (eg: adding event listeners to external objects) should be\nacquired when the component is mounted.\n\n"
+                                    "text": "\nNotifies a component that is has been mounted.\n\nOverride this method to receive the notification.  External\nresources should be acquired when the component is mounted.\n(eg: adding event listeners to external objects)\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -944,7 +964,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies a component that is has been unmounted.\n\nOverride this method to receive the notification.  External\nresources (eg: removing event listeners from external objects) should be\nreleased when the component is unmounted.\n\n"
+                                    "text": "\nNotifies a component that is has been unmounted.\n\nOverride this method to receive the notification.  External\nresources should be released when the component is unmounted.\n(eg: removing event listeners from external objects)\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -974,7 +994,7 @@
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The event to listen for\n",
+                                    "text": "The event to listen to\n",
                                     "type": "string",
                                     "optional": false,
                                     "name": "event",
@@ -982,7 +1002,7 @@
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The event listener to add.  If not provided, the component's {@link 0} method is used.\n",
+                                    "text": "The event handler to add.  If not provided, the component's {@link 0} method is used.\n",
                                     "type": "Function",
                                     "optional": true,
                                     "name": "handler",
@@ -996,8 +1016,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 11001,
-                                    "end": 11029,
+                                    "pos": 11419,
+                                    "end": 11447,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -1023,7 +1043,7 @@
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The event being listened for\n",
+                                    "text": "The event being listened to\n",
                                     "type": "string",
                                     "optional": false,
                                     "name": "event",
@@ -1031,7 +1051,7 @@
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The event listener to remove.  If not provided, the component's {@link 1} method is used.\n",
+                                    "text": "The event handler to remove.  If not provided, the component's {@link 1} method is used.\n",
                                     "type": "Function",
                                     "optional": true,
                                     "name": "handler",
@@ -1045,14 +1065,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 11234,
-                                    "end": 11258,
+                                    "pos": 11652,
+                                    "end": 11676,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#listen"
                                 },
                                 {
-                                    "pos": 11535,
-                                    "end": 11563,
+                                    "pos": 11951,
+                                    "end": 11979,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -1070,7 +1090,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nIndicates if the component is current mounted.\n\n"
+                                            "text": "\nReturns `true` if the component is currently mounted.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -1090,11 +1110,11 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies the object is has been mounted or unmounted\n"
+                                    "text": "\nNotifies the object it has been mounted or unmounted\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "True when the object has been mounted, false when unmounted\n",
+                                    "text": "`true` if the object has been mounted, `false` if unmounted\n",
                                     "type": "boolean",
                                     "optional": false,
                                     "name": "mounted",
@@ -1137,7 +1157,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Unmounts this component\n\n"
+                                    "text": "\nUnmounts this component\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -1157,7 +1177,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Compiles a template into a domTreeConstructor function\n"
+                            "text": "\nCompiles a template into a {@link 0} function.\n\nUsually templates are automatically compiled by Components and this\nfunction isn't used directly.   For more information, see\n[Template Internals](templateInternals).\n\n"
                         },
                         {
                             "block": "param",
@@ -1173,7 +1193,14 @@
                             "type": "DomTreeConstructor"
                         }
                     ],
-                    "links": []
+                    "links": [
+                        {
+                            "pos": 12971,
+                            "end": 12997,
+                            "kind": "link",
+                            "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
+                        }
+                    ]
                 },
                 {
                     "kind": "function",
@@ -1282,7 +1309,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nTransition Options\n"
+                            "text": "\nOptions for controlling behaviour of transitions.\n\nSee [Transition Options](templateTransitions#transition-options) for more information.\n"
                         }
                     ],
                     "links": [],
@@ -1308,7 +1335,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nTransition order - concurrent, enter-leave or leave-enter\n"
+                                    "text": "\nTransition order - \"concurrent\", \"enter-leave\" or \"leave-enter\"\n"
                                 }
                             ],
                             "links": []
@@ -1334,7 +1361,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nA map of class name mappings\n"
+                                    "text": "\nA map of class name mappings.\n"
                                 }
                             ],
                             "links": []
@@ -1347,7 +1374,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe duration of the animation in milliseconds\n"
+                                    "text": "\nThe duration of the animation in milliseconds.\n"
                                 }
                             ],
                             "links": []
@@ -1360,7 +1387,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nWhether to monitor the element's sub-trees for animations\n"
+                                    "text": "\nWhether to monitor the element's sub-trees for animations.\n"
                                 }
                             ],
                             "links": []
@@ -1468,7 +1495,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nEntry point into the fluent template builder API\n"
+                            "text": "\nEntry point into the fluent template builder API\n\nThe API to the fluent object is dynamic and can't be documented\nas a typical API interface.\n\nSee the (Fluent Templates](templateFluent) for how to use this API.\n\n"
                         },
                         {
                             "block": "type",
@@ -1495,8 +1522,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 15776,
-                            "end": 15790,
+                            "pos": 16782,
+                            "end": 16796,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.notify"
                         }
@@ -1519,8 +1546,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 15925,
-                            "end": 15948,
+                            "pos": 16931,
+                            "end": 16954,
                             "kind": "link",
                             "title": "Notify",
                             "namepath": "module:@codeonlyjs/core.Notify"
@@ -1561,7 +1588,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Declares additional settings for input bindings\n"
+                            "text": "\nDeclares additional settings for bi-direction input field binding.\n\nSee {@link 0} for available options.\n\nSee [Input Bindings](templateInput) for more information.\n\n"
                         },
                         {
                             "block": "param",
@@ -1577,7 +1604,14 @@
                             "type": "object"
                         }
                     ],
-                    "links": []
+                    "links": [
+                        {
+                            "pos": 17318,
+                            "end": 17342,
+                            "kind": "linkcode",
+                            "namepath": "module:@codeonlyjs/core.InputOptions"
+                        }
+                    ]
                 },
                 {
                     "kind": "type-alias",
@@ -1587,10 +1621,35 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nOptions for controlling input bindings\n"
+                            "text": "\nOptions for controlling input bindings.\n\nIf the {@link 0} and {@link 1} handlers are specified\nthey override both {@link 2} and {@link 3} which are no\nlonger used.\n"
                         }
                     ],
-                    "links": [],
+                    "links": [
+                        {
+                            "pos": 17674,
+                            "end": 17702,
+                            "kind": "linkcode",
+                            "namepath": "module:@codeonlyjs/core.InputOptions#get"
+                        },
+                        {
+                            "pos": 17707,
+                            "end": 17735,
+                            "kind": "linkcode",
+                            "namepath": "module:@codeonlyjs/core.InputOptions#set"
+                        },
+                        {
+                            "pos": 17785,
+                            "end": 17816,
+                            "kind": "linkcode",
+                            "namepath": "module:@codeonlyjs/core.InputOptions#target"
+                        },
+                        {
+                            "pos": 17821,
+                            "end": 17850,
+                            "kind": "linkcode",
+                            "namepath": "module:@codeonlyjs/core.InputOptions#prop"
+                        }
+                    ],
                     "members": [
                         {
                             "kind": "property",
@@ -1600,7 +1659,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe name of the event (usually \"change\" or \"input\") to trigger the input binding\n"
+                                    "text": "\nThe name of the event (usually \"change\" or \"input\") to trigger the input binding.  If not specified, \"input\" is used.\n"
                                 }
                             ],
                             "links": []
@@ -1613,7 +1672,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe name of the property on the target object\n"
+                                    "text": "\nThe name of the property on the target object.\n"
                                 }
                             ],
                             "links": []
@@ -1626,10 +1685,17 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe target object providing the binding property\n"
+                                    "text": "\nThe target object providing the binding property.  If not specified, the template's {@link 0} object is used.\n"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 18313,
+                                    "end": 18345,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.DomTreeContext#model"
+                                }
+                            ]
                         },
                         {
                             "kind": "property",
@@ -1639,7 +1705,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nFormat the property value into a string for display\n"
+                                    "text": "\nFormat the property value into a string for display.\n"
                                 }
                             ],
                             "links": []
@@ -1652,7 +1718,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nParse a display string into a property value\n"
+                                    "text": "\nParse a display string into a property value.\n"
                                 }
                             ],
                             "links": []
@@ -1665,7 +1731,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nGet the value of the property\n"
+                                    "text": "\nGet the value of the property.\n"
                                 }
                             ],
                             "links": []
@@ -1678,7 +1744,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nSet the value of the property\n"
+                                    "text": "\nSet the value of the property.\n"
                                 }
                             ],
                             "links": []
@@ -1691,7 +1757,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nA callback to be invoked when the property value is changed by the user\n"
+                                    "text": "\nA callback to be invoked when the property value is changed by the user.\n"
                                 }
                             ],
                             "links": []
@@ -1732,7 +1798,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Implements a simple MRU cache that can be used to cache Page components for route handlers "
+                            "text": "\nImplements a simple MRU cache that can be used to cache page components used by route handlers.\n"
                         }
                     ],
                     "links": [],
@@ -1745,7 +1811,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Constructs a new page cache\n"
+                                    "text": "\nConstructs a new page cache.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -1774,11 +1840,11 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Get a cached object from the cache, or create a new one\n"
+                                    "text": "\nGet an object from the cache, or if no matches found invoke a callback\nto create a new instance.\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The key for the page\n",
+                                    "text": "The key for the page.\n",
                                     "type": "any",
                                     "optional": false,
                                     "name": "key",
@@ -1786,7 +1852,7 @@
                                 },
                                 {
                                     "block": "param",
-                                    "text": "A callback to create the page item if not in the cache\n",
+                                    "text": "A callback to create the item when not found in the cache.\n",
                                     "type": "(key: any) => any",
                                     "optional": false,
                                     "name": "factory",
@@ -1806,11 +1872,11 @@
                     "kind": "class",
                     "name": "Router",
                     "namepath": "module:@codeonlyjs/core.Router",
-                    "definition": "export class Router {\n    constructor(handlers: RouteHandler[]);\n    start(driver: object): any;\n    navigate: any;\n    replace: any;\n    back: any;\n    urlMapper: UrlMapper;\n    internalize(url: URL | string): URL | string;\n    externalize(url: URL | string): URL | string;\n    get current(): Route;\n    get pending(): Route;\n    addEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    removeEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    register(handlers: RouteHandler | RouteHandler[]): void;\n    revoke(predicate: (handler: RouteHandler) => boolean): void;\n    captureViewState: (route: Route) => object;\n    restoreViewState: (route: Route, state: object) => void;\n}",
+                    "definition": "export class Router {\n    constructor(handlers: RouteHandler[]);\n    start(driver: object | null): Promise<any>;\n    navigate: (url: URL | string) => Promise<Route>;\n    replace: (url: URL | string) => void;\n    back: () => void;\n    urlMapper: UrlMapper;\n    internalize(url: URL | string): URL | string;\n    externalize(url: URL | string): URL | string;\n    get current(): Route;\n    get pending(): Route;\n    addEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    removeEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;\n    register(handlers: RouteHandler | RouteHandler[]): void;\n    revoke(predicate: (handler: RouteHandler) => boolean): void;\n    captureViewState: (route: Route) => object;\n    restoreViewState: (route: Route, state: object) => void;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nThe Router class - handles URL load requests, creating\nroute objects using route handlers and firing associated\nevents\n"
+                            "text": "\nA Router handles URL load requests, by creating route objects matching them to\nroute handlers and firing associated events.\n"
                         }
                     ],
                     "links": [],
@@ -1823,67 +1889,72 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Constructs a new Router instance\n"
+                                    "text": "\nConstructs a new Router instance\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "An array of router handlers to initially register\n",
+                                    "text": "*\nAn array of router handlers to initially register, however usually\nhandlers are registered using the {@link 0} method.\n",
                                     "type": "RouteHandler[]",
                                     "optional": false,
                                     "name": "handlers",
                                     "specifier": "handlers"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 20605,
+                                    "end": 20628,
+                                    "kind": "link",
+                                    "namepath": "module:@codeonlyjs/core.Router#register"
+                                }
+                            ]
                         },
                         {
                             "kind": "method",
                             "name": "start",
                             "namepath": "module:@codeonlyjs/core.Router#start",
-                            "definition": "start(driver: object): any;",
+                            "definition": "start(driver: object | null): Promise<any>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Starts the router, using the specified driver\n"
+                                    "text": "\nStarts the router, using the specified driver\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The router driver to use\n",
-                                    "type": "object",
+                                    "text": "The router driver to use, or `null` to use the default Web History router driver.\n",
+                                    "type": "object | null",
                                     "optional": false,
                                     "name": "driver",
                                     "specifier": "driver"
                                 },
                                 {
                                     "block": "returns",
-                                    "text": "The result returned from the driver's start method\n",
-                                    "type": "any"
+                                    "text": "The result returned from the driver's start method (usually the initially navigated {@link 0} object).\n",
+                                    "type": "Promise<any>"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 21018,
+                                    "end": 21035,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.Route"
+                                }
+                            ]
                         },
                         {
                             "kind": "property",
                             "name": "navigate",
                             "namepath": "module:@codeonlyjs/core.Router#navigate",
-                            "definition": "navigate: any;",
+                            "definition": "navigate: (url: URL | string) => Promise<Route>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNavigates to a new URL\n"
+                                    "text": "\nNavigates to a new URL.\n"
                                 },
                                 {
-                                    "block": "param",
-                                    "text": "The external URL to navigate to\n",
-                                    "type": "URL | string",
-                                    "optional": false,
-                                    "name": "url",
-                                    "specifier": "url"
-                                },
-                                {
-                                    "block": "returns",
-                                    "text": "",
-                                    "type": "Promise<Route>"
+                                    "block": "type",
+                                    "text": "{(url: URL | string) => Promise<Route>}\n"
                                 }
                             ],
                             "links": []
@@ -1892,24 +1963,15 @@
                             "kind": "property",
                             "name": "replace",
                             "namepath": "module:@codeonlyjs/core.Router#replace",
-                            "definition": "replace: any;",
+                            "definition": "replace: (url: URL | string) => void;",
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nReplaces the current URL, without performing a navigation\n"
+                                    "text": "\nReplaces the current URL, without performing a navigation.\n"
                                 },
                                 {
-                                    "block": "param",
-                                    "text": "The new URL to display\n",
-                                    "type": "URL | string",
-                                    "optional": false,
-                                    "name": "url",
-                                    "specifier": "url"
-                                },
-                                {
-                                    "block": "returns",
-                                    "text": "",
-                                    "type": "void"
+                                    "block": "type",
+                                    "text": "{(url: URL | string) => void} url The new URL to display\n"
                                 }
                             ],
                             "links": []
@@ -1918,16 +1980,15 @@
                             "kind": "property",
                             "name": "back",
                             "namepath": "module:@codeonlyjs/core.Router#back",
-                            "definition": "back: any;",
+                            "definition": "back: () => void;",
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNavigates back one step in the history, or if there is\nno previous history navigates to the root URL\n"
+                                    "text": "\nNavigates back one step in the history, or if there is\nno previous history navigates to the root URL.\n"
                                 },
                                 {
-                                    "block": "returns",
-                                    "text": "",
-                                    "type": "void"
+                                    "block": "type",
+                                    "text": "{() => void}\n"
                                 }
                             ],
                             "links": []
@@ -1940,7 +2001,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nAn option URL mapper to be used for URL internalization and\nexternalization.\n"
+                                    "text": "\nAn optional URL mapper to be used for URL internalization and\nexternalization.\n\n"
                                 },
                                 {
                                     "block": "type",
@@ -1957,7 +2018,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Internalizes a URL\n"
+                                    "text": "\nInternalizes a URL.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -1983,7 +2044,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Externalizes a URL\n"
+                                    "text": "\nExternalizes a URL.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -2013,7 +2074,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "The current route object\n"
+                                            "text": "\nThe current route object.\n"
                                         },
                                         {
                                             "block": "type",
@@ -2037,7 +2098,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "The route currently being navigated to\n"
+                                            "text": "\nThe route currently being navigated to, but not yet committed.\n"
                                         },
                                         {
                                             "block": "type",
@@ -2057,7 +2118,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Adds an event listener\n\nAvailable events are:\n  - \"mayEnter\", \"mayLeave\" (async, cancellable events)\n  - \"didEnter\" and \"didLeave\" (sync, non-cancellable events)\n  - \"cancel\" (sync, notification only)\n\n"
+                                    "text": "\nAdds an event listener.\n\nAvailable events are:\n  - `mayEnter`, `mayLeave` async, cancellable\n  - `didEnter`, `didLeave` sync, non-cancellable\n  - `cancel` - sync, notification only\n\nThe async cancellable events should return `Promise<boolean>` where a\nresolved value of `false` cancels the navigation.\n\nAll event handlers receive two arguments a `from` and `to` route object.  For the\ninitial page load, the `from` parameter will be `null`.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -2086,7 +2147,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Removes a previously added event handler\n\n"
+                                    "text": "\nRemoves a previously registered event handler.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -2115,7 +2176,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Registers one or more route handlers with the router\n"
+                                    "text": "\nRegisters one or more route handlers.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -2136,11 +2197,11 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Revoke previously used handlers by matching to a predicate\n"
+                                    "text": "\nRevoke previously registered handlers that match a predicate callback.\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "Callback passed each route handler, return true to remove\n",
+                                    "text": "Callback passed each route handler, return `true` to remove\n",
                                     "type": "(handler: RouteHandler) => boolean",
                                     "optional": false,
                                     "name": "predicate",
@@ -2157,7 +2218,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "a callback to capture the view state for this route handler's routes\n"
+                                    "text": "\nA callback to capture the view state for a route.\n\n"
                                 },
                                 {
                                     "block": "type",
@@ -2174,7 +2235,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "a callback to restore the view state for this route handler's routes\n"
+                                    "text": "\nA callback to restore the view state for a route.\n\n"
                                 },
                                 {
                                     "block": "type",
@@ -2193,15 +2254,14 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nDefault {@link 0} Instance\n"
+                            "text": "\nDefault {@link 0} instance.\n\nNearly all applications only ever need a single router\ninstance and can use this pre-created instance.\n"
                         }
                     ],
                     "links": [
                         {
-                            "pos": 22333,
-                            "end": 22356,
+                            "pos": 24791,
+                            "end": 24805,
                             "kind": "link",
-                            "title": "Router",
                             "namepath": "module:@codeonlyjs/core.Router"
                         }
                     ]
@@ -2214,7 +2274,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nRepresents a Route instance\n"
+                            "text": "\nRoute objects store information about the current navigation, including the\nURL, the matched handler and anything else the handler wants to associate with\nthe route.\n"
                         }
                     ],
                     "links": [],
@@ -2227,7 +2287,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe route's URL\n"
+                                    "text": "\nThe route's internalized URL.\n"
                                 }
                             ],
                             "links": []
@@ -2240,10 +2300,17 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nState associated with the route\n"
+                                    "text": "\nState associated with the route.\n\nThe router stores important information in the state object so the clients\nshould never edit settings in the state object.  An application can however\nstore additional information in the state object, by setting properties on\nit and then calling the {@link 0} method.\n"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 25652,
+                                    "end": 25678,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.Router#replace"
+                                }
+                            ]
                         },
                         {
                             "kind": "property",
@@ -2253,7 +2320,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nTrue when this is the current route\n"
+                                    "text": "\n`true` when this is the current route.\n\nThere will only ever be one current route.\n"
                                 }
                             ],
                             "links": []
@@ -2266,10 +2333,17 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe handler associated with this route\n"
+                                    "text": "\nThe {@link 0} associated with this route.\n"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 25911,
+                                    "end": 25935,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.RouteHandler"
+                                }
+                            ]
                         },
                         {
                             "kind": "property",
@@ -2279,7 +2353,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe route's view state\n"
+                                    "text": "\nThe route's view state.\n\nThis information will be available on the Route object once\nthe `mayEnter` event has been fired by the Router.\n\nBy default the web history router driver will save and restore the current document\nscroll position but applications can save and restore additional custom information\nas necessary. For more information see [View State Restoration](routerDetails#view-state-restoration).\n"
                                 }
                             ],
                             "links": []
@@ -2292,7 +2366,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe page component for this route\n"
+                                    "text": "\nThe page component for this route.\n\nCodeOnly nevers sets or uses this property, but it is included here because\nby convention, most applications will set a `page` property.\n"
                                 }
                             ],
                             "links": []
@@ -2305,7 +2379,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe route's page title\n"
+                                    "text": "\nThe route's page title\n\nCodeOnly nevers sets or uses this property, but it is included here because\nby convention, most applications will set a `title` property.\n"
                                 }
                             ],
                             "links": []
@@ -2320,10 +2394,17 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nRouteHandlers handle mapping URLs to Route instances\n"
+                            "text": "\nA route handler is an object that handles the navigation to and from a particular URL.\n\nRoute handlers are registered with the router during app startup and are called by the\nrouter when a URL is loaded and needs to be matched to a particular handler.\n\nWhen a route handler matches a URL it will usually store additional information on the\n{@link 0} object that describes the component or page to be displayed for that\nURL along with any other information the handler or the application might find useful.\n\nSee [Route Handlers](routerDetails#route-handlers) for more information.\n"
                         }
                     ],
-                    "links": [],
+                    "links": [
+                        {
+                            "pos": 27465,
+                            "end": 27482,
+                            "kind": "linkcode",
+                            "namepath": "module:@codeonlyjs/core.Route"
+                        }
+                    ],
                     "members": [
                         {
                             "kind": "property",
@@ -2333,10 +2414,17 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nA string pattern or regular expression to match URL pathnames to this route handler\n"
+                                    "text": "\nA string pattern (see {@link 0}) or regular expression to match URL pathnames to this route handler. If not specified, all URL's will match.\n"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 27819,
+                                    "end": 27841,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.urlPattern"
+                                }
+                            ]
                         },
                         {
                             "kind": "property",
@@ -2346,7 +2434,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nA callback to confirm the URL match\n"
+                                    "text": "\nA callback to confirm the URL match. If not specified all URL's matching the pattern will be considered matches.\n"
                                 }
                             ],
                             "links": []
@@ -2359,7 +2447,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies that a route for this handler may be entered\n"
+                                    "text": "\nNotifies that a route for this handler may be entered.\n"
                                 }
                             ],
                             "links": []
@@ -2372,7 +2460,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies that a route for this handler may be left\n"
+                                    "text": "\nNotifies that a route for this handler may be left.\n"
                                 }
                             ],
                             "links": []
@@ -2385,7 +2473,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies that a route for this handler has been entered\n"
+                                    "text": "\nNotifies that a route for this handler has been entered.\n"
                                 }
                             ],
                             "links": []
@@ -2398,7 +2486,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies that a route for this handler has been left\n"
+                                    "text": "\nNotifies that a route for this handler has been left.\n"
                                 }
                             ],
                             "links": []
@@ -2411,7 +2499,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies that a route that could have been entered was cancelled\n"
+                                    "text": "\nNotifies that a route that may have been entered was cancelled.\n"
                                 }
                             ],
                             "links": []
@@ -2424,7 +2512,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nNotifies that a route that could have been left was cancelled\n"
+                                    "text": "\nNotifies that a route that may have been left was cancelled.\n"
                                 }
                             ],
                             "links": []
@@ -2437,7 +2525,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nOrder of this route handler when compared to all others (default = 0, lowest first)\n"
+                                    "text": "\nOrder of this route handler in relation to all others (default = 0, lowest first).\n"
                                 }
                             ],
                             "links": []
@@ -2450,7 +2538,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nA callback to capture the view state for this route handler's routes\n"
+                                    "text": "\nA callback to capture the view state for this route handler's routes.\n"
                                 }
                             ],
                             "links": []
@@ -2463,7 +2551,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nA callback to restore the view state for this route handler's routes\n"
+                                    "text": "\nA callback to restore the view state for this route handler's routes.\n"
                                 }
                             ],
                             "links": []

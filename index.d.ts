@@ -38,10 +38,14 @@ declare module "@codeonlyjs/core" {
          */
         untilLoaded(): Promise<void>;
     }
-    /** Marks a string as being HTML instead of plain text
+    /**
+     * Marks a string as being raw HTML instead of plain text
      *
      * Normally strings passed to templates are treated as plain text.  Wrapping
-     * a value in html() indicates the string should be treated as HTML instead.
+     * a value by calling this function indicates the string should be treated as
+     * raw HTML instead.
+     *
+     * See [Text and HTML](templateText) for more information.
      *
      * @param {string | (...args: any[]) => string} html The HTML value to be wrapped, or a function that returns a string
      * @returns {HtmlString}
@@ -93,6 +97,8 @@ declare module "@codeonlyjs/core" {
      * Components can be used either in the templates of other components
      * or mounted onto the document DOM to appear in a web page.
      *
+     * See also [Component Basics](components).
+     *
      * @extends EventTarget
      */
     export class Component extends EventTarget {
@@ -132,7 +138,9 @@ declare module "@codeonlyjs/core" {
          * @type {boolean}
          */
         static get isSingleRoot(): boolean;
-        /** The template to be used by this component class */
+        /**
+         * The template to be used by this component class
+         */
         static template: {};
         /**
          * Immediately updates this component's DOM elements - even if
@@ -140,37 +148,37 @@ declare module "@codeonlyjs/core" {
          *
          * Does nothing if the component's DOM elements haven't been created.
          *
-         * If the component has been invalidate, returns it to the valid state.
+         * If the component has been invalidated, returns it to the valid state.
          *
-         * This method is bound to the component instance
-         * and can be used as an event listener to update the
+         * This method is bound to the component instance and can be used
+         * directly as the handler for an event listener to update the
          * component when an event is triggered.
          *
          * @returns {void}
          */
         update(): void;
         /**
-         * Marks this component as requiring a DOM update.
+         * Invalidates this component, marking it as requiring a DOM update.
          *
          * Does nothing if the component hasn't yet been created.
          *
-         * This method is bound to the component instance
-         * and can be used as an event listener to invalidate the
+         * This method is bound to the component instance and can be used
+         * directly as the handler for an event listener to invalidate the
          * component when an event is triggered.
          *
          * @returns {void}
          */
         invalidate(): void;
         /**
-         * Ensures the DOM elements of this component have been created.
+         * Ensures this component's {@link DomTree} has been created.
          *
-         * Calling this method does nothing if the component is already created.
+         * Calling this method does nothing if the DomTree is already created.
          *
          * @returns {void}
          */
         create(): void;
         /**
-         * Returns true if this component's DOM elements have been created.
+         * Returns true if this component's {@link DomTree} has been created.
          *
          * @type {boolean}
          */
@@ -182,28 +190,32 @@ declare module "@codeonlyjs/core" {
         */
         get domTree(): DomTree;
         /**
-         * Returns true if this component instance has, and will only ever
-         * have a single root node
+         * Returns true if this component instance is guaranteed to always only
+         * have a single root node.
          *
          * @type {boolean}
          */
         get isSingleRoot(): boolean;
         /**
-         * Returns the single root node of this component if it is a single
-         * root node component.
+         * Returns the single root node of this component (if it is a single
+         * root node component).
          *
          * @type {Node}
          */
         get rootNode(): Node;
         /**
-         * Returns the root nodes of this element, creating them if necessary.
+         * Returns an array of root DOM nodes for this element, creating them if necessary.
          *
          * @type {Node[]}
         */
         get rootNodes(): Node[];
         /**
-         * Indicates if this component is had pending updates due to
-         * previous call to {@linkcode Component#invalidate}.
+         * Indicates if this component in invalid.
+         *
+         * A component is invalid if it has been invalidated by
+         * a previous call to {@linkcode Component#invalidate} and
+         * hasn't yet be updated.
+         *
          * @type {boolean}
          */
         get invalid(): boolean;
@@ -215,32 +227,36 @@ declare module "@codeonlyjs/core" {
          */
         validate(): void;
         /**
-         * Sets the error object associated with the (see {@linkcode Component#load}) operation.
+         * Sets the error object associated with the current call to {@linkcode Component#load}.
+         *
          * @param {Error | null} value The new error object
          */
         set loadError(value: Error | null);
         /**
-         * Gets the error object thrown during the last call to (see {@linkcode Component#load}).
+         * Gets the error object thrown during the last call to {@linkcode Component#load}.
          *
          * @type {Error | null}
         */
         get loadError(): Error | null;
-        /** Indicates if the component is currently in an {@linkcode Component#load} operation
+        /**
+         * Indicates if the component is currently in an {@linkcode Component#load} operation.
          *
          * @type {boolean}
          */
         get loading(): boolean;
-        /** Performs an async data load operation.
+        /**
+         * Performs an async data load operation.
          *
-         * The callback function is typically an async function that performs
-         * a data request.  While in the callback, the {@link Component#loading} property
-         * will return `true`.  If the callback throws an error, it will be captured
-         * to the {@link Component#loadError} property.
+         * The callback function is an async function that performs an async data load.
+         * While in the callback, the {@link Component#loading} property returns `true`.
+         *
+         * If the callback throws an error, it will be captured to the {@link Component#loadError}
+         * property.
          *
          * Before calling and after returning from the callback, the component is
          * invalidated so visual elements (eg: spinners) can be updated.
          *
-         * If the silent parameter is `true` the `loading` property isn't set and
+         * If the silent parameter is `true` the {@link Component#loading} property isn't set and
          * the component is only invalidated after returning from the callback.
          *
          * @param {() => Promise<any>} callback The callback to perform the load operation
@@ -249,7 +265,7 @@ declare module "@codeonlyjs/core" {
          */
         load(callback: () => Promise<any>, silent?: boolean): Promise<any>;
         /**
-         * Destroys this components {@linkcode DomTree} returning it to
+         * Destroys this component's {@linkcode DomTree} returning it to
          * the constructed, but non-created state.
          *
          * A destroyed component can be re-created by remounting it
@@ -262,8 +278,8 @@ declare module "@codeonlyjs/core" {
          * Notifies a component that is has been mounted.
          *
          * Override this method to receive the notification.  External
-         * resources (eg: adding event listeners to external objects) should be
-         * acquired when the component is mounted.
+         * resources should be acquired when the component is mounted.
+         * (eg: adding event listeners to external objects)
          *
          * @returns {void}
          */
@@ -272,8 +288,8 @@ declare module "@codeonlyjs/core" {
          * Notifies a component that is has been unmounted.
          *
          * Override this method to receive the notification.  External
-         * resources (eg: removing event listeners from external objects) should be
-         * released when the component is unmounted.
+         * resources should be released when the component is unmounted.
+         * (eg: removing event listeners from external objects)
          *
          * @returns {void}
          */
@@ -283,8 +299,8 @@ declare module "@codeonlyjs/core" {
          * when the component is mounted, and removed when unmounted.
          *
          * @param {object} target Any object that supports addEventListener and removeEventListener
-         * @param {string} event The event to listen for
-         * @param {Function} [handler] The event listener to add.  If not provided, the component's {@link Component#invalidate} method is used.
+         * @param {string} event The event to listen to
+         * @param {Function} [handler] The event handler to add.  If not provided, the component's {@link Component#invalidate} method is used.
          * @returns {void}
          */
         listen(target: object, event: string, handler?: Function): void;
@@ -292,20 +308,21 @@ declare module "@codeonlyjs/core" {
          * Removes an event listener previously registered with {@link Component#listen}
          *
          * @param {object} target Any object that supports addEventListener and removeEventListener
-         * @param {string} event The event being listened for
-         * @param {Function} [handler] The event listener to remove.  If not provided, the component's {@link Component#invalidate} method is used.
+         * @param {string} event The event being listened to
+         * @param {Function} [handler] The event handler to remove.  If not provided, the component's {@link Component#invalidate} method is used.
          * @returns {void}
          */
         unlisten(target: object, event: string, handler?: Function): void;
         /**
-         * Indicates if the component is current mounted.
+         * Returns `true` if the component is currently mounted.
          *
          * @type {boolean}
          */
         get mounted(): boolean;
         /**
-         * Notifies the object is has been mounted or unmounted
-         * @param {boolean} mounted True when the object has been mounted, false when unmounted
+         * Notifies the object it has been mounted or unmounted
+         *
+         * @param {boolean} mounted `true` if the object has been mounted, `false` if unmounted
          */
         setMounted(mounted: boolean): void;
         /**
@@ -315,13 +332,20 @@ declare module "@codeonlyjs/core" {
          * @returns {void}
          */
         mount(el: Element | string): void;
-        /** Unmounts this component
+        /**
+         * Unmounts this component
          *
          * @returns {void}
          */
         unmount(): void;
     }
-    /** Compiles a template into a domTreeConstructor function
+    /**
+     * Compiles a template into a {@link DomTreeConstructor} function.
+     *
+     * Usually templates are automatically compiled by Components and this
+     * function isn't used directly.   For more information, see
+     * [Template Internals](templateInternals).
+     *
      * @param {object} rootTemplate The template to be compiled
      * @returns {DomTreeConstructor}
      */
@@ -354,7 +378,9 @@ declare module "@codeonlyjs/core" {
         withTransition(context: any): any;
     };
     /**
-     * Transition Options
+     * Options for controlling behaviour of transitions.
+     *
+     * See [Transition Options](templateTransitions#transition-options) for more information.
      */
     export type TransitionOptions = {
         /**
@@ -362,7 +388,7 @@ declare module "@codeonlyjs/core" {
          */
         value: (model: object, context: object) => any;
         /**
-         * Transition order - concurrent, enter-leave or leave-enter
+         * Transition order - "concurrent", "enter-leave" or "leave-enter"
          */
         mode?: string;
         /**
@@ -370,15 +396,15 @@ declare module "@codeonlyjs/core" {
          */
         name?: void;
         /**
-         * A map of class name mappings
+         * A map of class name mappings.
          */
         classNames?: object;
         /**
-         * The duration of the animation in milliseconds
+         * The duration of the animation in milliseconds.
          */
         duration?: number;
         /**
-         * Whether to monitor the element's sub-trees for animations
+         * Whether to monitor the element's sub-trees for animations.
          */
         subtree?: boolean;
     };
@@ -413,6 +439,12 @@ declare module "@codeonlyjs/core" {
     };
     /**
      * Entry point into the fluent template builder API
+     *
+     * The API to the fluent object is dynamic and can't be documented
+     * as a typical API interface.
+     *
+     * See the (Fluent Templates](templateFluent) for how to use this API.
+     *
      * @type {any}
      */
     export let $: any;
@@ -435,45 +467,55 @@ declare module "@codeonlyjs/core" {
      * @returns {string}
      */
     export function htmlEncode(str: string): string;
-    /** Declares additional settings for input bindings
+    /**
+     * Declares additional settings for bi-direction input field binding.
+     *
+     * See {@linkcode InputOptions} for available options.
+     *
+     * See [Input Bindings](templateInput) for more information.
+     *
      * @param {InputOptions} options Additional input options
      * @returns {object}
      */
     export function input(options: InputOptions): object;
     /**
-     * Options for controlling input bindings
+     * Options for controlling input bindings.
+     *
+     * If the {@linkcode InputOptions#get} and {@linkcode InputOptions#set} handlers are specified
+     * they override both {@linkcode InputOptions#target} and {@linkcode InputOptions#prop} which are no
+     * longer used.
      */
     export type InputOptions = {
         /**
-         * The name of the event (usually "change" or "input") to trigger the input binding
+         * The name of the event (usually "change" or "input") to trigger the input binding.  If not specified, "input" is used.
          */
         event: string;
         /**
-         * The name of the property on the target object
+         * The name of the property on the target object.
          */
         prop?: string;
         /**
-         * The target object providing the binding property
+         * The target object providing the binding property.  If not specified, the template's {@linkcode DomTreeContext#model} object is used.
          */
         target?: string | ((model: object) => string);
         /**
-         * Format the property value into a string for display
+         * Format the property value into a string for display.
          */
         format?: (value: any) => string;
         /**
-         * Parse a display string into a property value
+         * Parse a display string into a property value.
          */
         parse?: (value: string) => any;
         /**
-         * Get the value of the property
+         * Get the value of the property.
          */
         get?: (model: any, context: any) => any;
         /**
-         * Set the value of the property
+         * Set the value of the property.
          */
         set?: (model: any, value: any, context: any) => void;
         /**
-         * A callback to be invoked when the property value is changed by the user
+         * A callback to be invoked when the property value is changed by the user.
          */
         on_change?: (model: any, event: Event) => any;
     };
@@ -483,196 +525,264 @@ declare module "@codeonlyjs/core" {
      * @returns {string}
      */
     export function urlPattern(pattern: string): string;
-    /** Implements a simple MRU cache that can be used to cache Page components for route handlers */
+    /**
+     * Implements a simple MRU cache that can be used to cache page components used by route handlers.
+     */
     export class PageCache {
-        /** Constructs a new page cache
+        /**
+         * Constructs a new page cache.
+         *
          * @param {object} options Options controlling the cache
          * @param {number} options.max The maximum number of cache entries to keep
          */
         constructor(options: {
             max: number;
         });
-        /** Get a cached object from the cache, or create a new one
-         * @param {any} key The key for the page
-         * @param {(key: any) => any} factory A callback to create the page item if not in the cache
+        /**
+         * Get an object from the cache, or if no matches found invoke a callback
+         * to create a new instance.
+         *
+         * @param {any} key The key for the page.
+         * @param {(key: any) => any} factory A callback to create the item when not found in the cache.
          * @return {any}
          */
         get(key: any, factory: (key: any) => any): any;
     }
     /**
-     * The Router class - handles URL load requests, creating
-     * route objects using route handlers and firing associated
-     * events
+     * A Router handles URL load requests, by creating route objects matching them to
+     * route handlers and firing associated events.
      */
     export class Router {
-        /** Constructs a new Router instance
-         * @param {RouteHandler[]} handlers An array of router handlers to initially register
+        /**
+         * Constructs a new Router instance
+         *
+         * @param {RouteHandler[]} handlers
+         *
+         * An array of router handlers to initially register, however usually
+         * handlers are registered using the {@link Router#register} method.
          */
         constructor(handlers: RouteHandler[]);
-        /** Starts the router, using the specified driver
-         * @param {object} driver The router driver to use
-         * @returns {any} The result returned from the driver's start method
-         */
-        start(driver: object): any;
         /**
-         * Navigates to a new URL
-         * @param {URL | string} url The external URL to navigate to
-         * @returns {Promise<Route>}
+         * Starts the router, using the specified driver
+         *
+         * @param {object | null} driver The router driver to use, or `null` to use the default Web History router driver.
+         * @returns {Promise<any>} The result returned from the driver's start method (usually the initially navigated {@linkcode Route} object).
          */
-        navigate: any;
+        start(driver: object | null): Promise<any>;
         /**
-         * Replaces the current URL, without performing a navigation
-         * @param {URL | string} url The new URL to display
-         * @returns {void}
+         * Navigates to a new URL.
+         * @type {(url: URL | string) => Promise<Route>}
          */
-        replace: any;
+        navigate: (url: URL | string) => Promise<Route>;
+        /**
+         * Replaces the current URL, without performing a navigation.
+         * @type {(url: URL | string) => void} url The new URL to display
+         */
+        replace: (url: URL | string) => void;
         /**
          * Navigates back one step in the history, or if there is
-         * no previous history navigates to the root URL
-         * @returns {void}
+         * no previous history navigates to the root URL.
+         * @type {() => void}
          */
-        back: any;
+        back: () => void;
         /**
-         * An option URL mapper to be used for URL internalization and
+         * An optional URL mapper to be used for URL internalization and
          * externalization.
+         *
          * @type {UrlMapper}
          */
         urlMapper: UrlMapper;
-        /** Internalizes a URL
+        /**
+         * Internalizes a URL.
+         *
          * @param {URL | string} url The URL to internalize
          * @returns { URL | string}
          */
         internalize(url: URL | string): URL | string;
-        /** Externalizes a URL
+        /**
+         * Externalizes a URL.
+         *
          * @param {URL | string} url The URL to internalize
          * @returns { URL | string}
          */
         externalize(url: URL | string): URL | string;
-        /** The current route object
+        /**
+         * The current route object.
          * @type {Route}
          */
         get current(): Route;
-        /** The route currently being navigated to
+        /**
+         * The route currently being navigated to, but not yet committed.
          * @type {Route}
          */
         get pending(): Route;
-        /** Adds an event listener
+        /**
+         * Adds an event listener.
          *
          * Available events are:
-         *   - "mayEnter", "mayLeave" (async, cancellable events)
-         *   - "didEnter" and "didLeave" (sync, non-cancellable events)
-         *   - "cancel" (sync, notification only)
+         *   - `mayEnter`, `mayLeave` async, cancellable
+         *   - `didEnter`, `didLeave` sync, non-cancellable
+         *   - `cancel` - sync, notification only
+         *
+         * The async cancellable events should return `Promise<boolean>` where a
+         * resolved value of `false` cancels the navigation.
+         *
+         * All event handlers receive two arguments a `from` and `to` route object.  For the
+         * initial page load, the `from` parameter will be `null`.
          *
          * @param {string} event The event to listen to
          * @param {RouterEventAsync | RouterEventSync} handler The event handler function
          */
         addEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;
-        /** Removes a previously added event handler
+        /**
+         * Removes a previously registered event handler.
          *
          * @param {string} event The event to remove the listener for
          * @param {RouterEventAsync | RouterEventSync} handler The event handler function to remove
          */
         removeEventListener(event: string, handler: RouterEventAsync | RouterEventSync): void;
-        /** Registers one or more route handlers with the router
+        /**
+         * Registers one or more route handlers.
+         *
          * @param {RouteHandler | RouteHandler[]} handlers The handler or handlers to register
          */
         register(handlers: RouteHandler | RouteHandler[]): void;
-        /** Revoke previously used handlers by matching to a predicate
-         * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return true to remove
+        /**
+         * Revoke previously registered handlers that match a predicate callback.
+         *
+         * @param {(handler: RouteHandler) => boolean} predicate Callback passed each route handler, return `true` to remove
          */
         revoke(predicate: (handler: RouteHandler) => boolean): void;
-        /** a callback to capture the view state for this route handler's routes
+        /**
+         * A callback to capture the view state for a route.
+         *
          * @type {(route: Route) => object}
          */
         captureViewState: (route: Route) => object;
-        /** a callback to restore the view state for this route handler's routes
+        /**
+         * A callback to restore the view state for a route.
+         *
          * @type {(route: Route, state: object) => void}
          */
         restoreViewState: (route: Route, state: object) => void;
     }
     /**
-     * Default {@link Router | Router} Instance
+     * Default {@link Router} instance.
+     *
+     * Nearly all applications only ever need a single router
+     * instance and can use this pre-created instance.
      */
     export let router: Router;
     /**
-     * Represents a Route instance
+     * Route objects store information about the current navigation, including the
+     * URL, the matched handler and anything else the handler wants to associate with
+     * the route.
      */
     export type Route = {
         /**
-         * The route's URL
+         * The route's internalized URL.
          */
         url: URL;
         /**
-         * State associated with the route
+         * State associated with the route.
+         *
+         * The router stores important information in the state object so the clients
+         * should never edit settings in the state object.  An application can however
+         * store additional information in the state object, by setting properties on
+         * it and then calling the {@linkcode Router#replace} method.
          */
         state: any;
         /**
-         * True when this is the current route
+         * `true` when this is the current route.
+         *
+         * There will only ever be one current route.
          */
         current: boolean;
         /**
-         * The handler associated with this route
+         * The {@linkcode RouteHandler} associated with this route.
          */
         handler: RouteHandler;
         /**
-         * The route's view state
+         * The route's view state.
+         *
+         * This information will be available on the Route object once
+         * the `mayEnter` event has been fired by the Router.
+         *
+         * By default the web history router driver will save and restore the current document
+         * scroll position but applications can save and restore additional custom information
+         * as necessary. For more information see [View State Restoration](routerDetails#view-state-restoration).
          */
         viewState?: any;
         /**
-         * The page component for this route
+         * The page component for this route.
+         *
+         * CodeOnly nevers sets or uses this property, but it is included here because
+         * by convention, most applications will set a `page` property.
          */
         page?: any;
         /**
          * The route's page title
+         *
+         * CodeOnly nevers sets or uses this property, but it is included here because
+         * by convention, most applications will set a `title` property.
          */
         title?: string;
     };
     /**
-     * RouteHandlers handle mapping URLs to Route instances
+     * A route handler is an object that handles the navigation to and from a particular URL.
+     *
+     * Route handlers are registered with the router during app startup and are called by the
+     * router when a URL is loaded and needs to be matched to a particular handler.
+     *
+     * When a route handler matches a URL it will usually store additional information on the
+     * {@linkcode Route} object that describes the component or page to be displayed for that
+     * URL along with any other information the handler or the application might find useful.
+     *
+     * See [Route Handlers](routerDetails#route-handlers) for more information.
      */
     export type RouteHandler = {
         /**
-         * A string pattern or regular expression to match URL pathnames to this route handler
+         * A string pattern (see {@linkcode urlPattern}) or regular expression to match URL pathnames to this route handler. If not specified, all URL's will match.
          */
         pattern?: string | RegExp;
         /**
-         * A callback to confirm the URL match
+         * A callback to confirm the URL match. If not specified all URL's matching the pattern will be considered matches.
          */
         match?: (route: Route) => Promise<boolean>;
         /**
-         * Notifies that a route for this handler may be entered
+         * Notifies that a route for this handler may be entered.
          */
         mayEnter?: (from: Route, to: Route) => Promise<boolean>;
         /**
-         * Notifies that a route for this handler may be left
+         * Notifies that a route for this handler may be left.
          */
         mayLeave?: (from: Route, to: Route) => Promise<boolean>;
         /**
-         * Notifies that a route for this handler has been entered
+         * Notifies that a route for this handler has been entered.
          */
         didEnter?: (from: Route, to: Route) => boolean;
         /**
-         * Notifies that a route for this handler has been left
+         * Notifies that a route for this handler has been left.
          */
         didLeave?: (from: Route, to: Route) => boolean;
         /**
-         * Notifies that a route that could have been entered was cancelled
+         * Notifies that a route that may have been entered was cancelled.
          */
         cancelEnter?: (from: Route, to: Route) => boolean;
         /**
-         * Notifies that a route that could have been left was cancelled
+         * Notifies that a route that may have been left was cancelled.
          */
         cancelLeave?: (from: Route, to: Route) => boolean;
         /**
-         * Order of this route handler when compared to all others (default = 0, lowest first)
+         * Order of this route handler in relation to all others (default = 0, lowest first).
          */
         order?: number;
         /**
-         * A callback to capture the view state for this route handler's routes
+         * A callback to capture the view state for this route handler's routes.
          */
         captureViewState?: (route: Route) => object;
         /**
-         * A callback to restore the view state for this route handler's routes
+         * A callback to restore the view state for this route handler's routes.
          */
         restoreViewState?: (route: Route, state: object) => void;
     };

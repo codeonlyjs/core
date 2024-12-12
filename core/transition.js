@@ -2,14 +2,17 @@ import { TransitionCss } from "./TransitionCss.js";
 
 
 /**
- * Transition Options
+ * Options for controlling behaviour of transitions.
+ * 
+ * See [Transition Options](templateTransitions#transition-options) for more information.
+ * 
  * @typedef TransitionOptions
  * @property {(model:object, context:object) => any} options.value The value callback that triggers the animation when it changes
- * @property {string} [options.mode] Transition order - concurrent, enter-leave or leave-enter
+ * @property {string} [options.mode] Transition order - "concurrent", "enter-leave" or "leave-enter"
  * @property {name} [options.name] Transition name - used as prefix to CSS class names, default = "tx"
- * @property {object} [options.classNames] A map of class name mappings
- * @property {number} [options.duration] The duration of the animation in milliseconds
- * @property {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations
+ * @property {object} [options.classNames] A map of class name mappings.
+ * @property {number} [options.duration] The duration of the animation in milliseconds.
+ * @property {boolean} [options.subtree] Whether to monitor the element's sub-trees for animations.
  */
 
 /** Declares addition settings transition directives

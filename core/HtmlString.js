@@ -33,10 +33,14 @@ export class HtmlString
     }
 }
 
-/** Marks a string as being HTML instead of plain text
+/** 
+ * Marks a string as being raw HTML instead of plain text
  * 
  * Normally strings passed to templates are treated as plain text.  Wrapping
- * a value in html() indicates the string should be treated as HTML instead.
+ * a value by calling this function indicates the string should be treated as 
+ * raw HTML instead.
+ * 
+ * See [Text and HTML](templateText) for more information.
  * 
  * @param {string | (...args: any[]) => string} html The HTML value to be wrapped, or a function that returns a string
  * @returns {HtmlString}

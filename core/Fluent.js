@@ -108,6 +108,12 @@ constructTemplateBuilder.encode = htmlEncode;
 
 /**
  * Entry point into the fluent template builder API
+ * 
+ * The API to the fluent object is dynamic and can't be documented
+ * as a typical API interface.
+ * 
+ * See the (Fluent Templates](templateFluent) for how to use this API.
+ * 
  * @type {any}
  */
 export let $ = new Proxy(constructTemplateBuilder,  RootProxy);

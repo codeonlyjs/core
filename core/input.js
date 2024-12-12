@@ -1,17 +1,28 @@
 /**
- * Options for controlling input bindings
+ * Options for controlling input bindings.
+ * 
+ * If the {@linkcode InputOptions#get} and {@linkcode InputOptions#set} handlers are specified 
+ * they override both {@linkcode InputOptions#target} and {@linkcode InputOptions#prop} which are no 
+ * longer used.
+ * 
  * @typedef {object} InputOptions
- * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding
- * @property {string} [prop] The name of the property on the target object
- * @property {string | (model: object) => string} [target] The target object providing the binding property
- * @property {(value:any) => string} [format] Format the property value into a string for display
- * @property {(value:string) => any} [parse] Parse a display string into a property value
- * @property {(model:any, context:any) => any} [get] Get the value of the property
- * @property {(model:any, value: any, context:any) => void} [set] Set the value of the property
- * @property {(model:any, event: Event) => any} [on_change] A callback to be invoked when the property value is changed by the user
+ * @property {string} event The name of the event (usually "change" or "input") to trigger the input binding.  If not specified, "input" is used.
+ * @property {string} [prop] The name of the property on the target object.
+ * @property {string | (model: object) => string} [target] The target object providing the binding property.  If not specified, the template's {@linkcode DomTreeContext#model} object is used.
+ * @property {(value:any) => string} [format] Format the property value into a string for display.
+ * @property {(value:string) => any} [parse] Parse a display string into a property value.
+ * @property {(model:any, context:any) => any} [get] Get the value of the property.
+ * @property {(model:any, value: any, context:any) => void} [set] Set the value of the property.
+ * @property {(model:any, event: Event) => any} [on_change] A callback to be invoked when the property value is changed by the user.
  */
 
-/** Declares additional settings for input bindings
+/** 
+ * Declares additional settings for bi-direction input field binding.
+ * 
+ * See {@linkcode InputOptions} for available options.
+ * 
+ * See [Input Bindings](templateInput) for more information.
+ * 
  * @param {InputOptions} options Additional input options
  * @returns {object}
  */

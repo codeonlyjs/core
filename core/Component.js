@@ -10,6 +10,8 @@ import { compileTemplate } from "./TemplateCompiler.js";
  *
  * Components can be used either in the templates of other components
  * or mounted onto the document DOM to appear in a web page.
+ * 
+ * See also [Component Basics](components).
  *
  * @extends EventTarget
  */
@@ -84,9 +86,9 @@ export class Component extends EventTarget
     }
 
     /** 
-     * Ensures the DOM elements of this component have been created.
+     * Ensures this component's {@link DomTree} has been created.
      * 
-     * Calling this method does nothing if the component is already created.
+     * Calling this method does nothing if the DomTree is already created.
      * 
      * @returns {void}
      */
@@ -97,7 +99,7 @@ export class Component extends EventTarget
     }
 
     /** 
-     * Returns true if this component's DOM elements have been created.
+     * Returns true if this component's {@link DomTree} has been created.
      * 
      * @type {boolean}
      */
@@ -120,8 +122,8 @@ export class Component extends EventTarget
     #domTree;
     
     /** 
-     * Returns true if this component instance has, and will only ever 
-     * have a single root node
+     * Returns true if this component instance is guaranteed to always only
+     * have a single root node.
      * 
      * @type {boolean}
      */
@@ -131,8 +133,8 @@ export class Component extends EventTarget
     }
 
     /** 
-     * Returns the single root node of this component if it is a single 
-     * root node component.
+     * Returns the single root node of this component (if it is a single 
+     * root node component).
      * 
      * @type {Node}
      */
@@ -145,7 +147,7 @@ export class Component extends EventTarget
     }
 
     /** 
-     * Returns the root nodes of this element, creating them if necessary.
+     * Returns an array of root DOM nodes for this element, creating them if necessary.
      * 
      * @type {Node[]}
     */
@@ -160,8 +162,12 @@ export class Component extends EventTarget
     #invalid = false;
 
     /** 
-     * Indicates if this component is had pending updates due to 
-     * previous call to {@linkcode Component#invalidate}.
+     * Indicates if this component in invalid.
+     * 
+     * A component is invalid if it has been invalidated by 
+     * a previous call to {@linkcode Component#invalidate} and 
+     * hasn't yet be updated.
+     * 
      * @type {boolean}
      */
     get invalid()
@@ -171,12 +177,12 @@ export class Component extends EventTarget
 
 
     /** 
-     * Marks this component as requiring a DOM update.
+     * Invalidates this component, marking it as requiring a DOM update.
      * 
      * Does nothing if the component hasn't yet been created.
      * 
-     * This method is bound to the component instance
-     * and can be used as an event listener to invalidate the
+     * This method is bound to the component instance and can be used 
+     * directly as the handler for an event listener to invalidate the
      * component when an event is triggered.
      * 
      * @returns {void}
@@ -243,10 +249,10 @@ export class Component extends EventTarget
      * 
      * Does nothing if the component's DOM elements haven't been created.
      * 
-     * If the component has been invalidate, returns it to the valid state.
+     * If the component has been invalidated, returns it to the valid state.
      * 
-     * This method is bound to the component instance
-     * and can be used as an event listener to update the
+     * This method is bound to the component instance and can be used 
+     * directly as the handler for an event listener to update the
      * component when an event is triggered.
      *
      * @returns {void}
@@ -262,7 +268,7 @@ export class Component extends EventTarget
 
     
     /** 
-     * Gets the error object thrown during the last call to (see {@linkcode Component#load}).
+     * Gets the error object thrown during the last call to {@linkcode Component#load}.
      * 
      * @type {Error | null}
     */
@@ -272,7 +278,8 @@ export class Component extends EventTarget
     }
     
     /** 
-     * Sets the error object associated with the (see {@linkcode Component#load}) operation.
+     * Sets the error object associated with the current call to {@linkcode Component#load}.
+     * 
      * @param {Error | null} value The new error object
      */
     set loadError(value)
@@ -284,7 +291,8 @@ export class Component extends EventTarget
         
     #loading = 0;
 
-    /** Indicates if the component is currently in an {@linkcode Component#load} operation
+    /** 
+     * Indicates if the component is currently in an {@linkcode Component#load} operation.
      * 
      * @type {boolean}
      */
@@ -293,17 +301,19 @@ export class Component extends EventTarget
         return this.#loading != 0;
     }
 
-    /** Performs an async data load operation.
+    /** 
+     * Performs an async data load operation.
      * 
-     * The callback function is typically an async function that performs
-     * a data request.  While in the callback, the {@link Component#loading} property
-     * will return `true`.  If the callback throws an error, it will be captured
-     * to the {@link Component#loadError} property.
+     * The callback function is an async function that performs an async data load.
+     * While in the callback, the {@link Component#loading} property returns `true`.  
+     * 
+     * If the callback throws an error, it will be captured to the {@link Component#loadError} 
+     * property.
      * 
      * Before calling and after returning from the callback, the component is
      * invalidated so visual elements (eg: spinners) can be updated.
      * 
-     * If the silent parameter is `true` the `loading` property isn't set and
+     * If the silent parameter is `true` the {@link Component#loading} property isn't set and
      * the component is only invalidated after returning from the callback.
      * 
      * @param {() => Promise<any>} callback The callback to perform the load operation
@@ -349,7 +359,7 @@ export class Component extends EventTarget
 
 
     /** 
-     * Destroys this components {@linkcode DomTree} returning it to 
+     * Destroys this component's {@linkcode DomTree} returning it to 
      * the constructed, but non-created state.
      * 
      * A destroyed component can be re-created by remounting it
@@ -370,8 +380,8 @@ export class Component extends EventTarget
      * Notifies a component that is has been mounted.
      * 
      * Override this method to receive the notification.  External
-     * resources (eg: adding event listeners to external objects) should be 
-     * acquired when the component is mounted.
+     * resources should be acquired when the component is mounted.
+     * (eg: adding event listeners to external objects)
      * 
      * @returns {void}
      */
@@ -383,8 +393,8 @@ export class Component extends EventTarget
      * Notifies a component that is has been unmounted.
      * 
      * Override this method to receive the notification.  External
-     * resources (eg: removing event listeners from external objects) should be 
-     * released when the component is unmounted.
+     * resources should be released when the component is unmounted.
+     * (eg: removing event listeners from external objects) 
      * 
      * @returns {void}
      */
@@ -400,8 +410,8 @@ export class Component extends EventTarget
      * when the component is mounted, and removed when unmounted.
      * 
      * @param {object} target Any object that supports addEventListener and removeEventListener
-     * @param {string} event The event to listen for
-     * @param {Function} [handler] The event listener to add.  If not provided, the component's {@link Component#invalidate} method is used.
+     * @param {string} event The event to listen to
+     * @param {Function} [handler] The event handler to add.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     listen(target, event, handler)
@@ -423,8 +433,8 @@ export class Component extends EventTarget
      * Removes an event listener previously registered with {@link Component#listen}
      * 
      * @param {object} target Any object that supports addEventListener and removeEventListener
-     * @param {string} event The event being listened for
-     * @param {Function} [handler] The event listener to remove.  If not provided, the component's {@link Component#invalidate} method is used.
+     * @param {string} event The event being listened to
+     * @param {Function} [handler] The event handler to remove.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
      */
     unlisten(target, event, handler)
@@ -445,7 +455,7 @@ export class Component extends EventTarget
     }
 
     /** 
-     * Indicates if the component is current mounted.
+     * Returns `true` if the component is currently mounted.
      * 
      * @type {boolean}
      */
@@ -458,8 +468,9 @@ export class Component extends EventTarget
 
     
     /**
-     * Notifies the object is has been mounted or unmounted
-     * @param {boolean} mounted True when the object has been mounted, false when unmounted
+     * Notifies the object it has been mounted or unmounted
+     * 
+     * @param {boolean} mounted `true` if the object has been mounted, `false` if unmounted
      */
     setMounted(mounted)
     {
@@ -503,7 +514,8 @@ export class Component extends EventTarget
         coenv.mount(this, el);
     }
 
-    /** Unmounts this component
+    /** 
+     * Unmounts this component
      * 
      * @returns {void}
      */
@@ -512,6 +524,8 @@ export class Component extends EventTarget
         coenv.unmount(this);
     }
 
-    /** The template to be used by this component class */
+    /** 
+     * The template to be used by this component class 
+     */
     static template = {};
 }

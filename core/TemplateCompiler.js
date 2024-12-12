@@ -757,7 +757,13 @@ function compileTemplateCode(rootTemplate, compilerOptions)
 
 let _nextInstanceId = 1;
 
-/** Compiles a template into a domTreeConstructor function
+/** 
+ * Compiles a template into a {@link DomTreeConstructor} function.
+ * 
+ * Usually templates are automatically compiled by Components and this
+ * function isn't used directly.   For more information, see 
+ * [Template Internals](templateInternals).
+ * 
  * @param {object} rootTemplate The template to be compiled
  * @returns {DomTreeConstructor}
  */
