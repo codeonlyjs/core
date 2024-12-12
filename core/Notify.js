@@ -1,5 +1,10 @@
 /**
- * Implements a simple notification and broadcast service
+ * Creates a new notify service instance.
+ * 
+ * Usuauly notify instances don't need to be created and the
+ * default {@link notify} instance can be used directly.
+ * 
+ * @returns {INotify}
  */
 export function Notify()
 {
@@ -67,4 +72,8 @@ export function Notify()
 }
 
 // Default instance of update manager
+/**
+ * Default {@link Notify | Notify} Instance
+ * @type {INotify}
+ */
 export let notify = new Notify();

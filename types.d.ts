@@ -1,6 +1,36 @@
 declare module "types" 
 {
     /**
+     * Interface to a notify service instance
+     */
+    export type INotify =
+    {
+        /**
+         * Fires a notification
+         * @param {any} sourceObject The source object or value of the event
+         * @param {any[]} args Optional arguments to pass to the event handlers
+         * @returns {void}
+         */
+        (sourceObject: any, ...args: any[]): void;
+
+        /**
+         * Adds an event listener to the notify servers
+         * @param {any} sourceObject The source object or value to listen to
+         * @param {(sourceObject, ...args) => void} handler The event handler
+         * @returns {void}
+         */
+        addEventListener: (sourceObject: any, handler: any) => void;
+
+        /**
+         * Removes previously registered event listener to the notify servers
+         * @param {any} sourceObject The source object or value to listen to
+         * @param {(sourceObject, ...args) => void} handler The event handler
+         * @returns {void}
+         */
+        removeEventListener: (sourceObject: any, handler: any) => void;
+    }
+
+    /**
      * Component Like Object.  Minimumm requirement for any
      * object to be hosted by a template
      */

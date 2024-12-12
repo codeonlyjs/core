@@ -375,11 +375,11 @@
                     "kind": "class",
                     "name": "Component",
                     "namepath": "module:@codeonlyjs/core.Component",
-                    "definition": "export class Component extends EventTarget {\n    static get domTreeConstructor(): DomTreeConstructor;\n    static onProvideDomTreeConstructor(): import(\"core/TemplateCompiler\").DomTreeConstructor;\n    static onProvideTemplate(): {};\n    static get isSingleRoot(): boolean;\n    static template: {};\n    update(): void;\n    invalidate(): void;\n    create(): void;\n    get created(): boolean;\n    get domTree(): DomTree;\n    get isSingleRoot(): boolean;\n    get rootNode(): Node;\n    get rootNodes(): Node[];\n    get invalid(): boolean;\n    validate(): void;\n    set loadError(value: Error | null);\n    get loadError(): Error;\n    get loading(): boolean;\n    load(callback: () => any, silent?: boolean): any;\n    destroy(): void;\n    onMount(): void;\n    onUnmount(): void;\n    listen(target: EventTarget, event: string, handler?: Function): void;\n    unlisten(target: EventTarget, event: string, handler?: Function): void;\n    get mounted(): boolean;\n    setMounted(mounted: boolean): void;\n    mount(el: Element | string): void;\n    unmount(): void;\n}",
+                    "definition": "export class Component extends EventTarget {\n    static get domTreeConstructor(): DomTreeConstructor;\n    static onProvideDomTreeConstructor(): DomTreeConstructor;\n    static onProvideTemplate(): {};\n    static get isSingleRoot(): boolean;\n    static template: {};\n    update(): void;\n    invalidate(): void;\n    create(): void;\n    get created(): boolean;\n    get domTree(): DomTree;\n    get isSingleRoot(): boolean;\n    get rootNode(): Node;\n    get rootNodes(): Node[];\n    get invalid(): boolean;\n    validate(): void;\n    set loadError(value: Error | null);\n    get loadError(): Error | null;\n    get loading(): boolean;\n    load(callback: () => Promise<any>, silent?: boolean): Promise<any>;\n    destroy(): void;\n    onMount(): void;\n    onUnmount(): void;\n    listen(target: object, event: string, handler?: Function): void;\n    unlisten(target: object, event: string, handler?: Function): void;\n    get mounted(): boolean;\n    setMounted(mounted: boolean): void;\n    mount(el: Element | string): void;\n    unmount(): void;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nComponents are the primary building block for constructing CodeOnly\napplications. They encapsulate program logic, a DOM (aka HTML) template\nand an optional a set of CSS styles.\n\nComponents can be used either in the templates of other components\nor mounted onto the document DOM to appear in a web page.\n\n"
+                            "text": "\nComponents are the primary building block for constructing CodeOnly\napplications. They encapsulate program logic, a DOM template\nand an optional a set of CSS styles.\n\nComponents can be used either in the templates of other components\nor mounted onto the document DOM to appear in a web page.\n\n"
                         },
                         {
                             "block": "extends",
@@ -402,14 +402,33 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Gets the `domTreeConstructor` for this component class.\n\nA `domTreeConstructor` is the constructor function used to\ncreate `domTree` instances for this component class.\n\nThe first time this property is accessed, it calls the\nstatic `onProvideDomTreeConstructor` method to actually provide the\ninstance.\n"
+                                            "text": "\nGets the {@link 0} for this component class.\n\nThe DomTreeConstructor is the constructor function used to\ncreate {@link 1} instances for this component class.\n\nThe first time this property is accessed, it calls the\nstatic {@link 2} method to\nprovide the instance.\n\n"
                                         },
                                         {
                                             "block": "type",
                                             "text": "{DomTreeConstructor}\n"
                                         }
                                     ],
-                                    "links": []
+                                    "links": [
+                                        {
+                                            "pos": 3745,
+                                            "end": 3775,
+                                            "kind": "linkcode",
+                                            "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
+                                        },
+                                        {
+                                            "pos": 3901,
+                                            "end": 3920,
+                                            "kind": "linkcode",
+                                            "namepath": "module:@codeonlyjs/core.DomTree"
+                                        },
+                                        {
+                                            "pos": 4052,
+                                            "end": 4101,
+                                            "kind": "linkcode",
+                                            "namepath": "module:@codeonlyjs/core.Component.onProvideDomTreeConstructor"
+                                        }
+                                    ]
                                 }
                             ],
                             "namepath": "module:@codeonlyjs/core.Component.domTreeConstructor"
@@ -419,19 +438,26 @@
                             "static": true,
                             "name": "onProvideDomTreeConstructor",
                             "namepath": "module:@codeonlyjs/core.Component.onProvideDomTreeConstructor",
-                            "definition": "static onProvideDomTreeConstructor(): import(\"core/TemplateCompiler\").DomTreeConstructor;",
+                            "definition": "static onProvideDomTreeConstructor(): DomTreeConstructor;",
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Provides the `domTreeConstructor` to be used by this component class.\n\nThis method is only called once per component class and should provide\na constructor function that can create `domTree` instances.\n"
+                                    "text": "\nProvides the {@link 0} to be used by this\ncomponent class.\n\nThis method is called once per component class and should provide\na constructor function that can create DomTree instances.\n"
                                 },
                                 {
                                     "block": "returns",
                                     "text": "",
-                                    "type": "import(\"./TemplateCompiler\").DomTreeConstructor"
+                                    "type": "DomTreeConstructor"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 4303,
+                                    "end": 4333,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
+                                }
+                            ]
                         },
                         {
                             "kind": "method",
@@ -442,7 +468,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Provides the template to be used by this component class.\n\nThis method is only called once per component class and should provide\nthe template to be compiled for this component class\n"
+                                    "text": "\nProvides the template to be used by this component class.\n\nThis method is called once per component class and should provide\nthe template to be compiled for this component class.\n"
                                 }
                             ],
                             "links": []
@@ -461,7 +487,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Indicates if instances of this component class will be guaranteed\nto only ever have a single root node\n\n"
+                                            "text": "\nReturns `true` if every instance of this component class will only\never have a single root node.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -495,7 +521,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Immediately updates this component's DOM elements - even if\nthe component is not marked as invalid.\n\nDoes nothing if the component's DOM elements haven't been created.\n\nIf the component is marked as invalid, returns it to the valid state.\n\nThis method is implicitly bound to the component instance\nand can be used as an event listener to update the\ncomponent when an event is triggered.\n\n"
+                                    "text": "\nImmediately updates this component's DOM elements - even if\nthe component is not marked as invalid.\n\nDoes nothing if the component's DOM elements haven't been created.\n\nIf the component has been invalidate, returns it to the valid state.\n\nThis method is bound to the component instance\nand can be used as an event listener to update the\ncomponent when an event is triggered.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -513,7 +539,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Marks this component as requiring a DOM update.\n\nDoes nothing if the component hasn't yet been created.\n\nThis method is implicitly bound to the component instance\nand can be used as an event listener to invalidate the\ncomponent when an event is triggered.\n\n"
+                                    "text": "\nMarks this component as requiring a DOM update.\n\nDoes nothing if the component hasn't yet been created.\n\nThis method is bound to the component instance\nand can be used as an event listener to invalidate the\ncomponent when an event is triggered.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -531,7 +557,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Ensures the DOM elements of this component are created.\n\nCalling this method does nothing if the component is already created.\n\n"
+                                    "text": "\nEnsures the DOM elements of this component have been created.\n\nCalling this method does nothing if the component is already created.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -553,7 +579,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Returns true if this component's DOM elements have been created\n\n"
+                                            "text": "\nReturns true if this component's DOM elements have been created.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -577,14 +603,21 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nGets the `domTree` for this component, creating it if necessary\n\n"
+                                            "text": "\nGets the {@link 0} for this component, creating it if necessary.\n\n"
                                         },
                                         {
                                             "block": "type",
                                             "text": "{DomTree}\n"
                                         }
                                     ],
-                                    "links": []
+                                    "links": [
+                                        {
+                                            "pos": 6691,
+                                            "end": 6710,
+                                            "kind": "linkcode",
+                                            "namepath": "module:@codeonlyjs/core.DomTree"
+                                        }
+                                    ]
                                 }
                             ],
                             "namepath": "module:@codeonlyjs/core.Component#domTree"
@@ -601,7 +634,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Returns true if this component instance has, and will only ever\nhave a single root node\n\n"
+                                            "text": "\nReturns true if this component instance has, and will only ever\nhave a single root node\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -625,7 +658,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Returns the single root node of this component (if it is a single\nroot node component)\n\n"
+                                            "text": "\nReturns the single root node of this component if it is a single\nroot node component.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -649,7 +682,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Returns the root nodes of this element\n\n"
+                                            "text": "\nReturns the root nodes of this element, creating them if necessary.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -673,14 +706,21 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Indicates if this component is currently marked as invalid\n"
+                                            "text": "\nIndicates if this component is had pending updates due to\nprevious call to {@link 0}.\n"
                                         },
                                         {
                                             "block": "type",
                                             "text": "{boolean}\n"
                                         }
                                     ],
-                                    "links": []
+                                    "links": [
+                                        {
+                                            "pos": 7525,
+                                            "end": 7557,
+                                            "kind": "linkcode",
+                                            "namepath": "module:@codeonlyjs/core.Component#invalidate"
+                                        }
+                                    ]
                                 }
                             ],
                             "namepath": "module:@codeonlyjs/core.Component#invalid"
@@ -693,7 +733,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Updates this component if it's marked as invalid\n\n"
+                                    "text": "\nUpdates this component if it has been marked as invalid\nby a previous call to {@link 0}.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -701,7 +741,14 @@
                                     "type": "void"
                                 }
                             ],
-                            "links": []
+                            "links": [
+                                {
+                                    "pos": 7742,
+                                    "end": 7774,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.Component#invalidate"
+                                }
+                            ]
                         },
                         {
                             "kind": "property",
@@ -711,22 +758,22 @@
                                     "kind": "get",
                                     "name": "loadError",
                                     "namepath": "module:@codeonlyjs/core.Component#loadError.get",
-                                    "definition": "get loadError(): Error;",
+                                    "definition": "get loadError(): Error | null;",
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Gets the error object (if any) that was thrown during the last async data {@link 0} operation.\n\n"
+                                            "text": "\nGets the error object thrown during the last call to (see {@link 0}).\n\n"
                                         },
                                         {
                                             "block": "type",
-                                            "text": "{Error}\n"
+                                            "text": "{Error | null}\n"
                                         }
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7896,
-                                            "end": 7918,
-                                            "kind": "link",
+                                            "pos": 8158,
+                                            "end": 8184,
+                                            "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
                                     ]
@@ -739,7 +786,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "\nSets the error object associated with the current async data {@link 0} operation.\n"
+                                            "text": "\nSets the error object associated with the (see {@link 0}) operation.\n"
                                         },
                                         {
                                             "block": "param",
@@ -752,9 +799,9 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7660,
-                                            "end": 7682,
-                                            "kind": "link",
+                                            "pos": 7922,
+                                            "end": 7948,
+                                            "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
                                     ]
@@ -774,7 +821,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Indicates if the component is currently in an async data {@link 0} operation\n\n"
+                                            "text": "Indicates if the component is currently in an {@link 0} operation\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -783,9 +830,9 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 8078,
-                                            "end": 8100,
-                                            "kind": "link",
+                                            "pos": 8338,
+                                            "end": 8364,
+                                            "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
                                     ]
@@ -797,7 +844,7 @@
                             "kind": "method",
                             "name": "load",
                             "namepath": "module:@codeonlyjs/core.Component#load",
-                            "definition": "load(callback: () => any, silent?: boolean): any;",
+                            "definition": "load(callback: () => Promise<any>, silent?: boolean): Promise<any>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -806,7 +853,7 @@
                                 {
                                     "block": "param",
                                     "text": "The callback to perform the load operation\n",
-                                    "type": "LoadCallback",
+                                    "type": "() => Promise<any>",
                                     "optional": false,
                                     "name": "callback",
                                     "specifier": "callback"
@@ -822,19 +869,19 @@
                                 {
                                     "block": "returns",
                                     "text": "The result of the callback\n",
-                                    "type": "any"
+                                    "type": "Promise<any>"
                                 }
                             ],
                             "links": [
                                 {
-                                    "pos": 8472,
-                                    "end": 8497,
+                                    "pos": 8652,
+                                    "end": 8677,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loading"
                                 },
                                 {
-                                    "pos": 8610,
-                                    "end": 8637,
+                                    "pos": 8790,
+                                    "end": 8817,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loadError"
                                 }
@@ -848,7 +895,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Destroys this components `domTree` returning it to\nthe constructed but not created state.\n\nA destroyed component can be recreated by remounting it\nor by calling its {@link 0} method.\n\n"
+                                    "text": "\nDestroys this components {@link 0} returning it to\nthe constructed, but non-created state.\n\nA destroyed component can be re-created by remounting it\nor by calling its {@link 1} method.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -858,8 +905,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 9498,
-                                    "end": 9522,
+                                    "pos": 9539,
+                                    "end": 9558,
+                                    "kind": "linkcode",
+                                    "namepath": "module:@codeonlyjs/core.DomTree"
+                                },
+                                {
+                                    "pos": 9734,
+                                    "end": 9758,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#create"
                                 }
@@ -873,7 +926,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Notifies a component that is has been mounted\n\nOverride this method to receive the notification.  External\nresources (eg: adding event listeners to external objects) should be\nacquired when the component is mounted.\n\n"
+                                    "text": "\nNotifies a component that is has been mounted.\n\nOverride this method to receive the notification.  External\nresources (eg: adding event listeners to external objects) should be\nacquired when the component is mounted.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -891,7 +944,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Notifies a component that is has been mounted\n\nOverride this method to receive the notification.  External\nresources (eg: removing event listeners from external objects) should be\nreleased when the component is unmounted.\n\n"
+                                    "text": "\nNotifies a component that is has been unmounted.\n\nOverride this method to receive the notification.  External\nresources (eg: removing event listeners from external objects) should be\nreleased when the component is unmounted.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -905,16 +958,16 @@
                             "kind": "method",
                             "name": "listen",
                             "namepath": "module:@codeonlyjs/core.Component#listen",
-                            "definition": "listen(target: EventTarget, event: string, handler?: Function): void;",
+                            "definition": "listen(target: object, event: string, handler?: Function): void;",
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Registers an event listener to be added to an object when\nautomatically when the component is mounted, and removed when\nunmounted\n\n"
+                                    "text": "\nRegisters an event listener to be automatically added to an object when\nwhen the component is mounted, and removed when unmounted.\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The object dispatching the events\n",
-                                    "type": "EventTarget",
+                                    "text": "Any object that supports addEventListener and removeEventListener\n",
+                                    "type": "object",
                                     "optional": false,
                                     "name": "target",
                                     "specifier": "target"
@@ -929,7 +982,7 @@
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The event listener to add/remove.  If not provided, the component's {@link 0} method is used.\n",
+                                    "text": "The event listener to add.  If not provided, the component's {@link 0} method is used.\n",
                                     "type": "Function",
                                     "optional": true,
                                     "name": "handler",
@@ -943,8 +996,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 10718,
-                                    "end": 10746,
+                                    "pos": 11001,
+                                    "end": 11029,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -954,23 +1007,23 @@
                             "kind": "method",
                             "name": "unlisten",
                             "namepath": "module:@codeonlyjs/core.Component#unlisten",
-                            "definition": "unlisten(target: EventTarget, event: string, handler?: Function): void;",
+                            "definition": "unlisten(target: object, event: string, handler?: Function): void;",
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Removes an event listener previously registered with {@link 0}\n\n"
+                                    "text": "\nRemoves an event listener previously registered with {@link 0}\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The object dispatching the events\n",
-                                    "type": "EventTarget",
+                                    "text": "Any object that supports addEventListener and removeEventListener\n",
+                                    "type": "object",
                                     "optional": false,
                                     "name": "target",
                                     "specifier": "target"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The event to listen for\n",
+                                    "text": "The event being listened for\n",
                                     "type": "string",
                                     "optional": false,
                                     "name": "event",
@@ -978,7 +1031,7 @@
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The event listener to add/remove.  If not\nprovided, the component's {@link 1} method is used.\n",
+                                    "text": "The event listener to remove.  If not provided, the component's {@link 1} method is used.\n",
                                     "type": "Function",
                                     "optional": true,
                                     "name": "handler",
@@ -992,14 +1045,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 10945,
-                                    "end": 10969,
+                                    "pos": 11234,
+                                    "end": 11258,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#listen"
                                 },
                                 {
-                                    "pos": 11229,
-                                    "end": 11257,
+                                    "pos": 11535,
+                                    "end": 11563,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -1017,7 +1070,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Indicates if the component is current mounted.\n\n"
+                                            "text": "\nIndicates if the component is current mounted.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -1058,7 +1111,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Mounts this component against an element in the document.\n\n"
+                                    "text": "\nMounts this component against an element in the document.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -1408,35 +1461,71 @@
                     ]
                 },
                 {
-                    "kind": "let",
+                    "kind": "variable",
                     "name": "$",
                     "namepath": "module:@codeonlyjs/core.$",
-                    "definition": "$: any"
-                },
-                {
-                    "kind": "function",
-                    "name": "Notify",
-                    "namepath": "module:@codeonlyjs/core.Notify",
-                    "definition": "export function Notify(): {\n    (sourceObject: any, ...args: any[]): void;\n    addEventListener: (sourceObject: any, handler: any) => void;\n    removeEventListener: (sourceObject: any, handler: any) => void;\n};",
+                    "definition": "export let $: any;",
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nImplements a simple notification and broadcast service\n"
+                            "text": "\nEntry point into the fluent template builder API\n"
+                        },
+                        {
+                            "block": "type",
+                            "text": "{any}\n"
                         }
                     ],
                     "links": []
                 },
                 {
-                    "kind": "variables",
-                    "declarations": [
+                    "kind": "function",
+                    "name": "Notify",
+                    "namepath": "module:@codeonlyjs/core.Notify",
+                    "definition": "export function Notify(): INotify;",
+                    "jsdoc": [
                         {
-                            "kind": "let",
-                            "name": "notify",
-                            "namepath": "module:@codeonlyjs/core.notify",
-                            "definition": "notify: any"
+                            "kind": null,
+                            "text": "\nCreates a new notify service instance.\n\nUsuauly notify instances don't need to be created and the\ndefault {@link 0} instance can be used directly.\n\n"
+                        },
+                        {
+                            "block": "returns",
+                            "text": "",
+                            "type": "INotify"
                         }
                     ],
-                    "definition": "export let notify: any;"
+                    "links": [
+                        {
+                            "pos": 15776,
+                            "end": 15790,
+                            "kind": "link",
+                            "namepath": "module:@codeonlyjs/core.notify"
+                        }
+                    ]
+                },
+                {
+                    "kind": "variable",
+                    "name": "notify",
+                    "namepath": "module:@codeonlyjs/core.notify",
+                    "definition": "export let notify: INotify;",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nDefault {@link 0} Instance\n"
+                        },
+                        {
+                            "block": "type",
+                            "text": "{INotify}\n"
+                        }
+                    ],
+                    "links": [
+                        {
+                            "pos": 15925,
+                            "end": 15948,
+                            "kind": "link",
+                            "title": "Notify",
+                            "namepath": "module:@codeonlyjs/core.Notify"
+                        }
+                    ]
                 },
                 {
                     "kind": "function",
@@ -2097,27 +2186,22 @@
                     ]
                 },
                 {
-                    "kind": "variables",
-                    "declarations": [
-                        {
-                            "kind": "let",
-                            "name": "router",
-                            "namepath": "module:@codeonlyjs/core.router",
-                            "definition": "router: Router"
-                        }
-                    ],
+                    "kind": "variable",
+                    "name": "router",
+                    "namepath": "module:@codeonlyjs/core.router",
                     "definition": "export let router: Router;",
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "The default {@link 0} instance "
+                            "text": "\nDefault {@link 0} Instance\n"
                         }
                     ],
                     "links": [
                         {
-                            "pos": 21867,
-                            "end": 21881,
+                            "pos": 22333,
+                            "end": 22356,
                             "kind": "link",
+                            "title": "Router",
                             "namepath": "module:@codeonlyjs/core.Router"
                         }
                     ]
@@ -3032,6 +3116,122 @@
                         }
                     ],
                     "links": []
+                },
+                {
+                    "kind": "type-alias",
+                    "name": "INotify",
+                    "namepath": "module:@codeonlyjs/core.INotify",
+                    "definition": "export type INotify =\n{\n    (sourceObject: any, ...args: any[]): void;\n    addEventListener: (sourceObject: any, handler: any) => void;\n    removeEventListener: (sourceObject: any, handler: any) => void;\n}",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nInterface to a notify service instance\n"
+                        }
+                    ],
+                    "links": [],
+                    "members": [
+                        {
+                            "kind": "call-signature",
+                            "name": "(call signature)",
+                            "definition": "(sourceObject: any, ...args: any[]): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nFires a notification\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The source object or value of the event\n",
+                                    "type": "any",
+                                    "optional": false,
+                                    "name": "sourceObject",
+                                    "specifier": "sourceObject"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "Optional arguments to pass to the event handlers\n",
+                                    "type": "any[]",
+                                    "optional": false,
+                                    "name": "args",
+                                    "specifier": "args"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "void"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "addEventListener",
+                            "namepath": "module:@codeonlyjs/core.INotify#addEventListener",
+                            "definition": "addEventListener: (sourceObject: any, handler: any) => void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nAdds an event listener to the notify servers\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The source object or value to listen to\n",
+                                    "type": "any",
+                                    "optional": false,
+                                    "name": "sourceObject",
+                                    "specifier": "sourceObject"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The event handler\n",
+                                    "type": "(sourceObject, ...args) => void",
+                                    "optional": false,
+                                    "name": "handler",
+                                    "specifier": "handler"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "void"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "removeEventListener",
+                            "namepath": "module:@codeonlyjs/core.INotify#removeEventListener",
+                            "definition": "removeEventListener: (sourceObject: any, handler: any) => void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nRemoves previously registered event listener to the notify servers\n"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The source object or value to listen to\n",
+                                    "type": "any",
+                                    "optional": false,
+                                    "name": "sourceObject",
+                                    "specifier": "sourceObject"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "The event handler\n",
+                                    "type": "(sourceObject, ...args) => void",
+                                    "optional": false,
+                                    "name": "handler",
+                                    "specifier": "handler"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "void"
+                                }
+                            ],
+                            "links": []
+                        }
+                    ]
                 },
                 {
                     "kind": "interface",

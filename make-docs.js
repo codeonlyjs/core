@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { parseNamePath } from "@toptensoftware/jsdoc";
 
 let groups = [
     {
@@ -10,7 +11,7 @@ let groups = [
             "anyPendingFrames", 
             "htmlEncode",
             "urlPattern",
-            "Notify",
+            /notify/i,
             "css",
             /^fetch/,
         ]
@@ -40,6 +41,7 @@ let groups = [
             "input", 
             "transition",
             "InputOptions", 
+            "$",
         ],
     },
     {
@@ -50,6 +52,7 @@ let groups = [
             /ViewStateCallback$/,
             "PageCache",
             "UrlMapper",
+            "router",
         ]
     },
     {
@@ -76,6 +79,7 @@ let groups = [
     },
 ]
 
+// Given a name, work out which group it belongs to
 function groupForName(name)
 {
     for (let g of groups)
@@ -100,8 +104,6 @@ function groupForName(name)
 }
 
 
-let defs = JSON.parse(fs.readFileSync("index.d.json", "utf8"));
-
 // create group writers
 for (let g of groups)
 {
@@ -115,23 +117,30 @@ for (let g of groups)
     g.writer.write(`# ${g.title}\n\n`);
 }
 
-let heading = "######";
+// Load index.d.json
+let defs = JSON.parse(fs.readFileSync("index.d.json", "utf8"));
 
-let unnamed = defs.members[0].members.filter(x => !x.name);
+// Sort definitions alphabetically
 defs.members[0].members.sort((a,b) => a.name.localeCompare(b.name));
+
+// Render all members to appropriate group
 for (let n of defs.members[0].members)
 {
     let g = groupForName(n.name);
     render(g.writer, 2, n);
 }
 
+// Write the group files
 for (let g of groups)
 {
     fs.writeFileSync(`../website/content/guide/${g.filename}.md`, g.output, "utf8");
 }
 
+// Done!
 console.log("OK");
 
+
+// Strip our module name from a namepath
 function stripModuleFromNamepath(np)
 {
     if (np.startsWith("module:@codeonlyjs/core."))
@@ -139,12 +148,14 @@ function stripModuleFromNamepath(np)
     return np;
 }
 
+// Given a name path, work out it's id
 function namePathToId(namepath)
 {
     let np = stripModuleFromNamepath(namepath);
     return np;
 }
 
+// Expand inline links
 function expandInline(links, text)
 {
     if (!links || !links.length)
@@ -164,13 +175,40 @@ function expandInline(links, text)
         let url = link.url;
         if (!url)
         {
+            // Parse the name path
+            let np = parseNamePath(link.namepath);
+
+            // If it's to our module
+            let file = "";
+            if (np && np[0].prefix == "module:" && np[0].name == "@codeonlyjs/core")
+            {
+                // Get the group and filename that it lives in
+                let group = groupForName(np[1].name);
+                if (group)
+                    file = group.filename;
+            }
+
+            // Convert namepath to id
             let id = namePathToId(link.namepath);
-            url = `#${id}`;
+
+            // Create URL
+            url = `${file}#${id}`;
+
+            // Work out title
             if (!title)
-                title = stripModuleFromNamepath(link.namepath);
+            {
+                if (np)
+                    title = np[np.length-1].name;
+                else
+                    title = link.namepath;
+            }
         }
 
-        return `[${title}](${url})`;
+        // Plain or code?
+        if (link.kind == "linkcode")
+            return `[\`${title}\`](${url})`;
+        else
+            return `[${title}](${url})`;
     });
 }
 
@@ -212,7 +250,7 @@ function render(w, depth, el)
         {
             id = ` \{#${namePathToId(el.namepath)}\}`
         }
-        w.write(`${heading.substring(0, depth)} ${title}${id}\n\n`);
+        w.write(`${"######".substring(0, depth)} ${title}${id}\n\n`);
     }
     
     let desc = getDescription(el);

@@ -457,5 +457,7 @@ export class Router
 }
 
 
-/** The default {@link Router} instance */
+/**
+ * Default {@link Router | Router} Instance
+ */
 export let router = new Router();

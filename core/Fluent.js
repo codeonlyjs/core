@@ -105,5 +105,10 @@ constructTemplateBuilder.html = html;
 constructTemplateBuilder.encode = htmlEncode;
 
 // Export the proxied template builder
+
+/**
+ * Entry point into the fluent template builder API
+ * @type {any}
+ */
 export let $ = new Proxy(constructTemplateBuilder,  RootProxy);
 
