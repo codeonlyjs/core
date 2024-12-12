@@ -1,12 +1,13 @@
 import { router } from "./Router.js"
 
-/** Fetches a text asset
+/** 
+ * Fetches a text asset.
  * 
- *  In the browser, issues a fetch request for an asset
- *  On the server, uses fs.readFile to load a local file asset
+ * In the browser, issues a fetch request for an asset
+ * On the server, uses fs.readFile to load a local file asset.
  *
- *  The asset path must be absolute (start with a '/') and is
- *  resolved relative to the project root.
+ * The asset path must be absolute (start with a '/') and is
+ * resolved relative to the project root.
  * 
  * @param {string} path The path of the asset to fetch
  * @returns {Promise<string>}
@@ -28,13 +29,14 @@ export async function fetchTextAsset(path)
     return coenv.fetchTextAsset(path);
 }
 
-/** Fetches a JSON asset
+/** 
+ * Fetches a JSON asset.
  * 
- *  In the browser, issues a fetch request for an asset
- *  On the server, uses fs.readFile to load a local file asset
+ * In the browser, issues a fetch request for an asset
+ * On the server, uses fs.readFile to load a local file asset.
  *
- *  The asset path must be absolute (start with a '/') and is
- *  resolved relative to the project root.
+ * The asset path must be absolute (start with a '/') and is
+ * resolved relative to the project root.
  * 
  * @param {string} path The path of the asset to fetch
  * @returns {Promise<object>}

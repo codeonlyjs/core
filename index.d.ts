@@ -1,39 +1,67 @@
 declare module "@codeonlyjs/core" {
-    /** Sets an environment provider
+    /**
+     * Sets an environment provider.
+     *
      * @param {() => Environment} value A callback to provide the current environment object
      * @returns {void}
      */
     export function setEnvProvider(value: () => Environment): void;
-    /** The base class for all environment types
+    /**
+     * The base class for all environment types
+     *
+     * The environment object is available via the globally declared `coenv`
+     * variable.
+     *
+     * * In the browser, there is a single environment object that
+     *   represents the browser.
+     * * When rendering, there are multiple environment objects, one per render
+     *   request.
+     *
+     * Never modify, nor cache the environment object as it can (and will) change
+     * from request to request in a server environment.
+     *
      * @extends {EventTarget}
      */
     export class Environment extends EventTarget {
         /**
-         * True when running in browser environment
+         * True when running in browser environment.
          */
         browser: boolean;
         /**
-         * True when running in a rendering environment
+         * True when running in a rendering environment.
          */
         ssr: boolean;
-        /** Notifies the environment that an async load operation is starting
+        /**
+         * Notifies the environment that an async load operation is starting.
+         *
+         * Environment level loading notifications are used when rendering to
+         * determine when the initial page load has completed and rendering
+         * can commence.
+         *
          * @returns {void}
          */
         enterLoading(): void;
-        /** Notifies the environment that an async load operation has finished
+        /**
+         * Notifies the environment that an async load operation has finished.
+         *
          * @returns {void}
          */
         leaveLoading(): void;
-        /** Indicates if there are async data load operations in progress
+        /**
+         * Returns `true` if there are in progress async load operations.
+         *
          * @type {boolean}
          */
         get loading(): boolean;
-        /** Runs an async data load operation
+        /**
+         * Runs an async data load operation.
+         *
          * @param {() => Promise<any>} callback A callback that performs the data load
          * @returns {Promise<any>}
          */
         load(callback: () => Promise<any>): Promise<any>;
-        /** Returns a promise that resolves when any pending load operation has finished
+        /**
+         * Returns a promise that resolves when any pending load operations have finished.
          * @returns {Promise<void>}
          */
         untilLoaded(): Promise<void>;
@@ -351,10 +379,10 @@ declare module "@codeonlyjs/core" {
      */
     export function compileTemplate(rootTemplate: object): DomTreeConstructor;
     /**
-     * Invokes a callback on the next update cycle
+     * Invokes a callback on the next update cycle.
      *
-     * @param {() => void} callback The callback to be invoked
-     * @param {Number} [order] The priority of the callback in related to others (lowest first, default 0)
+     * @param {() => void} callback The callback to be invoked.
+     * @param {Number} [order] The priority of the callback in related to others (lowest first, default 0).
      * @returns {void}
      */
     export function nextFrame(callback: () => void, order?: number): void;
@@ -462,7 +490,9 @@ declare module "@codeonlyjs/core" {
      * @type {INotify}
      */
     export let notify: INotify;
-    /** Encodes a string to make it safe for use in HTML
+    /**
+     * Encodes a string to make it safe for use in HTML.
+     *
      * @param {string} str The string to encode
      * @returns {string}
      */
@@ -519,7 +549,8 @@ declare module "@codeonlyjs/core" {
          */
         on_change?: (model: any, event: Event) => any;
     };
-    /** Converts a URL pattern string to a regular expression string
+    /**
+     * Converts a URL pattern string to a regular expression string.
      *
      * @param {string} pattern The URL pattern to be converted to a regular expression
      * @returns {string}
@@ -811,25 +842,27 @@ declare module "@codeonlyjs/core" {
          */
         externalize(url: URL, asset?: boolean): URL;
     }
-    /** Fetches a text asset
+    /**
+     * Fetches a text asset.
      *
-     *  In the browser, issues a fetch request for an asset
-     *  On the server, uses fs.readFile to load a local file asset
+     * In the browser, issues a fetch request for an asset
+     * On the server, uses fs.readFile to load a local file asset.
      *
-     *  The asset path must be absolute (start with a '/') and is
-     *  resolved relative to the project root.
+     * The asset path must be absolute (start with a '/') and is
+     * resolved relative to the project root.
      *
      * @param {string} path The path of the asset to fetch
      * @returns {Promise<string>}
      */
     export function fetchTextAsset(path: string): Promise<string>;
-    /** Fetches a JSON asset
+    /**
+     * Fetches a JSON asset.
      *
-     *  In the browser, issues a fetch request for an asset
-     *  On the server, uses fs.readFile to load a local file asset
+     * In the browser, issues a fetch request for an asset
+     * On the server, uses fs.readFile to load a local file asset.
      *
-     *  The asset path must be absolute (start with a '/') and is
-     *  resolved relative to the project root.
+     * The asset path must be absolute (start with a '/') and is
+     * resolved relative to the project root.
      *
      * @param {string} path The path of the asset to fetch
      * @returns {Promise<object>}
@@ -985,29 +1018,32 @@ declare module "@codeonlyjs/core" {
         closeBundle: () => Promise<void>;
     };
     /**
-     * Interface to a notify service instance
+     * Interface to a notify service instance.
      */
     export type INotify =
     {
         /**
-         * Fires a notification
-         * @param {any} sourceObject The source object or value of the event
+         * Fires a notification.
+         * 
+         * @param {any} sourceObject The event source object or value
          * @param {any[]} args Optional arguments to pass to the event handlers
          * @returns {void}
          */
         (sourceObject: any, ...args: any[]): void;
 
         /**
-         * Adds an event listener to the notify servers
-         * @param {any} sourceObject The source object or value to listen to
+         * Adds an event listener to the notify service.
+         * 
+         * @param {any} sourceObject The event source object or value
          * @param {(sourceObject, ...args) => void} handler The event handler
          * @returns {void}
          */
         addEventListener: (sourceObject: any, handler: any) => void;
 
         /**
-         * Removes previously registered event listener to the notify servers
-         * @param {any} sourceObject The source object or value to listen to
+         * Removes previously registered event listener from the notify service.
+         * 
+         * @param {any} sourceObject The event source object or value
          * @param {(sourceObject, ...args) => void} handler The event handler
          * @returns {void}
          */

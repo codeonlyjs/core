@@ -1,6 +1,19 @@
 import { untilLoaded } from "./Utils.js";
 
-/** The base class for all environment types 
+/** 
+ * The base class for all environment types 
+ * 
+ * The environment object is available via the globally declared `coenv`
+ * variable.
+ * 
+ * * In the browser, there is a single environment object that 
+ *   represents the browser.
+ * * When rendering, there are multiple environment objects, one per render
+ *   request.
+ * 
+ * Never modify, nor cache the environment object as it can (and will) change
+ * from request to request in a server environment.
+ * 
  * @extends {EventTarget}
  */
 export class Environment extends EventTarget
@@ -11,19 +24,25 @@ export class Environment extends EventTarget
         super();
 
         /**
-         * True when running in browser environment
+         * True when running in browser environment.
          */
         this.browser = false;
 
         /**
-         * True when running in a rendering environment
+         * True when running in a rendering environment.
          */
         this.ssr = false;
     }
 
     #loading = 0;
 
-    /** Notifies the environment that an async load operation is starting
+    /** 
+     * Notifies the environment that an async load operation is starting.
+     * 
+     * Environment level loading notifications are used when rendering to 
+     * determine when the initial page load has completed and rendering
+     * can commence.
+     * 
      * @returns {void}
      */
     enterLoading()
@@ -33,7 +52,9 @@ export class Environment extends EventTarget
             this.dispatchEvent(new Event("loading"));
     }
 
-    /** Notifies the environment that an async load operation has finished
+    /** 
+     * Notifies the environment that an async load operation has finished.
+     * 
      * @returns {void}
      */
     leaveLoading()
@@ -43,7 +64,9 @@ export class Environment extends EventTarget
             this.dispatchEvent(new Event("loaded"));
     }
 
-    /** Indicates if there are async data load operations in progress
+    /** 
+     * Returns `true` if there are in progress async load operations.
+     * 
      * @type {boolean}
      */
     get loading()
@@ -51,7 +74,9 @@ export class Environment extends EventTarget
         return this.#loading != 0;
     }
 
-    /** Runs an async data load operation
+    /** 
+     * Runs an async data load operation.
+     * 
      * @param {() => Promise<any>} callback A callback that performs the data load
      * @returns {Promise<any>}
      */
@@ -68,7 +93,8 @@ export class Environment extends EventTarget
         }
     }
 
-    /** Returns a promise that resolves when any pending load operation has finished
+    /** 
+     * Returns a promise that resolves when any pending load operations have finished.
      * @returns {Promise<void>}
      */
     untilLoaded()
@@ -86,8 +112,9 @@ Object.defineProperty(globalThis, "coenv", {
     }
 });
 
-
-/** Sets an environment provider
+/** 
+ * Sets an environment provider.
+ * 
  * @param {() => Environment} value A callback to provide the current environment object
  * @returns {void}
  */

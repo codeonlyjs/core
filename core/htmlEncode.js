@@ -1,4 +1,6 @@
-/** Encodes a string to make it safe for use in HTML
+/** 
+ * Encodes a string to make it safe for use in HTML.
+ * 
  * @param {string} str The string to encode
  * @returns {string}
  */

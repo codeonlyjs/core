@@ -14,7 +14,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Sets an environment provider\n"
+                            "text": "\nSets an environment provider.\n\n"
                         },
                         {
                             "block": "param",
@@ -40,7 +40,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "The base class for all environment types\n"
+                            "text": "\nThe base class for all environment types\n\nThe environment object is available via the globally declared `coenv`\nvariable.\n\n* In the browser, there is a single environment object that\n  represents the browser.\n* When rendering, there are multiple environment objects, one per render\n  request.\n\nNever modify, nor cache the environment object as it can (and will) change\nfrom request to request in a server environment.\n\n"
                         },
                         {
                             "block": "extends",
@@ -57,7 +57,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nTrue when running in browser environment\n"
+                                    "text": "\nTrue when running in browser environment.\n"
                                 }
                             ],
                             "links": []
@@ -70,7 +70,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nTrue when running in a rendering environment\n"
+                                    "text": "\nTrue when running in a rendering environment.\n"
                                 }
                             ],
                             "links": []
@@ -83,7 +83,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Notifies the environment that an async load operation is starting\n"
+                                    "text": "\nNotifies the environment that an async load operation is starting.\n\nEnvironment level loading notifications are used when rendering to\ndetermine when the initial page load has completed and rendering\ncan commence.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -101,7 +101,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Notifies the environment that an async load operation has finished\n"
+                                    "text": "\nNotifies the environment that an async load operation has finished.\n\n"
                                 },
                                 {
                                     "block": "returns",
@@ -123,7 +123,7 @@
                                     "jsdoc": [
                                         {
                                             "kind": null,
-                                            "text": "Indicates if there are async data load operations in progress\n"
+                                            "text": "\nReturns `true` if there are in progress async load operations.\n\n"
                                         },
                                         {
                                             "block": "type",
@@ -143,7 +143,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Runs an async data load operation\n"
+                                    "text": "\nRuns an async data load operation.\n\n"
                                 },
                                 {
                                     "block": "param",
@@ -169,7 +169,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "Returns a promise that resolves when any pending load operation has finished\n"
+                                    "text": "\nReturns a promise that resolves when any pending load operations have finished.\n"
                                 },
                                 {
                                     "block": "returns",
@@ -411,20 +411,20 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 3907,
-                                            "end": 3937,
+                                            "pos": 4685,
+                                            "end": 4715,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                                         },
                                         {
-                                            "pos": 4063,
-                                            "end": 4082,
+                                            "pos": 4841,
+                                            "end": 4860,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         },
                                         {
-                                            "pos": 4214,
-                                            "end": 4263,
+                                            "pos": 4992,
+                                            "end": 5041,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component.onProvideDomTreeConstructor"
                                         }
@@ -452,8 +452,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 4465,
-                                    "end": 4495,
+                                    "pos": 5243,
+                                    "end": 5273,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                                 }
@@ -567,8 +567,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 6537,
-                                    "end": 6552,
+                                    "pos": 7315,
+                                    "end": 7330,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.DomTree"
                                 }
@@ -595,8 +595,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 6791,
-                                            "end": 6806,
+                                            "pos": 7569,
+                                            "end": 7584,
                                             "kind": "link",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         }
@@ -626,8 +626,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 6939,
-                                            "end": 6958,
+                                            "pos": 7717,
+                                            "end": 7736,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         }
@@ -729,8 +729,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7853,
-                                            "end": 7885,
+                                            "pos": 8631,
+                                            "end": 8663,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                         }
@@ -757,8 +757,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 8118,
-                                    "end": 8150,
+                                    "pos": 8896,
+                                    "end": 8928,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -785,8 +785,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 8540,
-                                            "end": 8566,
+                                            "pos": 9318,
+                                            "end": 9344,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -813,8 +813,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 8309,
-                                            "end": 8335,
+                                            "pos": 9087,
+                                            "end": 9113,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -844,8 +844,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 8730,
-                                            "end": 8756,
+                                            "pos": 9508,
+                                            "end": 9534,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -888,20 +888,20 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 9049,
-                                    "end": 9074,
+                                    "pos": 9827,
+                                    "end": 9852,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loading"
                                 },
                                 {
-                                    "pos": 9182,
-                                    "end": 9209,
+                                    "pos": 9960,
+                                    "end": 9987,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loadError"
                                 },
                                 {
-                                    "pos": 9457,
-                                    "end": 9482,
+                                    "pos": 10235,
+                                    "end": 10260,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loading"
                                 }
@@ -925,14 +925,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 9959,
-                                    "end": 9978,
+                                    "pos": 10737,
+                                    "end": 10756,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTree"
                                 },
                                 {
-                                    "pos": 10154,
-                                    "end": 10178,
+                                    "pos": 10932,
+                                    "end": 10956,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#create"
                                 }
@@ -1016,8 +1016,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 11419,
-                                    "end": 11447,
+                                    "pos": 12197,
+                                    "end": 12225,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -1065,14 +1065,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 11652,
-                                    "end": 11676,
+                                    "pos": 12430,
+                                    "end": 12454,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#listen"
                                 },
                                 {
-                                    "pos": 11951,
-                                    "end": 11979,
+                                    "pos": 12729,
+                                    "end": 12757,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -1195,8 +1195,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 12971,
-                            "end": 12997,
+                            "pos": 13749,
+                            "end": 13775,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                         }
@@ -1210,11 +1210,11 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nInvokes a callback on the next update cycle\n\n"
+                            "text": "\nInvokes a callback on the next update cycle.\n\n"
                         },
                         {
                             "block": "param",
-                            "text": "The callback to be invoked\n",
+                            "text": "The callback to be invoked.\n",
                             "type": "() => void",
                             "optional": false,
                             "name": "callback",
@@ -1222,7 +1222,7 @@
                         },
                         {
                             "block": "param",
-                            "text": "The priority of the callback in related to others (lowest first, default 0)\n",
+                            "text": "The priority of the callback in related to others (lowest first, default 0).\n",
                             "type": "Number",
                             "optional": true,
                             "name": "order",
@@ -1522,8 +1522,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 16782,
-                            "end": 16796,
+                            "pos": 17563,
+                            "end": 17577,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.notify"
                         }
@@ -1546,8 +1546,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 16931,
-                            "end": 16954,
+                            "pos": 17712,
+                            "end": 17735,
                             "kind": "link",
                             "title": "Notify",
                             "namepath": "module:@codeonlyjs/core.Notify"
@@ -1562,7 +1562,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Encodes a string to make it safe for use in HTML\n"
+                            "text": "\nEncodes a string to make it safe for use in HTML.\n\n"
                         },
                         {
                             "block": "param",
@@ -1606,8 +1606,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 17318,
-                            "end": 17342,
+                            "pos": 18114,
+                            "end": 18138,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions"
                         }
@@ -1626,26 +1626,26 @@
                     ],
                     "links": [
                         {
-                            "pos": 17674,
-                            "end": 17702,
+                            "pos": 18470,
+                            "end": 18498,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#get"
                         },
                         {
-                            "pos": 17707,
-                            "end": 17735,
+                            "pos": 18503,
+                            "end": 18531,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#set"
                         },
                         {
-                            "pos": 17785,
-                            "end": 17816,
+                            "pos": 18581,
+                            "end": 18612,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#target"
                         },
                         {
-                            "pos": 17821,
-                            "end": 17850,
+                            "pos": 18617,
+                            "end": 18646,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#prop"
                         }
@@ -1690,8 +1690,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 18313,
-                                    "end": 18345,
+                                    "pos": 19109,
+                                    "end": 19141,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTreeContext#model"
                                 }
@@ -1772,7 +1772,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Converts a URL pattern string to a regular expression string\n\n"
+                            "text": "\nConverts a URL pattern string to a regular expression string.\n\n"
                         },
                         {
                             "block": "param",
@@ -1902,8 +1902,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 20605,
-                                    "end": 20628,
+                                    "pos": 21409,
+                                    "end": 21432,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Router#register"
                                 }
@@ -1935,8 +1935,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 21018,
-                                    "end": 21035,
+                                    "pos": 21822,
+                                    "end": 21839,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Route"
                                 }
@@ -2259,8 +2259,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 24791,
-                            "end": 24805,
+                            "pos": 25595,
+                            "end": 25609,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.Router"
                         }
@@ -2305,8 +2305,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 25652,
-                                    "end": 25678,
+                                    "pos": 26456,
+                                    "end": 26482,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Router#replace"
                                 }
@@ -2338,8 +2338,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 25911,
-                                    "end": 25935,
+                                    "pos": 26715,
+                                    "end": 26739,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.RouteHandler"
                                 }
@@ -2399,8 +2399,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 27465,
-                            "end": 27482,
+                            "pos": 28269,
+                            "end": 28286,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.Route"
                         }
@@ -2419,8 +2419,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 27819,
-                                    "end": 27841,
+                                    "pos": 28623,
+                                    "end": 28645,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.urlPattern"
                                 }
@@ -2678,7 +2678,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Fetches a text asset\n\n In the browser, issues a fetch request for an asset\n On the server, uses fs.readFile to load a local file asset\n\n The asset path must be absolute (start with a '/') and is\n resolved relative to the project root.\n\n"
+                            "text": "\nFetches a text asset.\n\nIn the browser, issues a fetch request for an asset\nOn the server, uses fs.readFile to load a local file asset.\n\nThe asset path must be absolute (start with a '/') and is\nresolved relative to the project root.\n\n"
                         },
                         {
                             "block": "param",
@@ -2704,7 +2704,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "Fetches a JSON asset\n\n In the browser, issues a fetch request for an asset\n On the server, uses fs.readFile to load a local file asset\n\n The asset path must be absolute (start with a '/') and is\n resolved relative to the project root.\n\n"
+                            "text": "\nFetches a JSON asset.\n\nIn the browser, issues a fetch request for an asset\nOn the server, uses fs.readFile to load a local file asset.\n\nThe asset path must be absolute (start with a '/') and is\nresolved relative to the project root.\n\n"
                         },
                         {
                             "block": "param",
@@ -3213,7 +3213,7 @@
                     "jsdoc": [
                         {
                             "kind": null,
-                            "text": "\nInterface to a notify service instance\n"
+                            "text": "\nInterface to a notify service instance.\n"
                         }
                     ],
                     "links": [],
@@ -3225,11 +3225,11 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nFires a notification\n"
+                                    "text": "\nFires a notification.\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The source object or value of the event\n",
+                                    "text": "The event source object or value\n",
                                     "type": "any",
                                     "optional": false,
                                     "name": "sourceObject",
@@ -3259,11 +3259,11 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nAdds an event listener to the notify servers\n"
+                                    "text": "\nAdds an event listener to the notify service.\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The source object or value to listen to\n",
+                                    "text": "The event source object or value\n",
                                     "type": "any",
                                     "optional": false,
                                     "name": "sourceObject",
@@ -3293,11 +3293,11 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nRemoves previously registered event listener to the notify servers\n"
+                                    "text": "\nRemoves previously registered event listener from the notify service.\n\n"
                                 },
                                 {
                                     "block": "param",
-                                    "text": "The source object or value to listen to\n",
+                                    "text": "The event source object or value\n",
                                     "type": "any",
                                     "optional": false,
                                     "name": "sourceObject",
