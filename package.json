@@ -33,7 +33,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@codeonlyjs/dts": "github:toptensoftware/dts",
+    "@toptensoftware/dts": "github:toptensoftware/dts",
     "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@toptensoftware/jsdoc": "github:toptensoftware/jsdoc",
