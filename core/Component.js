@@ -1,5 +1,6 @@
 import { nextFrame } from "./nextFrame.js";
 import { compileTemplate } from "./TemplateCompiler.js";
+import { TemplateNode } from "./TemplateNode.js";
 
 /** @import { DomTree, DomTreeConstructor } from "../types.d.ts" */
 
@@ -84,15 +85,15 @@ export class Component extends EventTarget
     {
         if (!this._isCompiling)
         {
-            this._isComiling = true;
+            this._isCompiling = true;
             let retv = this.domTreeConstructor.isSingleRoot;
-            this._isCompiling = false;
+            delete this._isCompiling;
             return retv;
         }
 
         // We've gone re-entrant during compilation, inspect the
         // template directly to see if single root
-        let tn = new TemplateNode(OnProvideTemplate(), {});
+        let tn = new TemplateNode(this.OnProvideTemplate(), {});
         return tn.isSingleRoot;
     }
 
