@@ -3656,7 +3656,7 @@ class Component extends EventTarget
 
         // We've gone re-entrant during compilation, inspect the
         // template directly to see if single root
-        let tn = new TemplateNode(this.OnProvideTemplate(), {});
+        let tn = new TemplateNode(this.onProvideTemplate(), {});
         return tn.isSingleRoot;
     }
 
