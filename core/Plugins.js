@@ -23,8 +23,10 @@ export class Plugins
     {
         for (let p of this.plugins)
         {
-            p.transformGroup?.(childNodes);
+            if (p.transformGroup)
+                childNodes = p.transformGroup(childNodes);
         }
+        return childNodes;
     }
 
 }

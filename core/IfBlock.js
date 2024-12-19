@@ -116,11 +116,18 @@ export class IfBlock
     static transformGroup(templates)
     {
         let ifBlock = null;
+        let cloned = false;
         for (let i=0; i<templates.length; i++)
         {
             let t = templates[i];
             if (t.if)
             {
+                if (!cloned)
+                {
+                    templates = [...templates];
+                    cloned = true;
+                }
+                t = Object.assign({}, t);
                 ifBlock = {
                     type: IfBlock,
                     branches: [
@@ -138,6 +145,7 @@ export class IfBlock
                 if (!ifBlock)
                     throw new Error("template has 'elseif' without a preceeding condition");
 
+                t = Object.assign({}, t);
                 ifBlock.branches.push({
                     condition: t.elseif,
                     template: t,
@@ -153,6 +161,7 @@ export class IfBlock
                 if (!ifBlock)
                     throw new Error("template has 'else' without a preceeding condition");
 
+                t = Object.assign({}, t);
                 ifBlock.branches.push({
                     condition: true,
                     template: t,
@@ -171,6 +180,8 @@ export class IfBlock
                 ifBlock = null;
             }
         }
+
+        return templates;
     }
 
     constructor(options)

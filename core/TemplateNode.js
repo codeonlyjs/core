@@ -7,25 +7,27 @@ import { parseTypeDecl } from "./parseTypeDecl.js";
 export class TemplateNode
 {
     // Constructs a new TemplateNode
-    // - name: the variable name for this node (eg: "n1")
-    // - template: the user supplied template object this node is derived from
     constructor(template, compilerOptions)
     {
         // Unwrap fluent
         if (template.$node)
             template = template.$node;
 
-        // Parse type decl
-        if (typeof(template.type) === 'string' && template.type[0] != '#')
-        {
-            Object.assign(template, parseTypeDecl(template.type));
-        }
-
         // Automatically wrap array as a fragment with the array
         // as the child nodes.
         if (Array.isArray(template))
         {
             template = { $:template }
+        }
+        else if (typeof(template) === 'object' && !(template instanceof HtmlString))
+        {
+            template = Object.assign({}, template);
+        }
+
+        // Parse type decl
+        if (typeof(template.type) === 'string' && template.type[0] != '#')
+        {
+            Object.assign(template, parseTypeDecl(template.type));
         }
 
         template = Plugins.transform(template);
@@ -115,8 +117,8 @@ export class TemplateNode
 
                 template.childNodes = template.childNodes.map(x => x.$node ?? x);
                 
-                Plugins.transformGroup(template.childNodes);
-                this.childNodes = this.template.childNodes.map(x => new TemplateNode(x, compilerOptions));
+                this.childNodes = Plugins.transformGroup(template.childNodes)
+                    .map(x => new TemplateNode(x, compilerOptions));
             }
             else
                 this.childNodes = [];
