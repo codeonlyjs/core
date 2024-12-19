@@ -82,7 +82,18 @@ export class Component extends EventTarget
      */
     static get isSingleRoot()
     {
-        return this.domTreeConstructor.isSingleRoot;
+        if (!this._isCompiling)
+        {
+            this._isComiling = true;
+            let retv = this.domTreeConstructor.isSingleRoot;
+            this._isCompiling = false;
+            return retv;
+        }
+
+        // We've gone re-entrant during compilation, inspect the
+        // template directly to see if single root
+        let tn = new TemplateNode(OnProvideTemplate(), {});
+        return tn.isSingleRoot;
     }
 
     /** 
