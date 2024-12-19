@@ -61,7 +61,15 @@ export class Component extends EventTarget
      */
     static onProvideDomTreeConstructor()
     {
-        return compileTemplate(this.onProvideTemplate());
+        try
+        {
+            this._compiling = this.onProvideTemplate();
+            return compileTemplate(this._compiling);
+        }
+        finally
+        {
+            delete this._compiling;
+        }
     }
 
     /** 
@@ -83,17 +91,14 @@ export class Component extends EventTarget
      */
     static get isSingleRoot()
     {
-        if (!this._isCompiling)
+        if (!this._compiling)
         {
-            this._isCompiling = true;
-            let retv = this.domTreeConstructor.isSingleRoot;
-            delete this._isCompiling;
-            return retv;
+            return this.domTreeConstructor.isSingleRoot;
         }
 
         // We've gone re-entrant during compilation, inspect the
         // template directly to see if single root
-        let tn = new TemplateNode(this.onProvideTemplate(), {});
+        let tn = new TemplateNode(this._compiling);
         return tn.isSingleRoot;
     }
 

@@ -27,7 +27,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
     let rootClosure = null;
 
     // Create root node info        
-    let rootTemplateNode = new TemplateNode(rootTemplate, compilerOptions);
+    let rootTemplateNode = new TemplateNode(rootTemplate);
 
     // Storarge for export and bindings
     let exports = new Map();
@@ -260,6 +260,9 @@ function compileTemplateCode(rootTemplate, compilerOptions)
         // Emit an 'integrated' component node
         function emit_integrated_node(ni)
         {
+            // Compile it
+            ni.integrated.compile?.(compilerOptions);
+
             // Emit sub-nodes
             let nodeConstructors = [];
             let has_bindings = false;
@@ -386,7 +389,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                         continue;
 
                     // Emit the template node
-                    let propTemplate = new TemplateNode(ni.template[key], compilerOptions);
+                    let propTemplate = new TemplateNode(ni.template[key]);
                     emit_node(propTemplate);
                     if (propTemplate.isSingleRoot)
                         closure_create_append(`${ni.name}${member(key)}.content = ${propTemplate.name};`);

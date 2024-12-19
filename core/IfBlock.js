@@ -5,7 +5,7 @@ import { TransitionNone } from "./TransitionNone.js";
 
 export class IfBlock
 {
-    static integrate(template, compilerOptions)
+    static integrate(template)
     {
         let branches = [];
         let key = template.key;
@@ -43,7 +43,7 @@ export class IfBlock
             if (branch.template !== undefined)
             {
                 // Check if branch template has a single root
-                let ni_branch = new TemplateNode(branch.template, compilerOptions);
+                let ni_branch = new TemplateNode(branch.template);
                 if (!ni_branch.isSingleRoot)
                     isSingleRoot = false;
 

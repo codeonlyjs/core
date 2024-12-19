@@ -4,10 +4,10 @@ import { TemplateNode } from "./TemplateNode.js";
 
 export class ForEachBlock
 {
-    static integrate(template, compilerOptions)
+    static integrate(template)
     {
+        let itemTemplate = template.template;
         let data = {
-            itemConstructor: compilerOptions.compileTemplate(template.template),
             template: {
                 items: template.items,
                 condition: template.condition,
@@ -15,11 +15,10 @@ export class ForEachBlock
             },
         }
 
-
         let nodes;
         if (template.empty)
         {
-            nodes = [ new TemplateNode(template.empty, compilerOptions) ];
+            nodes = [ new TemplateNode(template.empty) ];
         }
 
         delete template.template;
@@ -31,7 +30,10 @@ export class ForEachBlock
         return {
             isSingleRoot: false,
             data: data,
-            nodes: nodes
+            nodes: nodes,
+            compile: (compilerOptions) => {
+                data.itemConstructor = compilerOptions.compileTemplate(itemTemplate);
+            }
         }
     }
 

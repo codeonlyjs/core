@@ -7,7 +7,7 @@ import { parseTypeDecl } from "./parseTypeDecl.js";
 export class TemplateNode
 {
     // Constructs a new TemplateNode
-    constructor(template, compilerOptions)
+    constructor(template)
     {
         // Unwrap fluent
         if (template.$node)
@@ -82,7 +82,7 @@ export class TemplateNode
                 template.content = template.$;
                 delete template.$;
             }
-            this.integrated = this.template.type.integrate(this.template, compilerOptions);
+            this.integrated = this.template.type.integrate(this.template);
         }
 
         // If $ is a string or HtmlString convert to text property
@@ -118,7 +118,7 @@ export class TemplateNode
                 template.childNodes = template.childNodes.map(x => x.$node ?? x);
                 
                 this.childNodes = Plugins.transformGroup(template.childNodes)
-                    .map(x => new TemplateNode(x, compilerOptions));
+                    .map(x => new TemplateNode(x));
             }
             else
                 this.childNodes = [];

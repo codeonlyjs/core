@@ -6,7 +6,7 @@ import { TransitionNone } from "./TransitionNone.js";
 
 export class EmbedSlot
 {
-    static integrate(template, compilerOptions)
+    static integrate(template)
     {
         let contentTemplate = null;
         if (template.content && typeof(template.content) === "object")
@@ -21,8 +21,8 @@ export class EmbedSlot
                 content: template.content,
             },
             nodes: [
-                contentTemplate ? new TemplateNode(contentTemplate, compilerOptions) : null,
-                template.placeholder ? new TemplateNode(template.placeholder, compilerOptions) : null,
+                contentTemplate ? new TemplateNode(contentTemplate) : null,
+                template.placeholder ? new TemplateNode(template.placeholder) : null,
             ]
         }
 
