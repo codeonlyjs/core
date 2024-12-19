@@ -22,7 +22,7 @@ export function transition(...options)
 {
     // Merge all args
     let optionsFinal = {};
-    for (let i=0; i<options; i++)
+    for (let i=0; i<options.length; i++)
     {
         let a = options[i];
         if (a instanceof Function)
