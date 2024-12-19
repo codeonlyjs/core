@@ -1031,8 +1031,10 @@ class Plugins
     {
         for (let p of this.plugins)
         {
-            p.transformGroup?.(childNodes);
+            if (p.transformGroup)
+                childNodes = p.transformGroup(childNodes);
         }
+        return childNodes;
     }
 
 }
@@ -1094,25 +1096,27 @@ function parseTypeDecl(str)
 class TemplateNode
 {
     // Constructs a new TemplateNode
-    // - name: the variable name for this node (eg: "n1")
-    // - template: the user supplied template object this node is derived from
     constructor(template, compilerOptions)
     {
         // Unwrap fluent
         if (template.$node)
             template = template.$node;
 
-        // Parse type decl
-        if (typeof(template.type) === 'string' && template.type[0] != '#')
-        {
-            Object.assign(template, parseTypeDecl(template.type));
-        }
-
         // Automatically wrap array as a fragment with the array
         // as the child nodes.
         if (Array.isArray(template))
         {
             template = { $:template };
+        }
+        else if (typeof(template) === 'object' && !(template instanceof HtmlString))
+        {
+            template = Object.assign({}, template);
+        }
+
+        // Parse type decl
+        if (typeof(template.type) === 'string' && template.type[0] != '#')
+        {
+            Object.assign(template, parseTypeDecl(template.type));
         }
 
         template = Plugins.transform(template);
@@ -1202,8 +1206,8 @@ class TemplateNode
 
                 template.childNodes = template.childNodes.map(x => x.$node ?? x);
                 
-                Plugins.transformGroup(template.childNodes);
-                this.childNodes = this.template.childNodes.map(x => new TemplateNode(x, compilerOptions));
+                this.childNodes = Plugins.transformGroup(template.childNodes)
+                    .map(x => new TemplateNode(x, compilerOptions));
             }
             else
                 this.childNodes = [];
@@ -2554,11 +2558,18 @@ class IfBlock
     static transformGroup(templates)
     {
         let ifBlock = null;
+        let cloned = false;
         for (let i=0; i<templates.length; i++)
         {
             let t = templates[i];
             if (t.if)
             {
+                if (!cloned)
+                {
+                    templates = [...templates];
+                    cloned = true;
+                }
+                t = Object.assign({}, t);
                 ifBlock = {
                     type: IfBlock,
                     branches: [
@@ -2576,6 +2587,7 @@ class IfBlock
                 if (!ifBlock)
                     throw new Error("template has 'elseif' without a preceeding condition");
 
+                t = Object.assign({}, t);
                 ifBlock.branches.push({
                     condition: t.elseif,
                     template: t,
@@ -2591,6 +2603,7 @@ class IfBlock
                 if (!ifBlock)
                     throw new Error("template has 'else' without a preceeding condition");
 
+                t = Object.assign({}, t);
                 ifBlock.branches.push({
                     condition: true,
                     template: t,
@@ -2609,6 +2622,8 @@ class IfBlock
                 ifBlock = null;
             }
         }
+
+        return templates;
     }
 
     constructor(options)
