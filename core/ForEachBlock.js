@@ -32,7 +32,7 @@ export class ForEachBlock
             data: data,
             nodes: nodes,
             compile: (compilerOptions) => {
-                data.itemConstructor = compilerOptions.compileTemplate(itemTemplate);
+                data.itemConstructor = compilerOptions.compileTemplate(itemTemplate, compilerOptions);
             }
         }
     }
