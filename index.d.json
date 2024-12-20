@@ -1173,7 +1173,7 @@
                     "kind": "function",
                     "name": "compileTemplate",
                     "namepath": "module:@codeonlyjs/core.compileTemplate",
-                    "definition": "export function compileTemplate(rootTemplate: object): DomTreeConstructor;",
+                    "definition": "export function compileTemplate(rootTemplate: object, options: any): DomTreeConstructor;",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -1522,8 +1522,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 17563,
-                            "end": 17577,
+                            "pos": 17577,
+                            "end": 17591,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.notify"
                         }
@@ -1546,8 +1546,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 17712,
-                            "end": 17735,
+                            "pos": 17726,
+                            "end": 17749,
                             "kind": "link",
                             "title": "Notify",
                             "namepath": "module:@codeonlyjs/core.Notify"
@@ -1606,8 +1606,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 18114,
-                            "end": 18138,
+                            "pos": 18128,
+                            "end": 18152,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions"
                         }
@@ -1626,26 +1626,26 @@
                     ],
                     "links": [
                         {
-                            "pos": 18470,
-                            "end": 18498,
+                            "pos": 18484,
+                            "end": 18512,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#get"
                         },
                         {
-                            "pos": 18503,
-                            "end": 18531,
+                            "pos": 18517,
+                            "end": 18545,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#set"
                         },
                         {
-                            "pos": 18581,
-                            "end": 18612,
+                            "pos": 18595,
+                            "end": 18626,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#target"
                         },
                         {
-                            "pos": 18617,
-                            "end": 18646,
+                            "pos": 18631,
+                            "end": 18660,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#prop"
                         }
@@ -1690,8 +1690,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 19109,
-                                    "end": 19141,
+                                    "pos": 19123,
+                                    "end": 19155,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTreeContext#model"
                                 }
@@ -1902,8 +1902,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 21409,
-                                    "end": 21432,
+                                    "pos": 21423,
+                                    "end": 21446,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Router#register"
                                 }
@@ -1935,8 +1935,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 21822,
-                                    "end": 21839,
+                                    "pos": 21836,
+                                    "end": 21853,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Route"
                                 }
@@ -2259,8 +2259,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 25595,
-                            "end": 25609,
+                            "pos": 25609,
+                            "end": 25623,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.Router"
                         }
@@ -2305,8 +2305,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 26456,
-                                    "end": 26482,
+                                    "pos": 26470,
+                                    "end": 26496,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Router#replace"
                                 }
@@ -2338,8 +2338,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 26715,
-                                    "end": 26739,
+                                    "pos": 26729,
+                                    "end": 26753,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.RouteHandler"
                                 }
@@ -2399,8 +2399,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 28269,
-                            "end": 28286,
+                            "pos": 28283,
+                            "end": 28300,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.Route"
                         }
@@ -2419,8 +2419,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 28623,
-                                    "end": 28645,
+                                    "pos": 28637,
+                                    "end": 28659,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.urlPattern"
                                 }

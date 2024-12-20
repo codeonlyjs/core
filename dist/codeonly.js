@@ -1904,7 +1904,7 @@ class ForEachBlock
             data: data,
             nodes: nodes,
             compile: (compilerOptions) => {
-                data.itemConstructor = compilerOptions.compileTemplate(itemTemplate);
+                data.itemConstructor = compilerOptions.compileTemplate(itemTemplate, compilerOptions);
             }
         }
     }
@@ -3556,11 +3556,13 @@ let _nextInstanceId = 1;
  * @param {object} rootTemplate The template to be compiled
  * @returns {DomTreeConstructor}
  */
-function compileTemplate(rootTemplate)
+function compileTemplate(rootTemplate, options)
 {
-    let compilerOptions = {
+    if (!options)
+        options = {};
+    let compilerOptions = Object.assign({}, options, {
         compileTemplate: compileTemplate
-    };
+    });
 
     // Compile code
     let code = compileTemplateCode(rootTemplate, compilerOptions);

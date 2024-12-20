@@ -377,7 +377,7 @@ declare module "@codeonlyjs/core" {
      * @param {object} rootTemplate The template to be compiled
      * @returns {DomTreeConstructor}
      */
-    export function compileTemplate(rootTemplate: object): DomTreeConstructor;
+    export function compileTemplate(rootTemplate: object, options: any): DomTreeConstructor;
     /**
      * Invokes a callback on the next update cycle.
      *
