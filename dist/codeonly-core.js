@@ -3274,14 +3274,14 @@ function compileTemplateCode(rootTemplate, compilerOptions)
         function emit_element_node(ni)
         {
             // Work out namespace
-            let save_xmlns = closure.current_xmlns;
+            let save_xmlns = compilerOptions.xmlns;
             let xmlns = ni.template.xmlns;
             if (xmlns === undefined && ni.template.type == 'svg')
             {
                 xmlns = "http://www.w3.org/2000/svg";
             }
             if (xmlns == null)
-                xmlns = closure.current_xmlns;
+                xmlns = compilerOptions.xmlns;
 
             // Create the element
             addNodeLocal(ni);
@@ -3289,7 +3289,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                 closure_create_append(`${ni.name} = document.createElement(${JSON.stringify(ni.template.type)});`);
             else
             {
-                closure.current_xmlns = xmlns;
+                compilerOptions.xmlns = xmlns;
                 closure_create_append(`${ni.name} = document.createElementNS(${JSON.stringify(xmlns)}, ${JSON.stringify(ni.template.type)});`);
             }
 
@@ -3370,7 +3370,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                 if (key.startsWith("attr_"))
                     attrName = attrName.substring(5);
 
-                if (!closure.current_xmlns)
+                if (!compilerOptions.xmlns)
                     attrName = camel_to_dash(attrName);
 
                 format_dynamic(ni.template[key], (valueExpr) => `helpers.setElementAttribute(${ni.name}, ${JSON.stringify(attrName)}, ${valueExpr})`);
@@ -3384,7 +3384,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
             {
                 closure_create_append(`${ni.name}.append(${ni.spreadChildDomNodes()});`);
             }
-            closure.current_xmlns = save_xmlns;
+            compilerOptions.xmlns = save_xmlns;
         }
 
         // Emit the child nodes of an element or fragment node
