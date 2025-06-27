@@ -987,11 +987,12 @@ class TemplateHelpers
         }
     }
 
-    static addEventListener(provideModel, el, eventName, handler)
+    static addEventListener(provideContext, el, eventName, handler)
     {
         function wrapped_handler(ev)
         {
-            return handler(provideModel(), ev);
+            let ctx = provideContext();
+            return handler(ctx.model, ev, ctx);
         }
 
         el.addEventListener(eventName, wrapped_handler);
@@ -3453,7 +3454,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                 closure.addLocal(listener_name);
 
                 // Add listener
-                closure_create_append(`${listener_name} = helpers.addEventListener(() => model, ${ni.name}, ${JSON.stringify(eventName)}, refs[${refs.length}]);`);
+                closure_create_append(`${listener_name} = helpers.addEventListener(() => context, ${ni.name}, ${JSON.stringify(eventName)}, refs[${refs.length}]);`);
                 refs.push(handler);
 
                 closure_destroy.append(`${listener_name}?.();`);
