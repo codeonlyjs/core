@@ -667,7 +667,7 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                 closure.addLocal(listener_name);
 
                 // Add listener
-                closure_create_append(`${listener_name} = helpers.addEventListener(() => model, ${ni.name}, ${JSON.stringify(eventName)}, refs[${refs.length}]);`);
+                closure_create_append(`${listener_name} = helpers.addEventListener(() => context, ${ni.name}, ${JSON.stringify(eventName)}, refs[${refs.length}]);`);
                 refs.push(handler);
 
                 closure_destroy.append(`${listener_name}?.();`);
