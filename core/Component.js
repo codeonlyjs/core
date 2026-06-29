@@ -426,7 +426,7 @@ export class Component extends EventTarget
      * Registers an event listener to be automatically added to an object when
      * when the component is mounted, and removed when unmounted.
      * 
-     * @param {object} target Any object that supports addEventListener and removeEventListener
+     * @param {object} target Any object that supports `addEventListener()`/`removeEventListener()` or `on()`/`off()`
      * @param {string} event The event to listen to
      * @param {Function} [handler] The event handler to add.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
@@ -443,13 +443,18 @@ export class Component extends EventTarget
             target, event, handler
         });
         if (this.#mounted)
-            target.addEventListener(event, handler);
+        {
+            if (target.addEventListener)
+                target.addEventListener(event, handler);
+            else
+                target.on(event, handler);
+        }
     }
 
     /** 
      * Removes an event listener previously registered with {@link Component#listen}
      * 
-     * @param {object} target Any object that supports addEventListener and removeEventListener
+     * @param {object} target Any object that supports `addEventListener()`/`removeEventListener()` or `on()`/`off()`
      * @param {string} event The event being listened to
      * @param {Function} [handler] The event handler to remove.  If not provided, the component's {@link Component#invalidate} method is used.
      * @returns {void}
@@ -467,7 +472,12 @@ export class Component extends EventTarget
         {
             this.#listeners.splice(index, 1);
             if (this.#mounted)
-                target.removeEventListener(event, handler);
+            {
+                if (target.removeEventListener)
+                    target.removeEventListener(event, handler);
+                else
+                    target.off(event, handler);
+            }
         }
     }
 
@@ -501,7 +511,12 @@ export class Component extends EventTarget
         let needsInvalidate = false;
         if (mounted && this.#listeners)
         {
-            this.#listeners.forEach(x => x.target.addEventListener(x.event, x.handler));
+            this.#listeners.forEach(x => {
+                if (x.target.addEventListener)
+                    x.target.addEventListener(x.event, x.handler)
+                else
+                    x.target.on(x.event, x.handler)
+            });
             needsInvalidate = this.#listeners.length > 0 && this.#domTree;
         }
 
@@ -517,7 +532,12 @@ export class Component extends EventTarget
 
         // Remove event listeners
         if (!mounted && this.#listeners)
-            this.#listeners.forEach(x => x.target.removeEventListener(x.event, x.handler));
+            this.#listeners.forEach(x => {
+                if (x.target.removeEventListener)
+                    x.target.removeEventListener(x.event, x.handler)
+                else
+                    x.target.off(x.event, x.handler)
+            });
     }
 
     /** 
