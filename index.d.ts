@@ -326,7 +326,7 @@ declare module "@codeonlyjs/core" {
          * Registers an event listener to be automatically added to an object when
          * when the component is mounted, and removed when unmounted.
          *
-         * @param {object} target Any object that supports addEventListener and removeEventListener
+         * @param {object} target Any object that supports `addEventListener()`/`removeEventListener()` or `on()`/`off()`
          * @param {string} event The event to listen to
          * @param {Function} [handler] The event handler to add.  If not provided, the component's {@link Component#invalidate} method is used.
          * @returns {void}
@@ -335,7 +335,7 @@ declare module "@codeonlyjs/core" {
         /**
          * Removes an event listener previously registered with {@link Component#listen}
          *
-         * @param {object} target Any object that supports addEventListener and removeEventListener
+         * @param {object} target Any object that supports `addEventListener()`/`removeEventListener()` or `on()`/`off()`
          * @param {string} event The event being listened to
          * @param {Function} [handler] The event handler to remove.  If not provided, the component's {@link Component#invalidate} method is used.
          * @returns {void}
