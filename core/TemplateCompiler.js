@@ -416,21 +416,19 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                     }
 
                     // Create
-                    let prevName = `p${prevId++}`;
-                    closure.addLocal(prevName);
                     let callback_index = refs.length;
 
                     // Update
                     need_update_temp();
                     closure_update_append(`temp = ${format_callback(callback_index)};`);
-                    closure_update_append(`if (temp !== ${prevName})`);
+                    closure_update_append(`if (temp !== ${ni.name}${member(key)})`);
                     if (auto_update)
                     {
                         closure_update_append(`{`);
                         closure_update_append(`  ${auto_modified_name} = true;`);
                     }
 
-                    closure_update_append(`  ${ni.name}${member(key)} = ${prevName} = temp;`);
+                    closure_update_append(`  ${ni.name}${member(key)} = temp;`);
 
                     if (auto_update)
                         closure_update_append(`}`);
