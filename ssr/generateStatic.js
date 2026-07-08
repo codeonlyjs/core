@@ -128,7 +128,7 @@ export async function generateStatic(options)
             r.content = prettyHtml(doc);
 
         // Work out output file name
-        let filename = url.pathname;
+        let filename = r.internalUrl;
         if (filename.endsWith("/"))
             filename += "index";
         filename += options.ext;
