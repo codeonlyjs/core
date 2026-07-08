@@ -178,7 +178,10 @@ export class SSRWorker
             let result = Object.assign(
                 {}, 
                 router.current?.ssr ?? {}, 
-                { content: this.#htmlInjector.inject(injections) }
+                { 
+                    internalUrl: router.internalize(router.current.url.pathname),
+                    content: this.#htmlInjector.inject(injections) 
+                }
             );
 
             return result;
