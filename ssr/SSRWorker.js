@@ -164,7 +164,7 @@ export class SSRWorker
             if (!injections.head)
                 injections.head = [];
             if (this.options.cssUrl)
-                injections.head.push(`<link href="${this.options.cssUrl}" type="text/css" rel="stylesheet" />`);
+                injections.head.push(`<link href="${router.externalize(this.options.cssUrl)}" type="text/css" rel="stylesheet" />`);
             else
                 injections.head.push(`<style>${this.#css}</style>`);
 
@@ -178,7 +178,10 @@ export class SSRWorker
             let result = Object.assign(
                 {}, 
                 router.current?.ssr ?? {}, 
-                { content: this.#htmlInjector.inject(injections) }
+                { 
+                    internalUrl: router.internalize(router.current.url.pathname),
+                    content: this.#htmlInjector.inject(injections) 
+                }
             );
 
             return result;
