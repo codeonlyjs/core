@@ -16,10 +16,10 @@ export class Style
  * 
  * This function is intended to be used as a template literal tag
  * @param {string[]} strings The CSS to be added
- * @param {string[]} values The interpolated string values
+ * @param {...any} values The interpolated string values
  * @returns {void}
  */
-export function css(strings, values)
+export function css(strings, ...values)
 {
     let r = "";
     for (let i=0; i<strings.length - 1; i++)
