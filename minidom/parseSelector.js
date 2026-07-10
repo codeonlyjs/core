@@ -1,7 +1,8 @@
-let rxSel = /(\s+)|(?:(#?)(\.?)([-_a-zA-Z0-9]+))/y
+let rxSel = /(\s*,\s*)|(\s+)|(?:(#?)(\.?)([-_a-zA-Z0-9]+))/y
 
 export function parseSelector(sel)
 {
+    let chain = null;
     let selectors = [];
     let m;
     let s;
@@ -10,8 +11,15 @@ export function parseSelector(sel)
     {
         pos = rxSel.lastIndex;
 
-        // Whitespace?
         if (m[1])
+        {
+            chain = null;
+            s = null;
+            continue;
+        }
+
+        // Whitespace?
+        if (m[2])
         {
             if (s)
             {
@@ -23,19 +31,24 @@ export function parseSelector(sel)
         if (!s)
         {
             s = { };
-            selectors.push(s);
+            if (!chain)
+            {
+                chain = [];
+                selectors.push(chain);
+            }
+            chain.push(s);
         }
-        if (m[2])
-            s.id = m[4];
-        else if (m[3])
+        if (m[3])
+            s.id = m[5];
+        else if (m[4])
         {
             if (!s.class)
-                s.class = [ m[4] ];
+                s.class = [ m[5] ];
             else
-                s.class.push(m[4]);
+                s.class.push(m[5]);
         }
         else
-            s.tag = m[4].toLowerCase();
+            s.tag = m[5].toLowerCase();
     }
     if (pos != sel.length)
         throw new Error(`Invalid or unsupported selector: '${sel}'`);
@@ -67,10 +80,13 @@ function querySelectorInternal(elementIn, selsIn, firstOnly)
         selsIn = parseSelector(selsIn);
         
     let result = [];
-    qsa(elementIn, selsIn);
-    return firstOnly ? result[0] : result;
+    let activeChains = [...selsIn];
 
-    function qsa(element, sels)
+    walk(elementIn);
+
+    return result;
+
+    function walk(element)
     {
         for (let n of element.childNodes)
         {
@@ -78,23 +94,41 @@ function querySelectorInternal(elementIn, selsIn, firstOnly)
             if (n.nodeType != 1)
                 continue;
 
-            // If matches, match children on nested selectors
-            if (doesMatch(n, sels[0]))
+            // Process all active chains, creating new active
+            // chains with the tails of any partial matches
+            let newChains = null;
+            for (let chain of activeChains)
             {
-                if (sels.length == 1)
+                if (doesMatch(n, chain[0]))
                 {
-                    result.push(n);
-                    if (firstOnly)
-                        return true;
+                    if (chain.length == 1)
+                    {
+                        result.push(n);
+                        if (firstOnly)
+                            return true;
+                    }
+                    else
+                    {
+                        if (!newChains)
+                            newChains = [];
+                        newChains.push(chain.slice(1));
+                    }
                 }
-                else
-                    qsa(n, sels.slice(1));
             }
-            
+
+            // Setup new active chain list for child nodes
+            let save = activeChains;
+            if (newChains)
+                activeChains = [...activeChains, ...newChains]
+
             // Recurse
-            if (qsa(n, sels))
+            if (walk(n))
                 return true;
+
+            // Restore active chains
+            activeChains = save;
         }   
+
         return false;
     }
 }
@@ -106,5 +140,5 @@ export function querySelectorAll(element, sel)
 
 export function querySelector(element, sel)
 {
-    return querySelectorInternal(element, sel, true);
+    return querySelectorInternal(element, sel, true)[0];
 }
