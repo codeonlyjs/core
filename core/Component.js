@@ -25,8 +25,7 @@ export class Component extends EventTarget
     {
         super();
 
-        // Bind these so they can be passed directly to update callbacks.
-        this.update = this.update.bind(this);
+        // Bind this so they can be passed directly to update callbacks.
         this.invalidate = this.invalidate.bind(this);
     }
 
@@ -112,7 +111,10 @@ export class Component extends EventTarget
     create()
     {
         if (!this.#domTree)
+        {
             this.#domTree = new this.constructor.domTreeConstructor({ model: this });
+            this.domValid();
+        }
     }
 
     /** 
@@ -268,10 +270,6 @@ export class Component extends EventTarget
      * 
      * If the component has been invalidated, returns it to the valid state.
      * 
-     * This method is bound to the component instance and can be used 
-     * directly as the handler for an event listener to update the
-     * component when an event is triggered.
-     *
      * @returns {void}
      */
     update()
@@ -281,6 +279,17 @@ export class Component extends EventTarget
         
         this.#invalid = false;
         this.domTree.update();
+        this.domValid();
+    }
+
+    /** 
+     * Notifies that this component's DOM tree is now valid - either
+     * after being initially created, or updated
+     
+     * @returns {void}
+     */
+    domValid()
+    {
     }
 
     
