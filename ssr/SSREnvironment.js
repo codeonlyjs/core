@@ -53,7 +53,11 @@ export class SSREnvironment extends Environment
             throw new Error(`Mount point ${el} not found`);
 
         // Mount
-        elem.append(...component.rootNodes);
+        elem.append(
+            this.document.createComment("co-ssr-start"),
+            ...component.rootNodes,
+            this.document.createComment("co-ssr-end")
+        );
         component.setMounted(true);
 
         // Track it

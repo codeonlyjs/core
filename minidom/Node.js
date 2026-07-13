@@ -13,6 +13,8 @@ export class Node
     get parentNode() { return this.#parentNode; }
     get hasChildNodes() { return false; }
     get nodeValue() { return null; }
+    get firstChild() { return null; }
+    get lastChild() { return null; }
 
     _setParentNode(value)
     {

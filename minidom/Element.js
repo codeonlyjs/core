@@ -36,6 +36,8 @@ export class Element extends Node
     }
     get rawAttributes() { return this.#attributes; }
     get hasChildNodes() { return this.#childNodes.length > 0; }
+    get firstChild() { return this.#childNodes[0] ?? null; }
+    get lastChild() { return this.#childNodes[this.#childNodes.length-1] ?? null; }
     get id() { return this.getAttribute("id") ?? "" }
     set id(value) { this.setAttribute("id", value); }
 

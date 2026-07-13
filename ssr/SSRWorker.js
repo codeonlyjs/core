@@ -146,35 +146,37 @@ export class SSRWorker
             // Wait for environment
             await env.whileBusy();
 
-            /*
-            // Render all mounts
-            let injections = { 
-            };
-            for (let k of Object.keys(env.mounts))
+            // Find/create <head>
+            let elHead = env.document.querySelector("head");
+            if (!elHead)
             {
-                if (!injections[k])
-                    injections[k] = [];
-                env.mounts[k].setMounted(true);
-                let nodes = env.mounts[k].rootNodes;
-                injections[k].push(...nodes.map(x => x.html));
-                env.mounts[k].setMounted(false);
-                env.mounts[k].destroy();
+                elHead = env.document.createElement("head");
+                env.document.insertBefore(elHead, env.document.firstChild);
             }
 
-            if (!injections.head)
-                injections.head = [];
+            // Insert styles
             if (this.options.cssUrl)
-                injections.head.push(`<link href="${router.externalize(this.options.cssUrl)}" type="text/css" rel="stylesheet" />`);
-            else
-                injections.head.push(`<style>${this.#css}</style>`);
-
-            for (let k of Object.keys(injections))
             {
-                injections[k].unshift(`<!--co-ssr-start-->`);
-                injections[k].push(`<!--co-ssr-end-->`);
+                let e = env.document.createElement("link");
+                e.setAttribute("href", router.externalize(this.options.cssUrl));
+                e.setAttribute("type", "text/css");
+                e.setAttribute("rel", "stylesheet");
+                elHead.appendChild(e);
             }
-            injections.head.push(`<meta name="co-ssr" value="true" />`);
-            */
+            else
+            {
+                let e = env.document.createElement("style");
+                e.innerHTML = this.#css;
+                elHead.appendChild(e);
+            }
+
+            // Insert cossr flag
+            {
+                let e = env.document.createElement("meta");
+                e.setAttribute("name", "co-ssr");
+                e.setAttribute("value", "true");
+                elHead.appendChild(e);
+            }
 
             let result = Object.assign(
                 {}, 

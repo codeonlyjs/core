@@ -39,7 +39,7 @@ export async function generateStatic(options)
         outDir: "./dist",
         baseUrl: "http://localhost/",
         verbose: false,
-        cssUrl: "/assets/styles-[unique].css",
+        cssUrl: "/assets/co-styles-[unique].css",
     }, options);
 
     let baseUnique = Date.now();
@@ -48,7 +48,7 @@ export async function generateStatic(options)
         options.cssUrl = options.cssUrl.replace(/\[unique\]/g, () => {
             let buf = Buffer.alloc(8);
             buf.writeBigInt64BE(BigInt(baseUnique++));
-            return buf.toString('base64').replace(/\=/, "");
+            return buf.toString('base64').replace(/[\=\/]/g, "");
         });
     }
 
