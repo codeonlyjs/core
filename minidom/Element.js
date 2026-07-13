@@ -37,6 +37,7 @@ export class Element extends Node
     get rawAttributes() { return this.#attributes; }
     get hasChildNodes() { return this.#childNodes.length > 0; }
     get id() { return this.getAttribute("id") ?? "" }
+    set id(value) { this.setAttribute("id", value); }
 
     querySelector() { return querySelector(this, ...arguments); }
     querySelectorAll() { return querySelectorAll(this, ...arguments); }

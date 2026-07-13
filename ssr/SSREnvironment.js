@@ -12,9 +12,9 @@ export class SSREnvironment extends Environment
         super();
         this.options = options;
         this.ssr = true;
-        this.#window = new Window();
+        this.#window = new Window(options.entryHtml);
         this.#window.blockAnimationFrames = true;
-        this.mounts = {};
+        this.mountList = [];
         this.styles = "";
     }
     
@@ -47,8 +47,17 @@ export class SSREnvironment extends Environment
     {
         if (typeof(el) !== 'string')
             throw new Error("Components must be mounted against a selector string in SSR environments");
-        component.create();
-        this.mounts[el] = component;
+
+        let elem = this.document.querySelector(el);
+        if (!elem)
+            throw new Error(`Mount point ${el} not found`);
+
+        // Mount
+        elem.append(...component.rootNodes);
+        component.setMounted(true);
+
+        // Track it
+        this.mountList.push(component);
     }
 
     unmount()

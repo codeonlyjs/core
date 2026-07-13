@@ -34,6 +34,7 @@ export class SSRWorkerThread
      * @param {object} options Options
      * @param {string} options.entryFile The main entry .js file
      * @param {string} options.entryMain The name of the main function in the entry file
+     * @param {any[]} options.entryParams An array of parameters to pass to entryMain
      * @param {string} options.entryHtml An HTML string into which mounted components will be written
      * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
      * @returns {Promise<void>}

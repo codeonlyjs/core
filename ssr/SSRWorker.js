@@ -5,7 +5,6 @@ import { router } from "../spa/Router.js";
 import { setEnvProvider } from '../core/Environment.js';
 import { SSREnvironment } from './SSREnvironment.js';
 import { SSRRouterDriver } from "./SSRRouterDriver.js";
-import { HtmlInjector } from "./HtmlInjector.js";
 
 /**
  * The results of an SSRWorker/SSRWorkerThread render operation.
@@ -36,6 +35,7 @@ export class SSRWorker
      * @param {object} options Options
      * @param {string} options.entryFile The main entry .js file
      * @param {string} options.entryMain The name of the main function in the entry file
+     * @param {any[]} options.entryParams An array of parameters to pass to entryMain
      * @param {string} options.entryHtml An HTML string into which mounted components will be written
      * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
      * @returns {Promise<void>}
@@ -43,7 +43,7 @@ export class SSRWorker
     async init(options)
     {
         // Load entry module
-        let env = new SSREnvironment(this.options);
+        let env = new SSREnvironment(options);
         setEnvProvider(() => this.env);
 
         // Store options
@@ -85,17 +85,14 @@ export class SSRWorker
             if (!this.#entryMain)
                 throw new Error(`entryMain not found - ${JSON.stringify(this.options.entryMain)}`);
 
+
             // Capture registered styles
             this.#css = env.styles;
 
         });
-
-        // Create injector
-        this.#htmlInjector = new HtmlInjector(this.options.entryHtml);
     }
 
     #routerDriver;
-    #htmlInjector;
     #asyncStore;
     #entryModule;
     #entryMain;
@@ -141,7 +138,7 @@ export class SSRWorker
         return await this.#asyncStore.run(env, async () => {
 
             // Call entry point
-            await Promise.resolve(this.#entryModule[this.#entryMain]());
+            await Promise.resolve(this.#entryModule[this.#entryMain](...this.options.entryParams));
 
             // Tell the router driver to load URL
             await this.#routerDriver.load(new URL(url));
@@ -149,6 +146,7 @@ export class SSRWorker
             // Wait for environment
             await env.whileBusy();
 
+            /*
             // Render all mounts
             let injections = { 
             };
@@ -156,8 +154,10 @@ export class SSRWorker
             {
                 if (!injections[k])
                     injections[k] = [];
+                env.mounts[k].setMounted(true);
                 let nodes = env.mounts[k].rootNodes;
                 injections[k].push(...nodes.map(x => x.html));
+                env.mounts[k].setMounted(false);
                 env.mounts[k].destroy();
             }
 
@@ -174,13 +174,14 @@ export class SSRWorker
                 injections[k].push(`<!--co-ssr-end-->`);
             }
             injections.head.push(`<meta name="co-ssr" value="true" />`);
+            */
 
             let result = Object.assign(
                 {}, 
                 router.current?.ssr ?? {}, 
                 { 
                     internalUrl: router.internalize(router.current.url.pathname),
-                    content: this.#htmlInjector.inject(injections) 
+                    content: env.document.innerHTML, 
                 }
             );
 

@@ -2,10 +2,10 @@ import { Document } from "./Document.js";
 
 export class Window extends EventTarget
 {
-    constructor()
+    constructor(html)
     {
         super();
-        this.document = new Document();
+        this.document = new Document(html);
         this.blockAnimationFrames = false;
         this.pendingAnimationFrames = [];
     }

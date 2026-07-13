@@ -10,11 +10,13 @@ import { prettyHtml } from "../minidom/prettyHtml.js";
  * @typedef {object} GenerateStaticOptions
  * @property {string[]} [entryFile] The entry .js file (as an array, first found used)
  * @property {string[]} [entryMain] The name of the entry point function in the entryFile (as an array, first found used)
- * @property {string[]} [entryHtml] The HTML file to use as template for generated files (as an array, first found used)
+ * @property {any[]} [entryParams] An array of parameters to pass to entryMain
+ * @property {string[]} [entryHtmlFile] The HTML file to use as template for generated files (as an array, first found used)
+ * @property {string} [entryHtml] The HTML string to use as template (replaces entryHtmlFile)
  * @property {string[]} [entryUrls] The URL's to render (will also recursively render all linked URLs)
  * @property {string} [ext] The extension to append to all generated files (including the period)
  * @property {boolean} [pretty] Prettify the generated HTML
- * @property {string} [outDir] The output directory to write generated files
+ * @property {string} [outDir] The output directory to write generated files (null to return file contents)
  * @property {string} [baseUrl] The base URL used to qualify in-page URLs to an external full URL
  * @property {boolean} [verbose] Verbose output
  * @property {string} [cssUrl] Name of the CSS styles file
@@ -29,7 +31,8 @@ export async function generateStatic(options)
     options = Object.assign({
         entryFile: [ "main-ssg.js", "main-ssr.js", "Main.js", ],
         entryMain: [ "main-ssg", "main-ssr", "main" ],
-        entryHtml: [ "dist/index.html", "index-ssg.html", "index.ssr.html", "index.html" ],
+        entryParams: [],
+        entryHtmlFile: [ "dist/index.html", "index-ssg.html", "index.ssr.html", "index.html" ],
         entryUrls: [ "/" ],
         ext: ".html",
         pretty: true,
@@ -48,11 +51,6 @@ export async function generateStatic(options)
             return buf.toString('base64').replace(/\=/, "");
         });
     }
-   
-
-    // Install module loader hook.  We need to make
-    // sure we use our copy of codeonlyjs 
-    //register('./module_loader_hooks.js', import.meta.url);
 
     let start = Date.now();
 
@@ -61,22 +59,30 @@ export async function generateStatic(options)
         elapsed: 0,
     }
 
-    // Resolve files
-    options.entryFile = resolveFile(options.entryFile);
-    options.entryHtml = resolveFile(options.entryHtml);
-
     // If no URL specified, just use /
     if (options.entryUrls.length == 0)
         options.entryUrls.push("/");
 
-    // Load files
-    let entryHtml = fs.readFileSync(options.entryHtml, "utf8");
+    // Resolve files
+    options.entryFile = resolveFile(options.entryFile);
+
+    let entryHtml;
+    if (options.entryHtml)
+    {
+        entryHtml = options.entryHtml;
+    }
+    else
+    {
+        options.entryHtmlFile = resolveFile(options.entryHtmlFile);
+        entryHtml = fs.readFileSync(options.entryHtmlFile, "utf8");
+    }
 
     // Create SSRWorker
     let worker = new SSRWorker();
     await worker.init({
         entryFile: options.entryFile,
         entryMain: options.entryMain,
+        entryParams: options.entryParams,
         entryHtml,
         cssUrl: options.cssUrl,
     });
@@ -133,12 +139,15 @@ export async function generateStatic(options)
             filename += "index";
         filename += options.ext;
 
-        await writeFile(filename, r.content);
+        writeFile(filename, r.content);
 
         // Find links
         for (let a of doc.querySelectorAll("a"))
         {
-            let u = new URL(a.getAttribute("href"), url);
+            let href = a.getAttribute("href");
+            if (!href)
+                continue;
+            let u = new URL(href, url);
             if (!u.href.startsWith(options.baseUrl))
                 continue;
 
@@ -148,7 +157,7 @@ export async function generateStatic(options)
     }
 
     // Write it
-    await writeFile(options.cssUrl, await worker.getStyles());
+    writeFile(options.cssUrl, await worker.getStyles());
 
     await worker.stop();
 
@@ -159,26 +168,32 @@ export async function generateStatic(options)
 
     function writeFile(url, content)
     {
+        if (!options.quiet)
+            console.log(`render: ${url}`);
+
         if (url.startsWith("/"))
             url = "." + url;
 
-        // Qualify it
-        let outFile = path.join(options.outDir, url);
+        // Actually write the file?
+        if (options.outDir)
+        {
+            // Qualify it
+            let outFile = path.join(options.outDir, url);
 
-        // Make sure directory exists
-        let outDir = path.dirname(outFile);
-        if (!fs.existsSync(outDir))
-            fs.mkdirSync(outDir, { recursive: true });
+            // Make sure directory exists
+            let outDir = path.dirname(outFile);
+            if (!fs.existsSync(outDir))
+                fs.mkdirSync(outDir, { recursive: true });
 
-        // Write it
-        fs.writeFileSync(outFile, content, "utf8");
+            // Write it
+            fs.writeFileSync(outFile, content, "utf8");
+        }
 
-        if (!options.quiet)
-            console.log(`render: ${outFile}`);
-
-        result.files.push(outFile);
-
-        return outFile;
+        // Return the file and content in the results
+        result.files.push({
+            url,
+            content,
+        });
     }
 }
 
