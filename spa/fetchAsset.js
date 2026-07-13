@@ -20,6 +20,22 @@ export function revokeFetchAssetHandler(handler)
         handlers.splice(index, 1);
 }
 
+function mapFetchPath(path)
+{
+    if (!path.startsWith("/"))
+        throw new Error("asset paths must start with '/'");
+
+    // Externalize URL
+    if (coenv.browser && router.urlMapper)
+    {
+        let url = new URL(path, new URL(coenv.window.location));
+        url = router.urlMapper.externalize(url, true);
+        path = url.pathname + url.search;
+    }
+
+    return path;
+}
+
 /** 
  * Fetches a text asset.
  * 
@@ -34,16 +50,7 @@ export function revokeFetchAssetHandler(handler)
  */
 export async function fetchTextAsset(path)
 {
-    if (!path.startsWith("/"))
-        throw new Error("asset paths must start with '/'");
-
-    // Externalize URL
-    if (coenv.browser && router.urlMapper)
-    {
-        let url = new URL(path, new URL(coenv.window.location));
-        url = router.urlMapper.externalize(url, true);
-        path = url.pathname + url.search;
-    }
+    path = mapFetchPath(path);
 
     for (let h of handlers)
     {
@@ -78,17 +85,22 @@ export async function fetchTextAsset(path)
  */
 export async function fetchJsonAsset(path)
 {
-    let r = await h(path);
-    if (r)
+    path = mapFetchPath(path);
+
+    for (let h of handlers)
     {
-        if (r.text)
-            return JSON.parse(text);
-        if (r.json)
-            return r.json;
-        if (r.binary)
-            return JSON.parse(new TextDecoder('utf8').decode(r.binary));
-        throw new Error("Invalid fetch handler response");
+        let r = await h(path);
+        if (r)
+        {
+            if (r.text)
+                return JSON.parse(text);
+            if (r.json)
+                return r.json;
+            if (r.binary)
+                return JSON.parse(new TextDecoder('utf8').decode(r.binary));
+            throw new Error("Invalid fetch handler response");
+        }
     }
 
-    return JSON.parse(await fetchTextAsset(path));
+    return JSON.parse(await coenv.fetchTextAsset(path));
 }
