@@ -1,5 +1,25 @@
 import { router } from "./Router.js"
 
+let handlers = [];
+
+/** Registers a handler for fetch Asset requests
+ * @param {FetchAssetHandler} handler The handler to register
+ */
+export function registerFetchAssetHandler(handler)
+{
+    handlers.push(handler);
+}
+
+/** Revokes a previous registered handler for fetch Asset requests
+ * @param {FetchAssetHandler} handler The handler to register
+ */
+export function revokeFetchAssetHandler(handler)
+{
+    let index = handlers.indexOf(handler);
+    if (index >= 0)
+        handlers.splice(index, 1);
+}
+
 /** 
  * Fetches a text asset.
  * 
@@ -25,6 +45,21 @@ export async function fetchTextAsset(path)
         path = url.pathname + url.search;
     }
 
+    for (let h of handlers)
+    {
+        let r = await h(path);
+        if (r)
+        {
+            if (r.text)
+                return text;
+            if (r.json)
+                return JSON.stringify(r.json);
+            if (r.binary)
+                return new TextDecoder('utf8').decode(r.binary);
+            throw new Error("Invalid fetch handler response");
+        }
+    }
+
     // Fetch it
     return coenv.fetchTextAsset(path);
 }
@@ -43,5 +78,17 @@ export async function fetchTextAsset(path)
  */
 export async function fetchJsonAsset(path)
 {
+    let r = await h(path);
+    if (r)
+    {
+        if (r.text)
+            return JSON.parse(text);
+        if (r.json)
+            return r.json;
+        if (r.binary)
+            return JSON.parse(new TextDecoder('utf8').decode(r.binary));
+        throw new Error("Invalid fetch handler response");
+    }
+
     return JSON.parse(await fetchTextAsset(path));
 }

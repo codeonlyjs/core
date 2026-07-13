@@ -94,4 +94,17 @@ declare module "types"
      * A function that creates a DomTree
      */
     export type DomTreeConstructor = (DomTreeContext: any) => DomTree;
+
+    /**
+     * Return value from a fetch handler
+     */
+    export type FetchAssetResult =
+        | { kind: 'text'; text: string }
+        | { kind: 'json'; json: unknown }
+        | { kind: 'binary'; binary: ArrayBuffer };
+
+    /**
+     * Custom fetch handler for fetch[Json/Text]Asset functions
+     */
+    type FetchAssetHandler = (url: string) => Promise<FetchAssetResult>;
 }
