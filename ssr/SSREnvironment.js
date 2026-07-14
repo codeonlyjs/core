@@ -37,10 +37,26 @@ export class SSREnvironment extends Environment
         return this.window.document;
     }
 
+    #styleNode = null;
     declareStyle(css)
     {
         if (css.length)
             this.styles += css + '\n';
+
+        if (!this.options.cssUrl)
+        {
+            if (!this.#styleNode)
+            {
+                this.#styleNode = document.createElement("style");
+                this.document.head.append(
+                    this.document.createComent("co-ssr-start"),
+                    this.#styleNode,
+                    this.document.createComent("co-ssr-end")
+                );
+            }
+
+            this.#styleNode.innerHTML += css + "\n";
+        }
     }
 
     mount(component, el)
@@ -64,9 +80,23 @@ export class SSREnvironment extends Environment
         this.mountList.push(component);
     }
 
-    unmount()
+    unmount(component)
     {
-        throw new Error("Unmounting components not supported in SSR environment");
+        let index = this.mountList.indexOf(component);
+        if (index < 0)
+            return;
+
+        if (component.created)
+            component.rootNodes.forEach(x => x. remove());
+        component.setMounted(false);
+
+        this.mountList.splice(index, 1);
+    }
+
+    unmountAll()
+    {
+        for (let c of [...this.mountList])
+            this.unmount(c);
     }
 
     async whileBusy()

@@ -22,6 +22,24 @@ import { prettyHtml } from "../minidom/prettyHtml.js";
  * @property {string} [cssUrl] Name of the CSS styles file
  */
 
+function relPrefix(url)
+{
+    if (!url || !url.startsWith("/"))
+        return null;
+    let prefix = ".";
+    for (let i=1; i<url.length; i++)
+    {
+        if (url[i] == '/')
+        {
+            if (prefix == ".")
+                prefix = "..";
+            else
+                prefix += "/..";
+        }
+    }
+    return prefix;
+}
+
 /** Generates a static generated site (SSG)
  * 
  * @param {GenerateStaticOptions} options - site generation options
@@ -40,6 +58,7 @@ export async function generateStatic(options)
         baseUrl: "http://localhost/",
         verbose: false,
         cssUrl: "/assets/co-styles-[unique].css",
+        relocatable: true,
     }, options);
 
     let baseUnique = Date.now();
@@ -105,7 +124,6 @@ export async function generateStatic(options)
 
         // Render
         let r;
-        
         try
         {
             r = await worker.render(url.href);
@@ -129,9 +147,29 @@ export async function generateStatic(options)
         // Parse
         let doc = new Document(r.content);
 
+        // Insert CSS URL
+        if (options.cssUrl)
+        {
+            let e = doc.createElement("link");
+            e.setAttribute("href", worker.externalizeUrl(options.cssUrl));
+            e.setAttribute("type", "text/css");
+            e.setAttribute("rel", "stylesheet");
+            doc.head.appendChild(e);
+        }
+
+        // Make all paths relative
+        if (options.relocatable)
+        {
+            let relPathToRoot = relPrefix(url.pathname);
+            if (relPathToRoot)
+                insertRelPathToRoot(doc, relPathToRoot);
+        }
+
         // Pretty?
         if (options.pretty)
             r.content = prettyHtml(doc);
+        else
+            r.content = doc.innerHTML;
 
         // Work out output file name
         let filename = r.internalUrl;
@@ -159,6 +197,7 @@ export async function generateStatic(options)
     // Write it
     writeFile(options.cssUrl, await worker.getStyles());
 
+    // Stop worker
     await worker.stop();
 
 
@@ -212,3 +251,31 @@ function resolveFile(files)
 
     throw new Error(`can't find ${files.join(", ")}`);
 }
+
+function insertRelPathToRoot(n, relPathToRoot)
+{
+    if (n.getAttribute !== undefined)
+    {
+        fixAttribute("src");
+        fixAttribute("href");
+        if (n.hasChildNodes)
+        {
+            for (let c of n.childNodes)
+            {
+                insertRelPathToRoot(c, relPathToRoot);
+            }
+        }
+    }
+
+    function fixAttribute(attr)
+    {
+        let val = n.getAttribute(attr);
+        if (typeof(val) !== "string")
+            return;
+        if (val.startsWith("/"))
+        {
+            n.setAttribute(attr, relPathToRoot + val);
+        }
+    }
+}
+

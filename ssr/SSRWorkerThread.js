@@ -64,6 +64,14 @@ export class SSRWorkerThread
     }
 
     /**
+     * Externalize a URL
+     */
+    externalizeUrl(url)
+    {
+        return this.invoke("externalizeUrl", url);
+    }
+
+    /**
      * Stops the worker.
      */
     stop()
@@ -94,10 +102,6 @@ export class SSRWorkerThread
 
 if (!isMainThread)
 {
-    // Install module loader hook.  We need to make
-    // sure we use our copy of codeonlyjs 
-    //register('./module_loader_hooks.js', import.meta.url);
-
     let worker = new SSRWorker();
     parentPort.on('message', messageHandler);
 

@@ -1,6 +1,5 @@
 import path from 'node:path';
 
-import { AsyncLocalStorage } from 'node:async_hooks';
 import { router } from "../spa/Router.js";
 import { setEnvProvider } from '../core/Environment.js';
 import { SSREnvironment } from './SSREnvironment.js';
@@ -43,7 +42,7 @@ export class SSRWorker
     async init(options)
     {
         // Load entry module
-        let env = new SSREnvironment(options);
+        this.#env = new SSREnvironment(options);
         setEnvProvider(() => this.env);
 
         // Store options
@@ -57,63 +56,59 @@ export class SSRWorker
         this.#routerDriver = new SSRRouterDriver(this);
         router.start(this.#routerDriver);
 
-        // Construct async store
-        this.#asyncStore = new AsyncLocalStorage();
+        // Load entry point module
+        this.#entryModule = await import(`file://${path.resolve(options.entryFile)}`);
 
-        await this.#asyncStore.run(env, async () => {
-
-            // Load entry point
-            this.#entryModule = await import(`file://${path.resolve(options.entryFile)}`);
-
-            if (Array.isArray(this.options.entryMain))
+        // Find entry point
+        if (Array.isArray(this.options.entryMain))
+        {
+            // Look for first matching entry main
+            for (let m of this.options.entryMain)
             {
-                // Look for first matching entry main
-                for (let m of this.options.entryMain)
+                if (this.#entryModule[m])
                 {
-                    if (this.#entryModule[m])
-                    {
-                        this.#entryMain = m;
-                        break;
-                    }
+                    this.#entryMain = m;
+                    break;
                 }
             }
-            else
-            {
-                this.#entryMain = this.options.entryMain;
-            }
+        }
+        else
+        {
+            this.#entryMain = this.options.entryMain;
+        }
+        if (!this.#entryMain)
+            throw new Error(`entryMain not found - ${JSON.stringify(this.options.entryMain)}`);
 
-            if (!this.#entryMain)
-                throw new Error(`entryMain not found - ${JSON.stringify(this.options.entryMain)}`);
+        // Call entry point
+        await Promise.resolve(this.#entryModule[this.#entryMain](...this.options.entryParams));
 
-
-            // Capture registered styles
-            this.#css = env.styles;
-
-        });
+        // Insert cossr flag
+        {
+            let e = this.#env.document.createElement("meta");
+            e.setAttribute("name", "co-ssr");
+            e.setAttribute("value", "true");
+            this.#env.document.head.appendChild(e);
+        }
     }
 
+    #env;
     #routerDriver;
-    #asyncStore;
     #entryModule;
     #entryMain;
-    #css;
     
     /**
      * Stops the worker.
      */
     async stop()
     {
-        // nop
+        this.#env.unmountAll();
     }
 
 
     /** @internal */
     get env()
     {
-        let env = this.#asyncStore.getStore();
-        if (!env)
-            throw new Error("No async env store")
-        return env;
+        return this.#env;
     }
 
     /**
@@ -122,7 +117,7 @@ export class SSRWorker
      */
     async getStyles()
     {
-        return this.#css;
+        return this.#env.styles;
     }
 
     /**
@@ -133,62 +128,27 @@ export class SSRWorker
      */
     async render(url, options)
     {
-        let mergedOptions = Object.assign({}, this.options, options);
-        let env = new SSREnvironment(mergedOptions);
-        return await this.#asyncStore.run(env, async () => {
+        // Tell the router driver to load URL
+        await this.#routerDriver.load(new URL(url));
 
-            // Call entry point
-            await Promise.resolve(this.#entryModule[this.#entryMain](...this.options.entryParams));
+        // Wait for environment
+        await this.#env.whileBusy();
 
-            // Tell the router driver to load URL
-            await this.#routerDriver.load(new URL(url));
-
-            // Wait for environment
-            await env.whileBusy();
-
-            // Find/create <head>
-            let elHead = env.document.querySelector("head");
-            if (!elHead)
-            {
-                elHead = env.document.createElement("head");
-                env.document.insertBefore(elHead, env.document.firstChild);
+        let result = Object.assign(
+            {}, 
+            router.current?.ssr ?? {}, 
+            { 
+                internalUrl: router.internalize(router.current.url.pathname),
+                content: this.#env.document.innerHTML, 
             }
+        );
 
-            // Insert styles
-            if (this.options.cssUrl)
-            {
-                let e = env.document.createElement("link");
-                e.setAttribute("href", router.externalize(this.options.cssUrl));
-                e.setAttribute("type", "text/css");
-                e.setAttribute("rel", "stylesheet");
-                elHead.appendChild(e);
-            }
-            else
-            {
-                let e = env.document.createElement("style");
-                e.innerHTML = this.#css;
-                elHead.appendChild(e);
-            }
+        return result;
+    }
 
-            // Insert cossr flag
-            {
-                let e = env.document.createElement("meta");
-                e.setAttribute("name", "co-ssr");
-                e.setAttribute("value", "true");
-                elHead.appendChild(e);
-            }
-
-            let result = Object.assign(
-                {}, 
-                router.current?.ssr ?? {}, 
-                { 
-                    internalUrl: router.internalize(router.current.url.pathname),
-                    content: env.document.innerHTML, 
-                }
-            );
-
-            return result;
-        });
+    externalizeUrl(url)
+    {
+        return router.externalize(url);
     }
 }
 

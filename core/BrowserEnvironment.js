@@ -20,7 +20,7 @@ export class BrowserEnvironment extends Environment
         {
             this.pendingStyles += "\n" + css;
             if (!this.hydrateMounts)
-                this.window.requestAnimationFrame(() => this.mountStyles());
+                this.mountStyles();
         }
     }
 
@@ -30,13 +30,13 @@ export class BrowserEnvironment extends Environment
             return;
 
         if (!this.styleNode)
+        {
             this.styleNode = document.createElement("style");
+            document.head.appendChild(this.styleNode);
+        }
 
         this.styleNode.innerHTML += this.pendingStyles + "\n";
         this.pendingStyles = "";
-
-        if (!this.styleNode.parentNode)
-            document.head.appendChild(this.styleNode);
     }
 
     doHydrate()
