@@ -54,7 +54,6 @@ export async function generateStatic(options)
         entryUrls: [ "/" ],
         ext: ".html",
         pretty: true,
-        outDir: "./dist",
         baseUrl: "http://localhost/",
         verbose: false,
         cssUrl: "/assets/co-styles-[unique].css",
