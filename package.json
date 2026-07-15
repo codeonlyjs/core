@@ -18,7 +18,8 @@
     "rollup": "rollup -c rollup-core.config.mjs && rollup -c rollup-spa.config.mjs",
     "types": "tsc --project tsconfig.emit.json && dts flatten @codeonlyjs/core index.raw.d.ts types.d.ts --module:index-server --module:types --out:index.d.ts && dts extract index.d.ts --out:index.d.json",
     "build": "zx build.js",
-    "docs": "npm run types && node make-docs.js"
+    "docs": "npm run types && node make-docs.js",
+    "bump": "npm version patch && git push --follow-tags"
   },
   "author": "Topten Software",
   "contributors": [
