@@ -54,6 +54,15 @@ export class Element extends Node
         return this.#inner;
     }
 
+    isSvgContext()
+    {
+        if (this.nodeName == "svg")
+            return true;
+        if (this.parentNode)
+            return this.parentNode.isSvgContext;
+        return false;
+    }
+
     renderAttributes(w)
     {
         for (let [key,value] of this.#attributes)
@@ -61,6 +70,10 @@ export class Element extends Node
             // Don't render empty style or class attributes
             if ((key == "style" || key == "class") && !value.raw)
                 continue;
+        
+            // Don't render svg namespace attributes
+            if (key == "xmlns" && value.raw == "http://www.w3.org/2000/svg" && this.isSvgContext())
+                continue
 
             w.write(" ");
             w.write(key);
