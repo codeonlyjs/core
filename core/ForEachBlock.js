@@ -88,8 +88,8 @@ export class ForEachBlock
         this.itemDoms = [];
 
         // Sentinal nodes
-        this.#headSentinal = coenv.document?.createComment(" enter foreach block ");
-        this.#tailSentinal = coenv.document?.createComment(" leave foreach block ");
+        this.#headSentinal = coenv.document?.createComment(" enter foreach block ", false, true);
+        this.#tailSentinal = coenv.document?.createComment(" leave foreach block ", false, true);
 
         // Single vs multi-root op helpers
         if (this.itemConstructor.isSingleRoot)

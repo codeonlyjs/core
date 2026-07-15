@@ -4,7 +4,7 @@ export function Placeholder(comment)
 {
     let fn = function()
     {
-        let node = coenv.document?.createComment(comment);
+        let node = coenv.document?.createComment(comment, false, true);
 
         return {
             get rootNode() { return node; },

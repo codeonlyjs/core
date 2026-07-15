@@ -58,6 +58,10 @@ export class Element extends Node
     {
         for (let [key,value] of this.#attributes)
         {
+            // Don't render empty style or class attributes
+            if ((key == "style" || key == "class") && !value.raw)
+                continue;
+
             w.write(" ");
             w.write(key);
             w.write("=\"");

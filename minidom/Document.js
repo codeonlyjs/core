@@ -32,9 +32,9 @@ export class Document extends HTMLElement
     {
         return new Text(this, data, raw);
     }
-    createComment(data, raw)
+    createComment(data, raw, noRender)
     {
-        return new Comment(this, data, raw);
+        return new Comment(this, data, raw, noRender);
     }
 }
 

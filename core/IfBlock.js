@@ -213,7 +213,7 @@ export class IfBlock
         // Multi-root if blocks need a sentinal to mark position
         // in case one of the multi-root branches has no elements
         if (!this.isSingleRoot)
-            this.headSentinal = coenv.document?.createComment(" if ");
+            this.headSentinal = coenv.document?.createComment(" if ", false, true);
     }
 
     destroy()
