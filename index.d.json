@@ -299,7 +299,7 @@
                     "kind": "function",
                     "name": "css",
                     "namepath": "module:@codeonlyjs/core.css",
-                    "definition": "export function css(strings: string[], values: string[]): void;",
+                    "definition": "export function css(strings: string[], ...values: any[]): void;",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -316,7 +316,7 @@
                         {
                             "block": "param",
                             "text": "The interpolated string values\n",
-                            "type": "string[]",
+                            "type": "...any",
                             "optional": false,
                             "name": "values",
                             "specifier": "values"
@@ -375,7 +375,7 @@
                     "kind": "class",
                     "name": "Component",
                     "namepath": "module:@codeonlyjs/core.Component",
-                    "definition": "export class Component extends EventTarget {\n    static get domTreeConstructor(): DomTreeConstructor;\n    static onProvideDomTreeConstructor(): DomTreeConstructor;\n    static onProvideTemplate(): {};\n    static get isSingleRoot(): boolean;\n    static template: {};\n    update(): void;\n    invalidate(): void;\n    create(): void;\n    get created(): boolean;\n    get domTree(): DomTree;\n    get isSingleRoot(): boolean;\n    get rootNode(): Node;\n    get rootNodes(): Node[];\n    get invalid(): boolean;\n    validate(): void;\n    set loadError(value: Error | null);\n    get loadError(): Error | null;\n    get loading(): boolean;\n    load(callback: () => Promise<any>, silent?: boolean): Promise<any>;\n    destroy(): void;\n    onMount(): void;\n    onUnmount(): void;\n    listen(target: object, event: string, handler?: Function): void;\n    unlisten(target: object, event: string, handler?: Function): void;\n    get mounted(): boolean;\n    setMounted(mounted: boolean): void;\n    mount(el: Element | string): void;\n    unmount(): void;\n}",
+                    "definition": "export class Component extends EventTarget {\n    static get domTreeConstructor(): DomTreeConstructor;\n    static onProvideDomTreeConstructor(): DomTreeConstructor;\n    static onProvideTemplate(): {};\n    static get isSingleRoot(): boolean;\n    static template: {};\n    invalidate(): void;\n    create(): void;\n    get created(): boolean;\n    get domTree(): DomTree;\n    get isSingleRoot(): boolean;\n    get rootNode(): Node;\n    get rootNodes(): Node[];\n    get invalid(): boolean;\n    validate(): void;\n    update(): void;\n    domValid(): void;\n    set loadError(value: Error | null);\n    get loadError(): Error | null;\n    get loading(): boolean;\n    load(callback: () => Promise<any>, silent?: boolean): Promise<any>;\n    destroy(): void;\n    onMount(): void;\n    onUnmount(): void;\n    listen(target: object, event: string, handler?: Function): void;\n    unlisten(target: object, event: string, handler?: Function): void;\n    get mounted(): boolean;\n    setMounted(mounted: boolean): void;\n    mount(el: Element | string): void;\n    unmount(): void;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -411,20 +411,20 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 4685,
-                                            "end": 4715,
+                                            "pos": 4683,
+                                            "end": 4713,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                                         },
                                         {
-                                            "pos": 4841,
-                                            "end": 4860,
+                                            "pos": 4839,
+                                            "end": 4858,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         },
                                         {
-                                            "pos": 4992,
-                                            "end": 5041,
+                                            "pos": 4990,
+                                            "end": 5039,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component.onProvideDomTreeConstructor"
                                         }
@@ -452,8 +452,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 5243,
-                                    "end": 5273,
+                                    "pos": 5241,
+                                    "end": 5271,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                                 }
@@ -515,24 +515,6 @@
                         },
                         {
                             "kind": "method",
-                            "name": "update",
-                            "namepath": "module:@codeonlyjs/core.Component#update",
-                            "definition": "update(): void;",
-                            "jsdoc": [
-                                {
-                                    "kind": null,
-                                    "text": "\nImmediately updates this component's DOM elements - even if\nthe component is not marked as invalid.\n\nDoes nothing if the component's DOM elements haven't been created.\n\nIf the component has been invalidated, returns it to the valid state.\n\nThis method is bound to the component instance and can be used\ndirectly as the handler for an event listener to update the\ncomponent when an event is triggered.\n\n"
-                                },
-                                {
-                                    "block": "returns",
-                                    "text": "",
-                                    "type": "void"
-                                }
-                            ],
-                            "links": []
-                        },
-                        {
-                            "kind": "method",
                             "name": "invalidate",
                             "namepath": "module:@codeonlyjs/core.Component#invalidate",
                             "definition": "invalidate(): void;",
@@ -567,8 +549,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 7315,
-                                    "end": 7330,
+                                    "pos": 6719,
+                                    "end": 6734,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.DomTree"
                                 }
@@ -595,8 +577,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7569,
-                                            "end": 7584,
+                                            "pos": 6973,
+                                            "end": 6988,
                                             "kind": "link",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         }
@@ -626,8 +608,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 7717,
-                                            "end": 7736,
+                                            "pos": 7121,
+                                            "end": 7140,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.DomTree"
                                         }
@@ -729,8 +711,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 8631,
-                                            "end": 8663,
+                                            "pos": 8035,
+                                            "end": 8067,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                         }
@@ -757,12 +739,48 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 8896,
-                                    "end": 8928,
+                                    "pos": 8300,
+                                    "end": 8332,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
                             ]
+                        },
+                        {
+                            "kind": "method",
+                            "name": "update",
+                            "namepath": "module:@codeonlyjs/core.Component#update",
+                            "definition": "update(): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nImmediately updates this component's DOM elements - even if\nthe component is not marked as invalid.\n\nDoes nothing if the component's DOM elements haven't been created.\n\nIf the component has been invalidated, returns it to the valid state.\n\n"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "void"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "method",
+                            "name": "domValid",
+                            "namepath": "module:@codeonlyjs/core.Component#domValid",
+                            "definition": "domValid(): void;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nNotifies that this component's DOM tree is now valid - either\nafter being initially created, or updated\n"
+                                },
+                                {
+                                    "block": "returns",
+                                    "text": "",
+                                    "type": "void"
+                                }
+                            ],
+                            "links": []
                         },
                         {
                             "kind": "property",
@@ -785,8 +803,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 9318,
-                                            "end": 9344,
+                                            "pos": 9324,
+                                            "end": 9350,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -813,8 +831,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 9087,
-                                            "end": 9113,
+                                            "pos": 9093,
+                                            "end": 9119,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -844,8 +862,8 @@
                                     ],
                                     "links": [
                                         {
-                                            "pos": 9508,
-                                            "end": 9534,
+                                            "pos": 9514,
+                                            "end": 9540,
                                             "kind": "linkcode",
                                             "namepath": "module:@codeonlyjs/core.Component#load"
                                         }
@@ -888,20 +906,20 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 9827,
-                                    "end": 9852,
+                                    "pos": 9833,
+                                    "end": 9858,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loading"
                                 },
                                 {
-                                    "pos": 9960,
-                                    "end": 9987,
+                                    "pos": 9966,
+                                    "end": 9993,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loadError"
                                 },
                                 {
-                                    "pos": 10235,
-                                    "end": 10260,
+                                    "pos": 10241,
+                                    "end": 10266,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#loading"
                                 }
@@ -925,14 +943,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 10737,
-                                    "end": 10756,
+                                    "pos": 10743,
+                                    "end": 10762,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTree"
                                 },
                                 {
-                                    "pos": 10932,
-                                    "end": 10956,
+                                    "pos": 10938,
+                                    "end": 10962,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#create"
                                 }
@@ -1016,8 +1034,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 12219,
-                                    "end": 12247,
+                                    "pos": 12225,
+                                    "end": 12253,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -1065,14 +1083,14 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 12452,
-                                    "end": 12476,
+                                    "pos": 12458,
+                                    "end": 12482,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#listen"
                                 },
                                 {
-                                    "pos": 12773,
-                                    "end": 12801,
+                                    "pos": 12779,
+                                    "end": 12807,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Component#invalidate"
                                 }
@@ -1195,8 +1213,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 13793,
-                            "end": 13819,
+                            "pos": 13799,
+                            "end": 13825,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.DomTreeConstructor"
                         }
@@ -1522,8 +1540,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 17621,
-                            "end": 17635,
+                            "pos": 17627,
+                            "end": 17641,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.notify"
                         }
@@ -1546,8 +1564,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 17770,
-                            "end": 17793,
+                            "pos": 17776,
+                            "end": 17799,
                             "kind": "link",
                             "title": "Notify",
                             "namepath": "module:@codeonlyjs/core.Notify"
@@ -1606,8 +1624,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 18172,
-                            "end": 18196,
+                            "pos": 18178,
+                            "end": 18202,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions"
                         }
@@ -1626,26 +1644,26 @@
                     ],
                     "links": [
                         {
-                            "pos": 18528,
-                            "end": 18556,
+                            "pos": 18534,
+                            "end": 18562,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#get"
                         },
                         {
-                            "pos": 18561,
-                            "end": 18589,
+                            "pos": 18567,
+                            "end": 18595,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#set"
                         },
                         {
-                            "pos": 18639,
-                            "end": 18670,
+                            "pos": 18645,
+                            "end": 18676,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#target"
                         },
                         {
-                            "pos": 18675,
-                            "end": 18704,
+                            "pos": 18681,
+                            "end": 18710,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.InputOptions#prop"
                         }
@@ -1690,8 +1708,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 19167,
-                                    "end": 19199,
+                                    "pos": 19173,
+                                    "end": 19205,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.DomTreeContext#model"
                                 }
@@ -1902,8 +1920,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 21467,
-                                    "end": 21490,
+                                    "pos": 21473,
+                                    "end": 21496,
                                     "kind": "link",
                                     "namepath": "module:@codeonlyjs/core.Router#register"
                                 }
@@ -1935,8 +1953,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 21880,
-                                    "end": 21897,
+                                    "pos": 21886,
+                                    "end": 21903,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Route"
                                 }
@@ -2259,8 +2277,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 25653,
-                            "end": 25667,
+                            "pos": 25659,
+                            "end": 25673,
                             "kind": "link",
                             "namepath": "module:@codeonlyjs/core.Router"
                         }
@@ -2305,8 +2323,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 26514,
-                                    "end": 26540,
+                                    "pos": 26520,
+                                    "end": 26546,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.Router#replace"
                                 }
@@ -2338,8 +2356,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 26773,
-                                    "end": 26797,
+                                    "pos": 26779,
+                                    "end": 26803,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.RouteHandler"
                                 }
@@ -2399,8 +2417,8 @@
                     ],
                     "links": [
                         {
-                            "pos": 28327,
-                            "end": 28344,
+                            "pos": 28333,
+                            "end": 28350,
                             "kind": "linkcode",
                             "namepath": "module:@codeonlyjs/core.Route"
                         }
@@ -2419,8 +2437,8 @@
                             ],
                             "links": [
                                 {
-                                    "pos": 28681,
-                                    "end": 28703,
+                                    "pos": 28687,
+                                    "end": 28709,
                                     "kind": "linkcode",
                                     "namepath": "module:@codeonlyjs/core.urlPattern"
                                 }
@@ -2672,6 +2690,48 @@
                 },
                 {
                     "kind": "function",
+                    "name": "registerFetchAssetHandler",
+                    "namepath": "module:@codeonlyjs/core.registerFetchAssetHandler",
+                    "definition": "export function registerFetchAssetHandler(handler: FetchAssetHandler): void;",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "Registers a handler for fetch Asset requests\n"
+                        },
+                        {
+                            "block": "param",
+                            "text": "The handler to register\n",
+                            "type": "FetchAssetHandler",
+                            "optional": false,
+                            "name": "handler",
+                            "specifier": "handler"
+                        }
+                    ],
+                    "links": []
+                },
+                {
+                    "kind": "function",
+                    "name": "revokeFetchAssetHandler",
+                    "namepath": "module:@codeonlyjs/core.revokeFetchAssetHandler",
+                    "definition": "export function revokeFetchAssetHandler(handler: FetchAssetHandler): void;",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "Revokes a previous registered handler for fetch Asset requests\n"
+                        },
+                        {
+                            "block": "param",
+                            "text": "The handler to register\n",
+                            "type": "FetchAssetHandler",
+                            "optional": false,
+                            "name": "handler",
+                            "specifier": "handler"
+                        }
+                    ],
+                    "links": []
+                },
+                {
+                    "kind": "function",
                     "name": "fetchTextAsset",
                     "namepath": "module:@codeonlyjs/core.fetchTextAsset",
                     "definition": "export function fetchTextAsset(path: string): Promise<string>;",
@@ -2726,7 +2786,7 @@
                     "kind": "class",
                     "name": "SSRWorker",
                     "namepath": "module:@codeonlyjs/core.SSRWorker",
-                    "definition": "export class SSRWorker {\n    init(options: {\n        entryFile: string;\n        entryMain: string;\n        entryHtml: string;\n        cssUrl?: string;\n    }): Promise<void>;\n    stop(): Promise<void>;\n    getStyles(): Promise<string>;\n    render(url: string, options: any): SSRResult;\n}",
+                    "definition": "export class SSRWorker {\n    init(options: {\n        entryFile: string;\n        entryMain: string;\n        entryParams: any[];\n        entryHtml: string;\n        cssUrl?: string;\n    }): Promise<void>;\n    stop(): Promise<void>;\n    getStyles(): Promise<string>;\n    render(url: string, options: any): SSRResult;\n    externalizeUrl(url: any): string | URL;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -2739,7 +2799,7 @@
                             "kind": "method",
                             "name": "init",
                             "namepath": "module:@codeonlyjs/core.SSRWorker#init",
-                            "definition": "init(options: {\n    entryFile: string;\n    entryMain: string;\n    entryHtml: string;\n    cssUrl?: string;\n}): Promise<void>;",
+                            "definition": "init(options: {\n    entryFile: string;\n    entryMain: string;\n    entryParams: any[];\n    entryHtml: string;\n    cssUrl?: string;\n}): Promise<void>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2768,6 +2828,14 @@
                                     "optional": false,
                                     "name": "options",
                                     "specifier": "options.entryMain"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "An array of parameters to pass to entryMain\n",
+                                    "type": "any[]",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryParams"
                                 },
                                 {
                                     "block": "param",
@@ -2857,6 +2925,12 @@
                                 }
                             ],
                             "links": []
+                        },
+                        {
+                            "kind": "method",
+                            "name": "externalizeUrl",
+                            "namepath": "module:@codeonlyjs/core.SSRWorker#externalizeUrl",
+                            "definition": "externalizeUrl(url: any): string | URL;"
                         }
                     ]
                 },
@@ -2892,7 +2966,7 @@
                     "kind": "class",
                     "name": "SSRWorkerThread",
                     "namepath": "module:@codeonlyjs/core.SSRWorkerThread",
-                    "definition": "export class SSRWorkerThread {\n    init(options: {\n        entryFile: string;\n        entryMain: string;\n        entryHtml: string;\n        cssUrl?: string;\n    }): Promise<void>;\n    render(url: string): SSRResult;\n    getStyles(): Promise<string>;\n    stop(): Promise<any>;\n}",
+                    "definition": "export class SSRWorkerThread {\n    init(options: {\n        entryFile: string;\n        entryMain: string;\n        entryParams: any[];\n        entryHtml: string;\n        cssUrl?: string;\n    }): Promise<void>;\n    render(url: string): SSRResult;\n    getStyles(): Promise<string>;\n    externalizeUrl(url: any): Promise<any>;\n    stop(): Promise<any>;\n}",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -2905,7 +2979,7 @@
                             "kind": "method",
                             "name": "init",
                             "namepath": "module:@codeonlyjs/core.SSRWorkerThread#init",
-                            "definition": "init(options: {\n    entryFile: string;\n    entryMain: string;\n    entryHtml: string;\n    cssUrl?: string;\n}): Promise<void>;",
+                            "definition": "init(options: {\n    entryFile: string;\n    entryMain: string;\n    entryParams: any[];\n    entryHtml: string;\n    cssUrl?: string;\n}): Promise<void>;",
                             "jsdoc": [
                                 {
                                     "kind": null,
@@ -2934,6 +3008,14 @@
                                     "optional": false,
                                     "name": "options",
                                     "specifier": "options.entryMain"
+                                },
+                                {
+                                    "block": "param",
+                                    "text": "An array of parameters to pass to entryMain\n",
+                                    "type": "any[]",
+                                    "optional": false,
+                                    "name": "options",
+                                    "specifier": "options.entryParams"
                                 },
                                 {
                                     "block": "param",
@@ -3005,6 +3087,19 @@
                         },
                         {
                             "kind": "method",
+                            "name": "externalizeUrl",
+                            "namepath": "module:@codeonlyjs/core.SSRWorkerThread#externalizeUrl",
+                            "definition": "externalizeUrl(url: any): Promise<any>;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nExternalize a URL\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "method",
                             "name": "stop",
                             "namepath": "module:@codeonlyjs/core.SSRWorkerThread#stop",
                             "definition": "stop(): Promise<any>;",
@@ -3043,7 +3138,7 @@
                     "kind": "type-alias",
                     "name": "GenerateStaticOptions",
                     "namepath": "module:@codeonlyjs/core.GenerateStaticOptions",
-                    "definition": "export type GenerateStaticOptions = {\n    entryFile?: string[];\n    entryMain?: string[];\n    entryHtml?: string[];\n    entryUrls?: string[];\n    ext?: string;\n    pretty?: boolean;\n    outDir?: string;\n    baseUrl?: string;\n    verbose?: boolean;\n    cssUrl?: string;\n};",
+                    "definition": "export type GenerateStaticOptions = {\n    entryFile?: string[];\n    entryMain?: string[];\n    entryParams?: any[];\n    entryHtmlFile?: string[];\n    entryHtml?: string;\n    entryUrls?: string[];\n    ext?: string;\n    pretty?: boolean;\n    outDir?: string;\n    baseUrl?: string;\n    verbose?: boolean;\n    cssUrl?: string;\n};",
                     "jsdoc": [
                         {
                             "kind": null,
@@ -3080,13 +3175,39 @@
                         },
                         {
                             "kind": "property",
-                            "name": "entryHtml",
-                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryHtml",
-                            "definition": "entryHtml?: string[];",
+                            "name": "entryParams",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryParams",
+                            "definition": "entryParams?: any[];",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nAn array of parameters to pass to entryMain\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "entryHtmlFile",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryHtmlFile",
+                            "definition": "entryHtmlFile?: string[];",
                             "jsdoc": [
                                 {
                                     "kind": null,
                                     "text": "\nThe HTML file to use as template for generated files (as an array, first found used)\n"
+                                }
+                            ],
+                            "links": []
+                        },
+                        {
+                            "kind": "property",
+                            "name": "entryHtml",
+                            "namepath": "module:@codeonlyjs/core.GenerateStaticOptions#entryHtml",
+                            "definition": "entryHtml?: string;",
+                            "jsdoc": [
+                                {
+                                    "kind": null,
+                                    "text": "\nThe HTML string to use as template (replaces entryHtmlFile)\n"
                                 }
                             ],
                             "links": []
@@ -3138,7 +3259,7 @@
                             "jsdoc": [
                                 {
                                     "kind": null,
-                                    "text": "\nThe output directory to write generated files\n"
+                                    "text": "\nThe output directory to write generated files (null to return file contents)\n"
                                 }
                             ],
                             "links": []
@@ -3501,6 +3622,19 @@
                         {
                             "kind": null,
                             "text": "\nA function that creates a DomTree\n"
+                        }
+                    ],
+                    "links": []
+                },
+                {
+                    "kind": "type-alias",
+                    "name": "FetchAssetResult",
+                    "namepath": "module:@codeonlyjs/core.FetchAssetResult",
+                    "definition": "export type FetchAssetResult =\n    | { kind: 'text'; text: string }\n    | { kind: 'json'; json: unknown }\n    | { kind: 'binary'; binary: ArrayBuffer };",
+                    "jsdoc": [
+                        {
+                            "kind": null,
+                            "text": "\nReturn value from a fetch handler\n"
                         }
                     ],
                     "links": []

@@ -104,10 +104,10 @@ declare module "@codeonlyjs/core" {
      *
      * This function is intended to be used as a template literal tag
      * @param {string[]} strings The CSS to be added
-     * @param {string[]} values The interpolated string values
+     * @param {...any} values The interpolated string values
      * @returns {void}
      */
-    export function css(strings: string[], values: string[]): void;
+    export function css(strings: string[], ...values: any[]): void;
     /** Utility functions for working with CSS styles
      */
     export class Style {
@@ -170,21 +170,6 @@ declare module "@codeonlyjs/core" {
          * The template to be used by this component class
          */
         static template: {};
-        /**
-         * Immediately updates this component's DOM elements - even if
-         * the component is not marked as invalid.
-         *
-         * Does nothing if the component's DOM elements haven't been created.
-         *
-         * If the component has been invalidated, returns it to the valid state.
-         *
-         * This method is bound to the component instance and can be used
-         * directly as the handler for an event listener to update the
-         * component when an event is triggered.
-         *
-         * @returns {void}
-         */
-        update(): void;
         /**
          * Invalidates this component, marking it as requiring a DOM update.
          *
@@ -254,6 +239,24 @@ declare module "@codeonlyjs/core" {
          * @returns {void}
          */
         validate(): void;
+        /**
+         * Immediately updates this component's DOM elements - even if
+         * the component is not marked as invalid.
+         *
+         * Does nothing if the component's DOM elements haven't been created.
+         *
+         * If the component has been invalidated, returns it to the valid state.
+         *
+         * @returns {void}
+         */
+        update(): void;
+        /**
+         * Notifies that this component's DOM tree is now valid - either
+         * after being initially created, or updated
+         
+         * @returns {void}
+         */
+        domValid(): void;
         /**
          * Sets the error object associated with the current call to {@linkcode Component#load}.
          *
@@ -842,6 +845,14 @@ declare module "@codeonlyjs/core" {
          */
         externalize(url: URL, asset?: boolean): URL;
     }
+    /** Registers a handler for fetch Asset requests
+     * @param {FetchAssetHandler} handler The handler to register
+     */
+    export function registerFetchAssetHandler(handler: FetchAssetHandler): void;
+    /** Revokes a previous registered handler for fetch Asset requests
+     * @param {FetchAssetHandler} handler The handler to register
+     */
+    export function revokeFetchAssetHandler(handler: FetchAssetHandler): void;
     /**
      * Fetches a text asset.
      *
@@ -877,6 +888,7 @@ declare module "@codeonlyjs/core" {
          * @param {object} options Options
          * @param {string} options.entryFile The main entry .js file
          * @param {string} options.entryMain The name of the main function in the entry file
+         * @param {any[]} options.entryParams An array of parameters to pass to entryMain
          * @param {string} options.entryHtml An HTML string into which mounted components will be written
          * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
          * @returns {Promise<void>}
@@ -884,6 +896,7 @@ declare module "@codeonlyjs/core" {
         init(options: {
             entryFile: string;
             entryMain: string;
+            entryParams: any[];
             entryHtml: string;
             cssUrl?: string;
         }): Promise<void>;
@@ -903,6 +916,7 @@ declare module "@codeonlyjs/core" {
          * @returns {SSRResult} The results of the render
          */
         render(url: string, options: any): SSRResult;
+        externalizeUrl(url: any): string | URL;
     }
     /**
      * The results of an SSRWorker/SSRWorkerThread render operation.
@@ -928,6 +942,7 @@ declare module "@codeonlyjs/core" {
          * @param {object} options Options
          * @param {string} options.entryFile The main entry .js file
          * @param {string} options.entryMain The name of the main function in the entry file
+         * @param {any[]} options.entryParams An array of parameters to pass to entryMain
          * @param {string} options.entryHtml An HTML string into which mounted components will be written
          * @param {string} [options.cssUrl] A URL to use in-place of directly inserting CSS declarations
          * @returns {Promise<void>}
@@ -935,6 +950,7 @@ declare module "@codeonlyjs/core" {
         init(options: {
             entryFile: string;
             entryMain: string;
+            entryParams: any[];
             entryHtml: string;
             cssUrl?: string;
         }): Promise<void>;
@@ -949,6 +965,10 @@ declare module "@codeonlyjs/core" {
          * @returns {Promise<string>}
          */
         getStyles(): Promise<string>;
+        /**
+         * Externalize a URL
+         */
+        externalizeUrl(url: any): Promise<any>;
         /**
          * Stops the worker.
          */
@@ -975,9 +995,17 @@ declare module "@codeonlyjs/core" {
          */
         entryMain?: string[];
         /**
+         * An array of parameters to pass to entryMain
+         */
+        entryParams?: any[];
+        /**
          * The HTML file to use as template for generated files (as an array, first found used)
          */
-        entryHtml?: string[];
+        entryHtmlFile?: string[];
+        /**
+         * The HTML string to use as template (replaces entryHtmlFile)
+         */
+        entryHtml?: string;
         /**
          * The URL's to render (will also recursively render all linked URLs)
          */
@@ -991,7 +1019,7 @@ declare module "@codeonlyjs/core" {
          */
         pretty?: boolean;
         /**
-         * The output directory to write generated files
+         * The output directory to write generated files (null to return file contents)
          */
         outDir?: string;
         /**
@@ -1108,6 +1136,13 @@ declare module "@codeonlyjs/core" {
      * A function that creates a DomTree
      */
     export type DomTreeConstructor = (DomTreeContext: any) => DomTree;
+    /**
+     * Return value from a fetch handler
+     */
+    export type FetchAssetResult =
+        | { kind: 'text'; text: string }
+        | { kind: 'json'; json: unknown }
+        | { kind: 'binary'; binary: ArrayBuffer };
 
 }
 

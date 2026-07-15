@@ -277,10 +277,10 @@ class Style
  * 
  * This function is intended to be used as a template literal tag
  * @param {string[]} strings The CSS to be added
- * @param {string[]} values The interpolated string values
+ * @param {...any} values The interpolated string values
  * @returns {void}
  */
-function css(strings, values)
+function css(strings, ...values)
 {
     let r = "";
     for (let i=0; i<strings.length - 1; i++)
@@ -1961,8 +1961,8 @@ class ForEachBlock
         this.itemDoms = [];
 
         // Sentinal nodes
-        this.#headSentinal = coenv.document?.createComment(" enter foreach block ");
-        this.#tailSentinal = coenv.document?.createComment(" leave foreach block ");
+        this.#headSentinal = coenv.document?.createComment(" enter foreach block ", false, true);
+        this.#tailSentinal = coenv.document?.createComment(" leave foreach block ", false, true);
 
         // Single vs multi-root op helpers
         if (this.itemConstructor.isSingleRoot)
@@ -2432,7 +2432,7 @@ function Placeholder(comment)
 {
     let fn = function()
     {
-        let node = coenv.document?.createComment(comment);
+        let node = coenv.document?.createComment(comment, false, true);
 
         return {
             get rootNode() { return node; },
@@ -2658,7 +2658,7 @@ class IfBlock
         // Multi-root if blocks need a sentinal to mark position
         // in case one of the multi-root branches has no elements
         if (!this.isSingleRoot)
-            this.headSentinal = coenv.document?.createComment(" if ");
+            this.headSentinal = coenv.document?.createComment(" if ", false, true);
     }
 
     destroy()
@@ -3203,21 +3203,19 @@ function compileTemplateCode(rootTemplate, compilerOptions)
                     }
 
                     // Create
-                    let prevName = `p${prevId++}`;
-                    closure.addLocal(prevName);
                     let callback_index = refs.length;
 
                     // Update
                     need_update_temp();
                     closure_update_append(`temp = ${format_callback(callback_index)};`);
-                    closure_update_append(`if (temp !== ${prevName})`);
+                    closure_update_append(`if (temp !== ${ni.name}${member(key)})`);
                     if (auto_update)
                     {
                         closure_update_append(`{`);
                         closure_update_append(`  ${auto_modified_name} = true;`);
                     }
 
-                    closure_update_append(`  ${ni.name}${member(key)} = ${prevName} = temp;`);
+                    closure_update_append(`  ${ni.name}${member(key)} = temp;`);
 
                     if (auto_update)
                         closure_update_append(`}`);
@@ -3611,8 +3609,7 @@ class Component extends EventTarget
     {
         super();
 
-        // Bind these so they can be passed directly to update callbacks.
-        this.update = this.update.bind(this);
+        // Bind this so they can be passed directly to update callbacks.
         this.invalidate = this.invalidate.bind(this);
     }
 
@@ -3698,7 +3695,10 @@ class Component extends EventTarget
     create()
     {
         if (!this.#domTree)
+        {
             this.#domTree = new this.constructor.domTreeConstructor({ model: this });
+            this.domValid();
+        }
     }
 
     /** 
@@ -3854,10 +3854,6 @@ class Component extends EventTarget
      * 
      * If the component has been invalidated, returns it to the valid state.
      * 
-     * This method is bound to the component instance and can be used 
-     * directly as the handler for an event listener to update the
-     * component when an event is triggered.
-     *
      * @returns {void}
      */
     update()
@@ -3867,6 +3863,17 @@ class Component extends EventTarget
         
         this.#invalid = false;
         this.domTree.update();
+        this.domValid();
+    }
+
+    /** 
+     * Notifies that this component's DOM tree is now valid - either
+     * after being initially created, or updated
+     
+     * @returns {void}
+     */
+    domValid()
+    {
     }
 
     
@@ -4705,7 +4712,7 @@ class BrowserEnvironment extends Environment
         {
             this.pendingStyles += "\n" + css;
             if (!this.hydrateMounts)
-                this.window.requestAnimationFrame(() => this.mountStyles());
+                this.mountStyles();
         }
     }
 
@@ -4715,13 +4722,13 @@ class BrowserEnvironment extends Environment
             return;
 
         if (!this.styleNode)
+        {
             this.styleNode = document.createElement("style");
+            document.head.appendChild(this.styleNode);
+        }
 
         this.styleNode.innerHTML += this.pendingStyles + "\n";
         this.pendingStyles = "";
-
-        if (!this.styleNode.parentNode)
-            document.head.appendChild(this.styleNode);
     }
 
     doHydrate()

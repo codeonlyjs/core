@@ -13,10 +13,13 @@
     "init",
     "render",
     "getStyles",
+    "externalizeUrl",
     "stop",
     "SSRWorker",
     "fetchJsonAsset",
     "fetchTextAsset",
+    "revokeFetchAssetHandler",
+    "registerFetchAssetHandler",
     "UrlMapper",
     "internalize",
     "externalize",
@@ -54,7 +57,6 @@
     "onProvideTemplate",
     "isSingleRoot",
     "template",
-    "update",
     "invalidate",
     "create",
     "created",
@@ -62,6 +64,8 @@
     "rootNode",
     "invalid",
     "validate",
+    "update",
+    "domValid",
     "loadError",
     "loading",
     "load",
@@ -134,6 +138,6 @@
     null,
     null
   ],
-  "mappings": "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",
+  "mappings": "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",
   "ignoreList": []
 }
