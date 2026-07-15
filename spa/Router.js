@@ -307,7 +307,8 @@ export class Router
                 if (dup !== undefined)
                     route = dup;
                 else
-                    route = Object.assign({}, this.#current, route);
+                    return null;
+                    //route = Object.assign({}, this.#current, route);
             }
 
             route = Object.assign(route, { 
