@@ -39,44 +39,25 @@ export class BrowserEnvironment extends Environment
         this.pendingStyles = "";
     }
 
-    doHydrate()
+    onLoaded()
     {
-        nextFrame(async () => {
+        // Remove all ssr rendered content
+        document.querySelectorAll(".cossr").forEach(x => x.remove());
 
-            while (true)
-            {
-                // Wait for pending loads
-                await this.untilLoaded();
+        // Mount components
+        let mounts = this.hydrateMounts;
+        this.hydrateMounts = null;
+        mounts.forEach(x => {
+            removeSsrNodes(x.el),
+            this.mount(x.component, x.el)
+        });
 
-                // Wait for pending frames
-                if (anyPendingFrames())
-                {
-                    await new Promise((resolve) => postNextFrame(resolve));
-                }
-                else
-                    break;  
-            }
+        // Mount pending styles
+        removeSsrNodes(document.head);
+        this.mountStyles();
 
-            // On the next frame
-            postNextFrame(() => {
-
-                // Remove all ssr rendered content
-                document.querySelectorAll(".cossr").forEach(x => x.remove());
-
-                // Mount components
-                let mounts = this.hydrateMounts;
-                this.hydrateMounts = null;
-                mounts.forEach(x => {
-                    removeSsrNodes(x.el),
-                    this.mount(x.component, x.el)
-                });
-
-                // Mount pending styles
-                removeSsrNodes(document.head);
-                this.mountStyles();
-
-            })
-        }, Number.MAX_SAFE_INTEGER);
+        // Now fire environment loaded events
+        super.onLoaded();
     }
 
     mount(component, el)
@@ -89,8 +70,6 @@ export class BrowserEnvironment extends Environment
         if (this.hydrateMounts)
         {
             this.hydrateMounts.push({ el, component });
-            if (this.hydrateMounts.length == 1)
-                this.doHydrate();
         }
         else
         {

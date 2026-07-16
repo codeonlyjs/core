@@ -61,8 +61,20 @@ export class Environment extends EventTarget
     {
         this.#loading--;
         if (this.#loading == 0)
-            this.dispatchEvent(new Event("loaded"));
+            this.onLoaded();
     }
+
+    /** 
+     * Called when loading operation has finished
+     * Overridden in BrowserEnvironment to no fire until SSR mounts are hydrated on initial load
+     * 
+     * @returns {void}
+     */
+    onLoaded()
+    {
+        this.dispatchEvent(new Event("loaded"));
+    }
+
 
     /** 
      * Returns `true` if there are in progress async load operations.
