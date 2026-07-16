@@ -303,12 +303,20 @@ export class Router
             // In page navigation?
             if (this.#current?.url.pathname == url.pathname && this.#current.url.search == url.search)
             {
-                let dup = this.#current.handler.hashChange?.(this.#current, route);
-                if (dup !== undefined)
-                    route = dup;
-                else
-                    return null;
-                    //route = Object.assign({}, this.#current, route);
+                if (this.#current.handler.hashChange)
+                {
+                    let dup = this.#current.handler.hashChange?.(this.#current, route);
+                    if (dup !== undefined)
+                        route = dup;
+                    else
+                        route = Object.assign({}, this.#current, route);
+                }
+                else if (coenv.browser)
+                {
+                    let elHash = document.getElementById(url.hash.substring(1));
+                    elHash?.scrollIntoView();
+                    return this.#current;
+                }
             }
 
             route = Object.assign(route, { 
