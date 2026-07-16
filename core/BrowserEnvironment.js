@@ -41,20 +41,24 @@ export class BrowserEnvironment extends Environment
 
     onLoaded()
     {
-        // Remove all ssr rendered content
-        document.querySelectorAll(".cossr").forEach(x => x.remove());
 
         // Mount components
-        let mounts = this.hydrateMounts;
-        this.hydrateMounts = null;
-        mounts.forEach(x => {
-            removeSsrNodes(x.el),
-            this.mount(x.component, x.el)
-        });
+        if (this.hydrateMounts)
+        {
+            // Remove all ssr rendered content
+            document.querySelectorAll(".cossr").forEach(x => x.remove());
 
-        // Mount pending styles
-        removeSsrNodes(document.head);
-        this.mountStyles();
+            let mounts = this.hydrateMounts;
+            this.hydrateMounts = null;
+            mounts.forEach(x => {
+                removeSsrNodes(x.el),
+                this.mount(x.component, x.el)
+            });
+
+            // Mount pending styles
+            removeSsrNodes(document.head);
+            this.mountStyles();
+        }
 
         // Now fire environment loaded events
         super.onLoaded();
