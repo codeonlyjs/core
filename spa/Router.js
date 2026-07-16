@@ -315,6 +315,7 @@ export class Router
                 {
                     let elHash = document.getElementById(url.hash.substring(1));
                     elHash?.scrollIntoView();
+                    this.dispatchEvent("didInPageNav", false, route, route);
                     return this.#current;
                 }
             }
